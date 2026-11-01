@@ -34,7 +34,7 @@ All calculations use the cell-centred finite volume solvers of solids4foam~\cite
 		mokLidDrivenCavity & 2-D & periodic (forced) & large & C-weak & 4 & 3 & IQN-ILS/Aitken$^\dagger$ \\
 		cavityFlexibleBottom$^\ast$ & 2-D & steady & large & C-weak & 3 & -- & none \\
 		beamInCrossFlow$^\ast$ & 3-D & steady & small & C & \multicolumn{3}{l}{in progress (Richter definition)} \\
-		Hessenthaler$^\ast$ & 3-D & steady (Phase I) & large & -- & \multicolumn{3}{l}{in progress; validation case} \\
+		Hessenthaler$^\ast$ & 3-D & steady (Phase I) & large & -- & 3 (fluid), 3 (solid) & 3 & tolerance pair \\
 		blobInTreacle$^\ast$ & 2-D & trans.\,$\to$\,steady & large & C-weak & 4 & 4 & none \\
 		\bottomrule
 		\multicolumn{8}{l}{$^\ast$ Provisional or in progress (Section~\ref{sec:provisional}). $^\dagger$ Iteration counts only; no quantitative difference recorded.}
@@ -579,7 +579,7 @@ The present results are a self-convergence sequence for the fully specified grou
 \subsection{Provisional and in-development benchmarks}\label{sec:provisional}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Each of the four cases below would add a feature not otherwise covered, but none currently supports a verification claim. Two (beamInCrossFlow and Hessenthaler) are verification campaigns in progress, for which no convergence results are reported; no statement below depends on simulations that have not been completed.
+Each of the four cases below would add a feature not otherwise covered, but none yet supports a complete verification claim. beamInCrossFlow is a verification campaign in progress, for which no convergence results are reported, and the Hessenthaler campaign is complete except for the fluid convergence of its principal QoI; no statement below depends on simulations that have not been completed.
 
 %%-------------------------------------------------------------------
 \subsubsection{Flexible-bottom cavity [PROVISIONAL]}\label{sec:cavity}
@@ -633,20 +633,54 @@ The case has been rebuilt to the geometry and material of \citet{Richter2012}, a
 An earlier modified, large-deformation form ($E_S = 10\,\mathrm{kPa}$) with same-lineage reference values read from a figure of \citet{Tukovic2018} (C-weak) is not pursued here.
 
 %%-------------------------------------------------------------------
-\subsubsection{Hessenthaler three-dimensional benchmark [IN PROGRESS]}\label{sec:hessenthaler}
+\subsubsection{Hessenthaler three-dimensional benchmark (Phase I) [PROVISIONAL]}\label{sec:hessenthaler}
 %%-------------------------------------------------------------------
 
-\todo{IN PROGRESS. A numerical-verification campaign (solids4foam branch verification/hessenthaler-phaseI) is running; no convergence result is reported here. Retain in the main text only if mesh, time-step and coupling studies of the steady Phase-I state, run with the strict coupling test from $t = 0$, give consistent observed orders for the principal QoIs. Record the justification of the fixed shear modulus. The campaign was started on a tree without solids4foam PR \#546 (OpenFOAM-v2412, GCC, \texttt{-O2}, AMI interface transfer). The A/B check against a tree with PR \#546 is done: F1S2 is bit-identical over 750 steps, so the \texttt{-O2} build is unaffected by the aliasing defect and the S2 solid mesh does not reach the barycentric threshold. F1S3 changes the mean tip deflection by $+0.006$\,mm ($0.04\%$), well below the S2$\to$S3 change of about $0.09$\,mm. Final S3/S4 runs use the fixed build.}
-
-\paragraph{Intended role.}
+\paragraph{Role.}
 The benchmark of Hessenthaler et al.~\citep{Hessenthaler2017a,Hessenthaler2017b} is a geometrically complex, three-dimensional, large-deformation problem (a silicone flap in a flow phantom) with phase-contrast MRI measurements.
-It is primarily a \emph{validation} case: agreement with the measurements depends on the mathematical model (including a shear modulus calibrated from a measured deflection) as well as on the numerics, and is not a numerical verification reference.
-Separately, a numerical-verification campaign treats the Phase-I steady state of one fixed mathematical model (fixed shear modulus, neo-Hookean flap, Newtonian fluid) as the problem to be verified, with nested solid meshes, a fluid mesh family, time-step and coupling studies, and no use of the measurements.
+It is used here twice, and the two uses are kept apart: as a solution-verification case, in which one fixed mathematical model of the Phase-I steady state is solved on refined meshes and time steps without reference to the measurements, and, separately, as a validation case.
+No independent numerical solution exists, so the verification evidence is self-convergence only.
+
+\paragraph{Verification problem.}
+The model is fixed for every run: a neo-Hookean flap ($\nu_S = 0.45$, $\rho_S = 1058.3\,\mathrm{kg/m^3}$) with the shear modulus $\mu^* = 64.2\,\mathrm{kPa}$, an incompressible Newtonian fluid, the published inflow and the net buoyancy of the flap.
+$\mu^*$ comes from the continuum limit of a zero-flow calibration against the measured deflection on four nested solid meshes, which converges at second order to $63.95\,\mathrm{kPa}$ (GCI $0.4\%$); it is not recalibrated per mesh, which would change the problem under refinement (the tutorial's $58.45\,\mathrm{kPa}$ is the calibration on its own mesh and compensates for that mesh's discretisation error).
+The solid meshes S1--S3 are nested (ratio 2); the fluid meshes F1--F3 ($0.23$, $0.61$ and $1.53\times10^{6}$ cells) refine every region by a nominal $\sqrt2$ per level but are not nested.
+All runs use the strict coupling test from $t = 0$ (Section~\ref{sec:iterative_errors}) and $\Delta t = 0.002\,\mathrm{s}$, and are run to a steady state (35--45\,s of simulated time; the tutorial's 10\,s leaves the tip $0.25\,\mathrm{mm}$ short of it); the QoI is the steady vertical tip deflection, averaged over the last 4\,s.
+
+\paragraph{Results.}
+Table~\ref{tab:hessenthaler} gives the steady tip deflections.
+Under solid refinement (F1) the tip converges monotonically at an observed order of 2.21 (GCI on S3 $0.034\,\mathrm{mm}$, $0.20\%$).
+Under fluid refinement (S2) the differences decrease only slowly (ratio 0.81, observed order 0.62 against a formal 2), so asymptotic fluid convergence is not established; the provisional GCI indicator, $0.16\,\mathrm{mm}$, dominates the uncertainty.
+The upstream jets and the inlet pressures converge at about second order, and refining only the walls accounts for about $20\%$ of the F1$\to$F3 tip change, which points to the flap-sweep and merging regions.
+The solid and fluid effects are close to additive (F3S3 $16.813\,\mathrm{mm}$ against $16.820\,\mathrm{mm}$ predicted from F3S2 and the F1 solid increment).
+Halving or doubling the time step changes the steady tip by at most $0.004\,\mathrm{mm}$, and a coupling tolerance of $10^{-3}$ instead of $10^{-4}$, from $t = 0$, by $0.0004\,\mathrm{mm}$.
+The best-resolved tip is $16.813\,\mathrm{mm}$ on F3S3 ($16.819\,\mathrm{mm}$ after correcting the $+0.006\,\mathrm{mm}$ bias of the interface-transfer defect of solids4foam PR~\#546 on the S3 levels), with a conditional, provisional allowance of about $0.20\,\mathrm{mm}$ ($1.2\%$), which is neither a bound nor a confidence interval.
+
+\begin{table}[htbp]
+	\centering
+	\small
+	\caption{Hessenthaler Phase I, steady tip deflection $u_y$ (mm), strict coupling test from $t = 0$, $\mu^* = 64.2\,\mathrm{kPa}$, $\Delta t = 0.002\,\mathrm{s}$. F3S3 at coupling tolerance $10^{-3}$. Source: \texttt{paper-data/hessenthaler\_phaseI\_verification.md}.}
+	\label{tab:hessenthaler}
+	\begin{tabular}{lrrr}
+		\toprule
+		& S1 & S2 & S3 \\
+		\midrule
+		F1 & 16.2006 & 16.6550 & 16.7530 \\
+		F2 & & 16.6920 & \\
+		F3 & & 16.7219 & 16.8133 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\paragraph{Validation, kept separate.}
+The measured tip deflection is $16.41\,\mathrm{mm}$.
+F3S3 lies $0.40\,\mathrm{mm}$ ($2.5\%$) above it, and every refinement moves the computed tip further from the measurement (from $-0.21\,\mathrm{mm}$ on F1S1), so the close agreement of coarse meshes is partly a cancellation of discretisation error and is not evidence of accuracy; the voxel-averaged velocities hardly change with refinement.
+Without an experimental uncertainty, which is not available, the remaining discrepancy cannot be judged.
 
 \paragraph{Status.}
-The campaign has so far produced one methodological finding rather than convergence results: with the legacy default coupling convergence test the flap tip drifted slowly for the whole run, by more than the spatial differences being measured, and the drift was traced to accumulated coupling error (Section~\ref{sec:iterative_errors}).
-The verification runs are being repeated with the strict test from $t = 0$.
-If the experimental comparison is included, it will be presented separately, after the numerical verification and labelled as validation.
+The case is retained as provisional: the solid, temporal and iterative errors are controlled, but the fluid convergence of the tip is open, and there is no independent numerical reference.
+A fourth uniform fluid level (4.2 million cells, about 800 node-hours with the strict test) was not run; a locally refined fluid series, refining by $\sqrt2$ per level only the flap-sweep, interface and merging regions, is the proposed route.
+The campaign's main contribution to this paper is methodological: with the legacy coupling test, an accumulated iterative error mimicked a slow physical creep (Section~\ref{sec:iterative_errors}).
 
 %%-------------------------------------------------------------------
 \subsubsection{Blob in treacle [PROVISIONAL]}\label{sec:blob}
