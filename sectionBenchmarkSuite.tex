@@ -96,9 +96,63 @@ Meshes are refined by factors 1, 2 and 4 at 100 steps per period, and 25--100 st
 	\item \emph{Coupling.} IQN-ILS and Robin--Neumann agree to $0.03\%$ in frequency; Robin--Neumann needs 2.5 times as many iterations at the strong level (12.3 against 4.9 per step). IQN-ILS solutions lose amplitude (up to $2.1\%$ per period on the coarsest mesh at the strong level, halving with each refinement), whereas Robin--Neumann solutions are almost undamped ($\leq0.05\%$ per period); the mechanism has not been identified, and the frequency is unaffected at the reported precision.
 \end{itemize}
 
+\paragraph{Independent FEBio comparison.}
+The ring problem was also solved with the finite-element code FEBio~v4.13~\citep{Maas2012,Ateshian2018,Shim2019}, whose fluid--FSI module uses nodal fluid velocity (relative to the mesh) and dilatation with equal-order hexahedral interpolation, a monolithic Newton solver and generalised-$\alpha$ time integration with no numerical damping.
+The aim is to solve the same physical problem as the tutorial, not an analytical limit of it: same geometry, densities and $\nu_F=10^{-7}\,\mathrm{m^2/s}$, no-slip on the rigid wall and on the moving ring (imposed as $\bm{w}=\bm{0}$ on both), the same initial ring velocity, and the fluid initially at rest.
+The discretisations differ (linear hexahedra for ring and fluid, mesh motion by a massless regularising solid with $E=10^{-3}\,\mathrm{Pa}$, a different time integrator), and three model-form differences remain that were quantified rather than removed: FEBio's fluid is weakly compressible ($K=10^{8}\,\mathrm{Pa}$), its solid is a finite-strain isotropic elastic material with the same $E_S$ and $\nu_S$ (the tutorial is small-strain), and the response amplitude is finite.
+In the moderate regime, changing $K$ by a decade in either direction ($10^{7}$ and $10^{9}\,\mathrm{Pa}$) changed the ratio error by $-0.0011$ and $+0.0063$ percentage points, increasing the regulariser stiffness tenfold by $+0.0015$, and halving the amplitude by $-0.0068$ percentage points; none of these removes the differences, and the incompressible limit is bracketed, not reached.
+
+\emph{Resolution of the viscous layers.}
+The Stokes layer, $\delta=\sqrt{2\nu_F/\omega}=2.9\times10^{-4}$, $3.3\times10^{-4}$ and $5.1\times10^{-4}\,\mathrm{m}$ for the weak, moderate and strong levels, is not resolved by the tutorial mesh at any refinement factor ($\delta/h=0.009$ to $0.036$), and on a uniform fluid mesh of 12 radial cells FEBio's nodal no-slip constraint gave a wet/dry ratio error of $-6.2\%$ against the inviscid ratio.
+Grading the first fluid cell to $\delta/4$ at both walls (the setting of all results below) reduced the error against the finite-viscosity ratio to $+0.001\%$ in the moderate level (potential-flow start) and reduced the net energy creation of the unresolved cases (\suppRef).
+Source inspection found no defect in the enforcement of the no-slip condition or in the traction transfer, so the large error of the uniform mesh is attributed to near-wall resolution, not to the code; the graded-mesh ladder is given in \suppRef.
+
+\emph{Frequency and damping.}
+With the fluid mesh resolved and the fluid starting at rest, the wet/dry ratio agrees with the exact finite-viscosity ratio to better than $0.010\%$ for all three levels, and with the inviscid ratio to $0.0010\%$, $0.031\%$ and $0.083\%$ (weak, moderate, strong), i.e.\ it reproduces the small viscous shift of the reference (Table~\ref{tab:ring_febio}, Figure~\ref{fig:ring_febio_ratio}).
+The fitted amplitude decay rate is $0.974$--$0.998$ of the exact viscous rate for all six runs (\suppFigDecay).
+Halving the time step changed the ratio against the matched, equally refined dry ring by at most $0.0003$ percentage points, and doubling the ring and tangential resolution by at most $0.0007$ (the absolute wet frequency converges at a difference-based order of about two, with the hex8 ring supplying the common error), so these agreements are not limited by temporal or tangential resolution.
+The fluid-at-rest start launches an acoustic transient in the weakly compressible fluid and, because ring and fluid share momentum in the first step, the response amplitude is about $1/(1+m^*)$ of $V_0/\omega$ ($0.89$, $0.49$ and $0.088$ of $V_0/\omega$ against $0.91$, $0.50$ and $0.090$); this is a property of the impulsive start in this problem, which is linear, so frequency and decay rate are unaffected, and a start from the potential-flow field in the strong level gives a ratio error against the finite-viscosity value of $+0.04\%$ and a decay of $1.02$ times the exact rate.
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{figures/verification/ringAddedMass_febio_R1}
+	\caption{ringAddedMass, wet/dry frequency ratio error. Left: FEBio with resolved no-slip layers and the fluid at rest, against the exact inviscid ratio (A) and the exact finite-viscosity ratio (V), at two ring/tangential resolutions (f1, f2); the dotted lines mark V relative to A. Right: solids4foam with IQN-ILS (partitioned) coupling, standard solid, Stokes layer unresolved, against A, at mesh factors 1, 2 and 4. The two panels show different discretisations of the same continuum problem; they are not matched meshes. Sources: \texttt{paper-data/febio\_ring\_added\_mass/no\_slip\_resolved/} (regenerated by \texttt{scripts/ring\_figure\_R1\_partitioned.py}).}
+	\label{fig:ring_febio_ratio}
+\end{figure}
+
+\emph{What the solids4foam data do and do not contain.}
+Because the tutorial mesh does not resolve the Stokes layer, the solids4foam wet/dry ratio errors against the inviscid reference ($+0.069\%$, $+0.018\%$, $+0.0051\%$ for IQN-ILS with the standard solid at mesh factors 1, 2, 4 in the moderate level) are dominated by discretisation error, lie on the opposite side of the inviscid reference from the viscous shift ($-0.026\%$ for that level) and cannot discriminate it; its fitted amplitude decay at 100 steps per period ($2.0\times10^{-3}\,\mathrm{s^{-1}}$, moderate, factor 2) is $4.2$ times the viscous rate and falls by factors of $3.3$ and $1.5$ with each halving of the time step from 25 to 100 steps per period, so it is dominated by temporal and coupling damping.
+The comparison with FEBio is therefore a comparison of two independent discretisations against the same continuum references at the level of $0.1\%$ in the ratio (the largest difference between the FEBio and the finest-mesh solids4foam ratio errors is $0.09\%$, strong level); the viscous damping and the viscous shift are verified for FEBio only, and a solids4foam verification of these quantities would need a mesh that resolves the layers.
+
+\emph{Supplementary material.}
+The FEBio displacement histories and the reconstructed interface mechanics are in \suppRef{} (\suppFigBoth).
+
+\emph{Status.}
+FEBio reproduces the finite-viscosity, no-slip ring problem for the three added-mass levels, with the stated model-form differences (weak compressibility, finite strain, finite amplitude, regulariser) quantified at the $0.01$-percentage-point level in the moderate level; it is a qualified independent comparison rather than a demonstration that the two discretisations produce the same discrete solution.
+The earlier free-slip FEBio runs of this problem (an analytical-limit study, which agrees with the inviscid ratio to $\leq0.041\%$ at the finest mesh, but with a different wall condition) are kept as a separate record in the evidence package.
+
+\begin{table}[htbp]
+	\centering
+	\small
+	\setlength{\tabcolsep}{4pt}
+	\caption{ringAddedMass, FEBio v4.13, no-slip on the ring and the rigid wall, $\nu_F=10^{-7}\,\mathrm{m^2/s}$, fluid initially at rest, fluid mesh graded to a first cell of $\delta/4$ at both walls ($\delta=\sqrt{2\nu_F/\omega}$; 52 radial cells), 100 steps per period, four periods. f1 and f2: ring and tangential resolution ($4\times48$ and $8\times96$ ring cells; $48$ and $96$ tangential fluid cells). Errors of the wet/dry frequency ratio are against the exact inviscid ratio (A) and against the exact finite-viscosity ratio (V, the linearised viscous eigenvalue of the same Chebyshev code, $\mathrm{A}(1+\text{viscous shift})$); the last column is the fitted amplitude decay rate divided by the exact viscous rate $\alpha_V=1.005\times10^{-4}$, $4.748\times10^{-4}$, $5.621\times10^{-4}\,\mathrm{s^{-1}}$. Source: \texttt{paper-data/febio\_ring\_added\_mass/no\_slip\_resolved/}.}
+	\label{tab:ring_febio}
+	\begin{tabular}{llrrrr}
+		\toprule
+		Level & Mesh & $\omega$ (rad/s) & Ratio error vs A & Ratio error vs V & Decay$/\alpha_V$ \\
+		\midrule
+		weak ($m^*=0.101$) & f1 & 2.49852 & $-$0.0010\% & $+0.0031$\% & 0.998 \\
+		weak ($m^*=0.101$) & f2 & 2.45089 & $-$0.0006\% & $+0.0035$\% & 0.985 \\
+		moderate ($m^*=1.008$) & f1 & 1.85056 & $-$0.0311\% & $-$0.0049\% & 0.984 \\
+		moderate ($m^*=1.008$) & f2 & 1.81529 & $-$0.0305\% & $-$0.0043\% & 0.977 \\
+		strong ($m^*=10.08$) & f1 & 0.78786 & $-$0.0828\% & $-$0.0097\% & 0.983 \\
+		strong ($m^*=10.08$) & f2 & 0.77284 & $-$0.0821\% & $-$0.0090\% & 0.974 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
 \paragraph{Lesson.}
 The wet/dry ratio isolates the added-mass coupling from solid and temporal errors, which the two runs share, and so verifies it independently of the accuracy of the solid; the exact reference attributes the remaining error to a single source.
-Viscous and large-amplitude effects are, by design, not tested.
+Large-amplitude effects are, by design, not tested, and the solids4foam runs do not resolve the viscous layers; viscous damping and the viscous frequency shift are tested only by the independent FEBio comparison above.
 
 %%-------------------------------------------------------------------
 \subsubsection{Pulsatile compliant tube}\label{sec:womersley}
