@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Recompute the interface force definitions F1..F4 and the row-parity decomposition from the per-facet tables stored in results/raw/facets/
-(extracted once from the FEBio .xplt files by scripts/hpc/b3_force_reconstruction.py).  Package-only: needs numpy, no FEBio output files.
+(extracted once from the FEBio .xplt files by scripts/b3_force_reconstruction.py).  Package-only: needs numpy, no FEBio output files.
 This is a RE-EVALUATION OF STORED SOLVER FIELDS with the quadrature of the FEBio source routines.  It is NOT an independent solver verification.
   F1 = pressure part of FEFluidFSITraction::LoadVector (nodal wall-row pressure, 2x2 Gauss, deformed facet)   = load that moves the plate
   F2 = element-mean pressure of the adjacent fluid element x area vector (FEBio's built-in 'fluid pressure' / surface-force definition)

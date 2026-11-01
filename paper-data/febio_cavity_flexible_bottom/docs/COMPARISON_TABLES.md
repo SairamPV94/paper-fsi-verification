@@ -7,7 +7,7 @@ All values are steady point-A top-surface u_y (m) and vertical interface force F
 | level | dx | u_y FEBio | u_y s4f partitioned | rel | F_y FEBio (F1, latest accepted) | F_y s4f QM #618 | rel | u_x FEBio | u_x s4f QM | ratio |
 |---|---|---|---|---|---|---|---|---|---|---|
 | M1 | 0.1 | -0.211967 | -0.204568 | +3.6 % | -4.7176 | -5.1226 | -7.9 % | 3.57e-04 | 7.45e-05 | 4.8 |
-| M2 | 0.05 | -0.226233 | -0.231445 | -2.3 % | -4.9339 | -5.2266 | -5.6 % | 3.35e-04 | 9.08e-05 | 3.7 |
+| M2 | 0.05 | -0.226233 | -0.231445 | -2.25 % | -4.9339 | -5.2266 | -5.6 % | 3.35e-04 | 9.08e-05 | 3.7 |
 | M3 | 0.025 | -0.230038 | -0.238404 | -3.5 % | -4.9835 | -5.2504 | -5.1 % | 3.26e-04 | 9.54e-05 | 3.4 |
 
 Extrapolations (3 levels, indicative): FEBio u_y -0.2314 m, F_y about -5.00 N/m; solids4foam u_y -0.2407 (partitioned) / -0.2406 (QM), F_y about -5.26 (manuscript). Gaps -3.9 % and -4.9 %.

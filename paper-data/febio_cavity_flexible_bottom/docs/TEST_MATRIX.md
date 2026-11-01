@@ -338,7 +338,7 @@ Generated from `results/TEST_MATRIX.csv` (the machine-readable master; same cont
 - **source binary provenance**: stock febio4 sha256 f5ae1ed6...72f02 (v4.13, source tree clean; no bit-exact binary proof)
 - **mesh timestep**: 1688 hex8, dt 0.5, 600 steps
 - **cpu allocation**: 4 cores, 173 s (job 14015), 0.19 CPU-h
-- **observed result**: steady (F_y spread 1e-12), floor p 1.029-1.348 Pa, mass imbalance +9.1e-5, F_y raw -4.6637 N/m, odd-even bracket +/-2.8 %; A4 upstream dp/dx raw +60 % (FAIL as written; pair-averaged -0.3 %, criterion defect diagnosed)
+- **observed result**: steady (F_y spread 1e-12), floor p 1.029-1.348 Pa, mass imbalance +9.1e-5, F_y raw -4.6637 N/m, odd-even bracket +/-2.8 %; A4 upstream dp/dx raw +60 % (FAIL as written; pair-averaged -0.3 % [the pair-averaged value is not stored in any retained check file and no C1b `Mon_all` is retained, so it cannot be recomputed from this package; the explanation that A4 is an aliasing defect of the criterion is therefore a diagnosis from the same data and is not independently confirmed], criterion defect diagnosed)
 - **numerical acceptance criterion**: A3, A5-A8 pass; A4 within 2 %
 - **pass fail**: PASS A3,A5-A8; FAIL A4 as written
 - **strength of evidence**: PROVEN (steady, flux); the A4 explanation is STRONGLY SUPPORTED (derived from the same data)
