@@ -10,7 +10,7 @@
 % Implementation detail (solver options, invocation, iteration-count listings)
 % is in the solids4foam verification READMEs and is deliberately not repeated.
 
-The benchmarks are grouped by reference quality (Table~\ref{tab:ref_hierarchy}; Sections~\ref{sec:exact_refs}--\ref{sec:classical}), followed by provisional cases whose evidence is incomplete (Section~\ref{sec:provisional}); Table~\ref{tab:suite_overview} summarises the evidence.
+The benchmarks are grouped by reference quality (Table~\ref{tab:ref_hierarchy}; Sections~\ref{sec:exact_refs}--\ref{sec:classical}), followed by provisional cases whose evidence is incomplete (Section~\ref{sec:provisional}); Table~\ref{tab:suite_overview} summarises the evidence, and Figure~\ref{fig:geometry_panel} shows the geometries of the cases that have no figure in their own section.
 For each mature case we state what the problem tests, how trustworthy the reference is, which spatial, temporal and iterative evidence matters, and the numerical lesson.
 All calculations use the cell-centred finite volume solvers of solids4foam~\citep{Cardiff2025} with partitioned coupling and BDF2 time integration unless stated; costs are collected in Table~\ref{tab:cost}.
 
@@ -41,7 +41,12 @@ All calculations use the cell-centred finite volume solvers of solids4foam~\cite
 	\end{tabular}
 \end{table}
 
-\todo{Insert a figure panel with geometry sketches for ringAddedMass, womersleyTube, collapsibleChannel and mokLidDrivenCavity; geometry figures currently exist only for HronTurek, 3dTube, beamInCrossFlow, cavityFlexibleBottom and blobInTreacle (figures/*-geometry.pdf).}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{figures/benchmarks_geometry_panel}
+	\caption{Geometry of (a) ringAddedMass, (b) mokLidDrivenCavity, (c) womersleyTube and (d) collapsibleChannel; solid regions in red. The deformed shapes (dashed and dotted) are schematic. In (c) and (d) the transverse direction is stretched three times. The other benchmarks' geometries are shown with their sections. Source: \texttt{paper-data/figure\_scripts/geometry\_panel.py}.}
+	\label{fig:geometry_panel}
+\end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
