@@ -104,7 +104,7 @@ In the moderate regime, changing $K$ by a decade in either direction ($10^{7}$ a
 
 \emph{Resolution of the viscous layers.}
 The Stokes layer, $\delta=\sqrt{2\nu_F/\omega}=2.9\times10^{-4}$, $3.3\times10^{-4}$ and $5.1\times10^{-4}\,\mathrm{m}$ for the weak, moderate and strong levels, is not resolved by the tutorial mesh at any refinement factor ($\delta/h=0.009$ to $0.036$), and on a uniform fluid mesh of 12 radial cells FEBio's nodal no-slip constraint gave a wet/dry ratio error of $-6.2\%$ against the inviscid ratio.
-Grading the first fluid cell to $\delta/4$ at both walls (the setting of all results below) reduced the error against the finite-viscosity ratio to $+0.001\%$ in the moderate level and removed the net energy creation of the unresolved cases.
+Grading the first fluid cell to $\delta/4$ at both walls (the setting of all results below) reduced the error against the finite-viscosity ratio to $+0.001\%$ in the moderate level (potential-flow start) and reduced the net energy creation of the unresolved cases (Appendix~\ref{app:ring_febio}).
 Source inspection found no defect in the enforcement of the no-slip condition or in the traction transfer, so the large error of the uniform mesh is attributed to near-wall resolution, not to the code; the graded-mesh ladder is given in Appendix~\ref{app:ring_febio}.
 
 \emph{Frequency and damping.}
@@ -121,7 +121,7 @@ The fluid-at-rest start launches an acoustic transient in the weakly compressibl
 
 \emph{What the solids4foam data do and do not contain.}
 Because the tutorial mesh does not resolve the Stokes layer, the solids4foam wet/dry ratio errors against the inviscid reference ($+0.069\%$, $+0.018\%$, $+0.0051\%$ for IQN-ILS with the standard solid at mesh factors 1, 2, 4 in the moderate level) are dominated by discretisation error, lie on the opposite side of the inviscid reference from the viscous shift ($-0.026\%$ for that level) and cannot discriminate it; its fitted amplitude decay at 100 steps per period ($2.0\times10^{-3}\,\mathrm{s^{-1}}$, moderate, factor 2) is $4.2$ times the viscous rate and falls by factors of $3.3$ and $1.5$ with each halving of the time step from 25 to 100 steps per period, so it is dominated by temporal and coupling damping.
-The comparison with FEBio is therefore a comparison of two independent discretisations against the same continuum references at the level of $0.04\%$ in the ratio at the finest solids4foam mesh; the viscous damping and the viscous shift are verified for FEBio only, and a solids4foam verification of these quantities would need a mesh that resolves the layers.
+The comparison with FEBio is therefore a comparison of two independent discretisations against the same continuum references at the level of $0.1\%$ in the ratio (the largest difference between the FEBio and the finest-mesh solids4foam ratio errors is $0.09\%$, strong level); the viscous damping and the viscous shift are verified for FEBio only, and a solids4foam verification of these quantities would need a mesh that resolves the layers.
 
 \emph{Supplementary material.}
 The FEBio displacement histories and the reconstructed interface mechanics are in Appendix~\ref{app:ring_febio} (Figures~\ref{fig:ring_febio_decay} and~\ref{fig:ring_febio_traction}).
