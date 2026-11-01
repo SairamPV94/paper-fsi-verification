@@ -58,7 +58,35 @@ The collocation scripts are stored with the cases and are independent of solids4
 \paragraph{What it tests.}
 Added mass, the principal source of instability and slow convergence in partitioned FSI~\citep{Causin2005}, is present in most benchmarks at a fixed, unquantified strength.
 Here an elastic ring vibrates freely in its $n=2$ mode inside a fluid-filled rigid annulus (plane strain, linear geometry, amplitude $\approx5\times10^{-4}$ of the radius, effectively inviscid fluid), with the added-mass ratio varied at fixed solid properties: $m^* = 0.101$, $1.008$, $10.08$ (``weak'', ``moderate'', ``strong''), plus a dry run.
-\todo{Add a short parameter table (ring radii, thickness, $E_S$, $\nu_S$, $\rho_S$, outer wall radius) from the tutorial README, and the definition of $m^*$.}
+The geometry and material parameters are those of Table~\ref{tab:ring_params}; the three levels differ only in the fluid density.
+The added-mass ratio is the ratio of the potential-flow added mass of the $n=2$ mode to the modal mass of a thin inextensional ring,
+\begin{equation}
+m^* = \frac{n^2}{n^2+1}\,\frac{m_a R}{\rho_S h a},
+\qquad
+m_a = \frac{\rho_F R}{n}\,\frac{b^{2n}+R^{2n}}{b^{2n}-R^{2n}},
+\end{equation}
+so that a thin ring vibrates at $\omega_{\mathrm{wet}} = \omega_{\mathrm{dry}}(1+m^*)^{-1/2}$; the exact reference is the full continuum solution, not this thin-ring estimate.
+\begin{table}[htbp]
+	\centering
+	\small
+	\caption{ringAddedMass, physical parameters (plane strain). Only a quadrant is modelled, with symmetry planes on the axes.}
+	\label{tab:ring_params}
+	\begin{tabular}{lll}
+		\toprule
+		Parameter & Value & Units \\
+		\midrule
+		Ring mean radius $a$, thickness $h$ & $1$, $0.1$ & m \\
+		Ring inner and outer radii $R_i$, $R$ & $0.95$, $1.05$ & m \\
+		Rigid wall radius $b$ & $1.5$ & m \\
+		Solid density $\rho_S$ & $1000$ & kg/m$^3$ \\
+		Young's modulus $E_S$, Poisson's ratio $\nu_S$ & $10^{6}$, $0.3$ & Pa, -- \\
+		Fluid density $\rho_F$ (weak, moderate, strong) & $14$, $140$, $1400$ & kg/m$^3$ \\
+		Added-mass ratio $m^*$ & $0.101$, $1.008$, $10.08$ & -- \\
+		Fluid kinematic viscosity $\nu_F$ & $10^{-7}$ & m$^2$/s \\
+		Initial velocity amplitude $V_0$ ($n=2$ mode) & $1.5\times10^{-3}$ & m/s \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \paragraph{Reference.}
 The exact linear eigenvalue of a plane-strain continuum ring loaded by the exact potential-flow added-mass traction, by Chebyshev collocation (refinement changes the frequencies by $\approx5\times10^{-8}$): $\omega_\mathrm{dry} = 2.555042\,\mathrm{rad/s}$ and wet frequencies $2.435615$, $1.804513$ and $0.768654\,\mathrm{rad/s}$.
@@ -286,9 +314,9 @@ The Featflow tables are among the most carefully documented FSI references avail
 For the FSI3 displacements and drag amplitude, the Featflow levels 2, 3 and 4 do not form a monotone sequence ($u_y$ amplitude $35.73$, $34.43$, $34.99\,\mathrm{mm}$; $u_x$ mean $-3.02$, $-2.77$, $-2.88\,\mathrm{mm}$; drag amplitude $28.80$, $26.50$, $27.74\,\mathrm{N/m}$), and the lift amplitude rises by $\approx4\,\mathrm{N/m}$ per level without settling. These quantities have therefore not been shown to be in the asymptotic range, and no extrapolated value or error bound can be formed from them.
 The published reference time history is not strictly periodic either: over its $7.9$ periods the per-period lift amplitude drifts from $157.7$ to $153.5\,\mathrm{N/m}$ ($2.7\%$), so the tabulated amplitudes also depend on the averaging window by about that amount.
 Together these bound the confidence that can be placed in the level-4 values to a few percent for the displacements and force amplitudes, whereas the frequency and the drag mean, which change little between levels, are well determined.
-The detailed Featflow tables, used here, differ from the frequently quoted summary values of~\citet{Turek2006} (Table~\ref{tab:hronturek_ref}), most strongly in the FSI3 drag amplitude ($-18\%$), and the summary frequencies are rounded; the summary values are level 4 of the 2006 proceedings table at $\Delta t = 0.0005\,\mathrm{s}$, which the Featflow pages retain only as superseded values. A comparison with the summary values would misattribute this $18\%$ to the code under test.
+The detailed Featflow tables~\citep{FeatflowFSI,Turek2010}, used here, differ from the frequently quoted summary values of~\citet{Turek2006} (Table~\ref{tab:hronturek_ref}), most strongly in the FSI3 drag amplitude ($-18\%$), and the summary frequencies are rounded; the summary values are level 4 of the 2006 proceedings table at $\Delta t = 0.0005\,\mathrm{s}$, which the Featflow pages retain only as superseded values. A comparison with the summary values would misattribute this $18\%$ to the code under test.
 As a check, the driver reproduces the tabulated statistics from the published Featflow time histories to within $0.6\%$ (FSI3; $0.8\%$ for drag amplitude, $0.3\%$ for the frequencies) and $0.3\%$ (FSI2).
-\todo{Cite the Featflow table source precisely (Turek--Hron benchmark web pages / Turek et al.\ 2010 book chapter?)~\citetodo{Featflow FSI benchmark tables}; confirm the FSI1 six-level spread from that source. Check every entry of Table~\ref{tab:hronturek_ref} against the original sources rather than the solids4foam README; identify which later papers quote which set.}
+\todo{Check every entry of Table~\ref{tab:hronturek_ref} against the original sources rather than the solids4foam README, and confirm the FSI1 six-level spread; identify which later papers quote which set. (The FSI3 levels 2--4 values above were checked against~\citet{FeatflowFSI}.)}
 
 \begin{table}[htbp]
 	\centering
@@ -492,7 +520,7 @@ The membrane is tension-dominated ($0.002\,\mathrm{m}$ thick, $E_S = 250\,\mathr
 \paragraph{Reference: two inconsistent groups.}
 The published midpoint histories fall into two mutually inconsistent groups (Fig.~\ref{fig:mok_refs}).
 In group A (Mok, Wall, Gerbeau and Vidrascu) the openings are defined through the mesh and their size is not stated, so the problem itself is mesh dependent; peaks range from $0.177$ to $0.215\,\mathrm{m}$.
-Group B (Vald\'es~\citep{Valdes2007}, the Kratos example\citetodo{Kratos Multiphysics example (Zorrilla)}, Tiba et al.~\citep{Tiba2026}) specifies inflow over a fixed $0.125\,\mathrm{m}$ opening and $p = 0$ at the outlet; within it the peak varies by $5.7\%$ and the oscillation amplitude by $20\%$.
+Group B (Vald\'es~\citep{Valdes2007}, the Kratos example~\citep{KratosLDC}, Tiba et al.~\citep{Tiba2026}) specifies inflow over a fixed $0.125\,\mathrm{m}$ opening and $p = 0$ at the outlet; within it the peak varies by $5.7\%$ and the oscillation amplitude by $20\%$.
 \citet{Kassiotis2011} lies between the groups.
 None of the cited sources provides a convincing spatial and temporal convergence demonstration.
 Pilot runs show that the group-B definition reproduces group B, whereas traction-free openings reproduce neither group.
@@ -606,7 +634,7 @@ An earlier modified, large-deformation form ($E_S = 10\,\mathrm{kPa}$) with same
 \todo{IN PROGRESS. A numerical-verification campaign (solids4foam branch verification/hessenthaler-phaseI) is running; no convergence result is reported here. Retain in the main text only if mesh, time-step and coupling studies of the steady Phase-I state, run with the strict coupling test from $t = 0$, give consistent observed orders for the principal QoIs. Record the justification of the fixed shear modulus. The campaign was started on a tree without solids4foam PR \#546 (OpenFOAM-v2412, GCC, \texttt{-O2}, AMI interface transfer). The A/B check against a tree with PR \#546 is done: F1S2 is bit-identical over 750 steps, so the \texttt{-O2} build is unaffected by the aliasing defect and the S2 solid mesh does not reach the barycentric threshold. F1S3 changes the mean tip deflection by $+0.006$\,mm ($0.04\%$), well below the S2$\to$S3 change of about $0.09$\,mm. Final S3/S4 runs use the fixed build.}
 
 \paragraph{Intended role.}
-The benchmark of Hessenthaler et al.~\citep{Hessenthaler2017a}\citetodo{check also the companion numerical paper: Hessenthaler2017b is in the bibliography} is a geometrically complex, three-dimensional, large-deformation problem (a silicone flap in a flow phantom) with phase-contrast MRI measurements.
+The benchmark of Hessenthaler et al.~\citep{Hessenthaler2017a,Hessenthaler2017b} is a geometrically complex, three-dimensional, large-deformation problem (a silicone flap in a flow phantom) with phase-contrast MRI measurements.
 It is primarily a \emph{validation} case: agreement with the measurements depends on the mathematical model (including a shear modulus calibrated from a measured deflection) as well as on the numerics, and is not a numerical verification reference.
 Separately, a numerical-verification campaign treats the Phase-I steady state of one fixed mathematical model (fixed shear modulus, neo-Hookean flap, Newtonian fluid) as the problem to be verified, with nested solid meshes, a fluid mesh family, time-step and coupling studies, and no use of the measurements.
 
