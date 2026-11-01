@@ -36,4 +36,6 @@ Evidence labels: PROVEN / SUPPORTED / UNRESOLVED / FAILED / NOT TESTED. Classes:
 `./reproduce.sh` (Python 3 with numpy, scipy, matplotlib; about 30 s on one core; `FULL=1` adds the 40-element beam run): regenerates the six inputs and checks their hashes against the shipped inputs and the ledger, rebuilds the shape file, re-runs the three original analysis scripts and the independent re-computation on the stored raw data, rebuilds the tables and figures. Result: `provenance/REPRODUCTION_RECORD.md`. Re-running FEBio itself needs v4.13 with MKL; commands are in `provenance/REPRODUCTION_RECORD.md`.
 
 ## What this package does not claim
+
+- **Amendment A1 is a post-gate amendment.** Its written timing relative to the F1 fluid run cannot be established from the retained files (the plan file was overwritten in place; see `docs/PLAN_AMENDMENTS_AND_ACCEPTANCE.md` and `provenance/INCONSISTENCIES.md` INC-1). It is disclosed as a documented deviation, not as a pre-registered step.
 No successful verification of collapsibleChannel by FEBio; no statement about solids4foam's results; no statement that F1 or F2 is the physically correct load; no claim that parity is the sole cause of the wall lag; the 20-step diagnostic is never presented as agreement.
