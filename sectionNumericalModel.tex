@@ -52,7 +52,7 @@ Which variant is used is stated per case, because for thin bending-dominated wal
 
 Displacements are transferred from the solid to the fluid interface at the interface points, and tractions from the fluid to the solid interface at the faces.
 Where the two interface meshes coincide (ringAddedMass, womersleyTube, collapsibleChannel, mokLidDrivenCavity), a direct one-to-one map is used.
-Where they do not (Hron--Turek, 3dTube, Hessenthaler), face tractions are transferred conservatively with arbitrary-mesh-interface (AMI) weights, and point displacements by barycentric interpolation on a triangulation of the donor interface faces.
+Where they do not (Hron--Turek, 3dTube, Hessenthaler), face tractions are interpolated with arbitrary-mesh-interface (AMI) weights, and point displacements by barycentric interpolation on a triangulation of the donor interface faces.
 The interface transfer is part of the discretisation: it is an operator that must converge with refinement like any other, and in 3dTube a defect in it changed with mesh level (Section~\ref{sec:3dtube}).
 
 %%--------------------------------------------------------------------------------------------------------------------%%
