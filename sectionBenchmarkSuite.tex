@@ -104,12 +104,12 @@ In the moderate regime, changing $K$ by a decade in either direction ($10^{7}$ a
 
 \emph{Resolution of the viscous layers.}
 The Stokes layer, $\delta=\sqrt{2\nu_F/\omega}=2.9\times10^{-4}$, $3.3\times10^{-4}$ and $5.1\times10^{-4}\,\mathrm{m}$ for the weak, moderate and strong levels, is not resolved by the tutorial mesh at any refinement factor ($\delta/h=0.009$ to $0.036$), and on a uniform fluid mesh of 12 radial cells FEBio's nodal no-slip constraint gave a wet/dry ratio error of $-6.2\%$ against the inviscid ratio.
-Grading the first fluid cell to $\delta/4$ at both walls (the setting of all results below) reduced the error against the finite-viscosity ratio to $+0.001\%$ in the moderate level (potential-flow start) and reduced the net energy creation of the unresolved cases (Appendix~\ref{app:ring_febio}).
-Source inspection found no defect in the enforcement of the no-slip condition or in the traction transfer, so the large error of the uniform mesh is attributed to near-wall resolution, not to the code; the graded-mesh ladder is given in Appendix~\ref{app:ring_febio}.
+Grading the first fluid cell to $\delta/4$ at both walls (the setting of all results below) reduced the error against the finite-viscosity ratio to $+0.001\%$ in the moderate level (potential-flow start) and reduced the net energy creation of the unresolved cases (\suppRef).
+Source inspection found no defect in the enforcement of the no-slip condition or in the traction transfer, so the large error of the uniform mesh is attributed to near-wall resolution, not to the code; the graded-mesh ladder is given in \suppRef.
 
 \emph{Frequency and damping.}
 With the fluid mesh resolved and the fluid starting at rest, the wet/dry ratio agrees with the exact finite-viscosity ratio to better than $0.010\%$ for all three levels, and with the inviscid ratio to $0.0010\%$, $0.031\%$ and $0.083\%$ (weak, moderate, strong), i.e.\ it reproduces the small viscous shift of the reference (Table~\ref{tab:ring_febio}, Figure~\ref{fig:ring_febio_ratio}).
-The fitted amplitude decay rate is $0.974$--$0.998$ of the exact viscous rate for all six runs (Figure~\ref{fig:ring_febio_decay} of Appendix~\ref{app:ring_febio}).
+The fitted amplitude decay rate is $0.974$--$0.998$ of the exact viscous rate for all six runs (\suppFigDecay).
 Halving the time step changed the ratio against the matched, equally refined dry ring by at most $0.0003$ percentage points, and doubling the ring and tangential resolution by at most $0.0007$ (the absolute wet frequency converges at a difference-based order of about two, with the hex8 ring supplying the common error), so these agreements are not limited by temporal or tangential resolution.
 The fluid-at-rest start launches an acoustic transient in the weakly compressible fluid and, because ring and fluid share momentum in the first step, the response amplitude is about $1/(1+m^*)$ of $V_0/\omega$ ($0.89$, $0.49$ and $0.088$ of $V_0/\omega$ against $0.91$, $0.50$ and $0.090$); this is a property of the impulsive start in this problem, which is linear, so frequency and decay rate are unaffected, and a start from the potential-flow field in the strong level gives a ratio error against the finite-viscosity value of $+0.04\%$ and a decay of $1.02$ times the exact rate.
 \begin{figure}[htbp]
@@ -124,7 +124,7 @@ Because the tutorial mesh does not resolve the Stokes layer, the solids4foam wet
 The comparison with FEBio is therefore a comparison of two independent discretisations against the same continuum references at the level of $0.1\%$ in the ratio (the largest difference between the FEBio and the finest-mesh solids4foam ratio errors is $0.09\%$, strong level); the viscous damping and the viscous shift are verified for FEBio only, and a solids4foam verification of these quantities would need a mesh that resolves the layers.
 
 \emph{Supplementary material.}
-The FEBio displacement histories and the reconstructed interface mechanics are in Appendix~\ref{app:ring_febio} (Figures~\ref{fig:ring_febio_decay} and~\ref{fig:ring_febio_traction}).
+The FEBio displacement histories and the reconstructed interface mechanics are in \suppRef{} (\suppFigBoth).
 
 \emph{Status.}
 FEBio reproduces the finite-viscosity, no-slip ring problem for the three added-mass levels, with the stated model-form differences (weak compressibility, finite strain, finite amplitude, regulariser) quantified at the $0.01$-percentage-point level in the moderate level; it is a qualified independent comparison rather than a demonstration that the two discretisations produce the same discrete solution.

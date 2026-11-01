@@ -91,6 +91,22 @@ textheight=24cm, % llncs has 19.3cm
 	\noindent\textcolor{red}{\rule{\linewidth}{0.8pt}}\par}
 \newcommand{\citetodo}[1]{\textcolor{red}{[\textbf{cite:}~#1]}}
 
+%% Supplement toggle. false (default): the FEBio ring comparison is Appendix B of this file.
+%% true: it is only in the standalone supplement_febio_ring.tex (Sec. S1, Figs. S1-S2) and
+%% Appendix B is omitted here. See supplement_febio_ring.tex for the build command.
+\newif\ifsupplementseparate
+\supplementseparatefalse
+%\supplementseparatetrue
+\ifsupplementseparate
+  \newcommand{\suppRef}{the Supplementary Material, Sec.~S1}
+  \newcommand{\suppFigDecay}{Figure~S1 of the Supplementary Material}
+  \newcommand{\suppFigBoth}{Figures~S1 and~S2}
+\else
+  \newcommand{\suppRef}{Appendix~\ref{app:ring_febio}}
+  \newcommand{\suppFigDecay}{Figure~\ref{fig:ring_febio_decay} of Appendix~\ref{app:ring_febio}}
+  \newcommand{\suppFigBoth}{Figures~\ref{fig:ring_febio_decay} and~\ref{fig:ring_febio_traction}}
+\fi
+
 \begin{document}
 
 \title[Verification benchmarks for fluid--solid interaction]{Benchmark problems are not benchmark solutions: an open verification suite for continuum fluid--solid interaction with quantified numerical uncertainty}
@@ -214,6 +230,7 @@ Additionally, the authors wish to acknowledge the DJEI/DES/SFI/HEA Irish Centre 
 
 
 
+\ifsupplementseparate\else
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Supplementary material: FEBio comparison for the ring added-mass problem}
 \label{app:ring_febio}
@@ -243,6 +260,8 @@ These are reconstructions and one-element-gradient dissipation estimates, not me
 \end{figure}
 
 
+
+\fi
 
 \end{appendices}
 
