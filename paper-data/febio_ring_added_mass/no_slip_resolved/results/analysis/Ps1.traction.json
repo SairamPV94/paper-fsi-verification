@@ -1,0 +1,23 @@
+{
+ "run": "OVERNIGHT2/runs/Ps1",
+ "tag": "Ps1",
+ "n_faces": 48,
+ "qpot": -1.6319252533228055,
+ "omega": 0.7686546,
+ "stokes_layer": 0.0005100930220826292,
+ "pressure_traction_n2_amp_Pa": 0.12027070649759762,
+ "viscous_tangential_traction_n2_amp_Pa": 9.415205119538718e-05,
+ "viscous_normal_traction_n2_amp_Pa": 4.46186644187477e-08,
+ "viscous_over_pressure": 0.0007828344402156468,
+ "interface_radial_velocity_amp": 0.00013877236813660687,
+ "mismatch_tangential_velocity_amp": 0.0002875471245204378,
+ "thin_layer_shear_estimate_Pa": 0.00011160988996105915,
+ "measured_over_estimate": 0.8435816147497052,
+ "work": {
+  "W_pressure_end": -2.521888622352557e-06,
+  "W_viscous_end": -1.9100311713602142e-08,
+  "W_total_end": -2.5409889340661594e-06,
+  "W_abs_max": 3.6804576158558063e-06,
+  "W_viscous_over_pressure_peak": 0.005204993192587142
+ }
+}

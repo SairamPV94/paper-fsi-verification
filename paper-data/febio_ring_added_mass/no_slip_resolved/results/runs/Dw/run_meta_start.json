@@ -1,0 +1,12 @@
+{
+ "slurm_job_id": "14583",
+ "partition": "main",
+ "cpus_per_task": 2,
+ "start": "2026-11-01T05:14:20+00:00",
+ "febio_bin": "<project-root>/build/febio-4.13/bin/febio4",
+ "febio_sha256": "f5ae1ed6f347f875c392f93d847f2369f437345a9b785296d46b0bd6fbb72f02",
+ "input": "Dw.feb",
+ "input_sha256": "c35f7efed99efab8aaf29e4981c93592394a3b7760afab2b1eb68d584e9e75f9",
+ "omp_num_threads": "2",
+ "mkl_num_threads": "2"
+}
