@@ -1,0 +1,114 @@
+    = 0
+	right hand side evaluations   = 4
+	stiffness matrix reformations = 3
+	step from line search         = 1.000000
+	convergence norms :     INITIAL         CURRENT         REQUIRED
+	   residual            2.991109e+01    4.721542e-21    2.991109e-09 
+	   energy              3.157890e-02    3.570288e-23    3.157890e-10 
+	   displacement        5.318861e-08    1.284297e-20    3.025105e-19 
+	   velocity            7.044137e-03    2.979541e-17    5.230151e-15 
+	   dilatation          3.236889e-08    3.676768e-26    3.014985e-20 
+
+convergence summary
+    number of iterations   : 3
+    number of reformations : 3
+
+------- converged at time : 32.6971
+
+
+Data Record #1
+===========================================================================
+Step = 800
+Time = 32.6970543
+Data = x;y;ux;uy;vx;vy
+File = probes.txt
+
+Data Record #2
+===========================================================================
+Step = 800
+Time = 32.6970543
+Data = ux;uy;vx;vy
+File = ring_nodes.txt
+
+Data Record #3
+===========================================================================
+Step = 800
+Time = 32.6970543
+Data = ux;uy;vx;vy;nfvx;nfvy
+File = fluid_nodes.txt
+
+Data Record #4
+===========================================================================
+Step = 800
+Time = 32.6970543
+Data = fp;fJ
+File = fluid_elems.txt
+
+Data Record #5
+===========================================================================
+Step = 800
+Time = 32.6970543
+Data = fsxx;fsyy;fsxy;fdxx;fdyy;fdxy
+File = fluid_stress.txt
+
+Data Record #6
+===========================================================================
+Step = 800
+Time = 32.6970543
+Data = ef
+File = fluid_ef.txt
+
+
+ N O N L I N E A R   I T E R A T I O N   I N F O R M A T I O N
+
+	Number of time steps completed .................... : 800
+
+	Total number of equilibrium iterations ............ : 2400
+
+	Average number of equilibrium iterations .......... : 3
+
+	Total number of right hand evaluations ............ : 3200
+
+	Total number of stiffness reformations ............ : 2400
+
+
+ L I N E A R   S O L V E R   S T A T S
+
+	Total calls to linear solver ........ : 2400
+
+	Avg iterations per solve ............ : 1
+
+	Time in linear solver: 0:19:20
+
+
+ Elapsed time : 0:25:50
+
+ T I M I N G   I N F O R M A T I O N
+
+	Input time ...................... : 0:00:00 (0.0334032 sec)
+
+	Initialization time ............. : 0:00:00 (0.0122803 sec)
+
+	Solve time ...................... : 0:25:50 (1550.45 sec)
+
+	   IO-time (plot, dmp, data) .... : 0:00:30 (30.1515 sec)
+
+	   serialization ................ : 0:00:00 (0 sec)
+
+	   reforming stiffness .......... : 0:00:00 (0.0536374 sec)
+
+	   evaluating stiffness ......... : 0:04:49 (288.953 sec)
+
+	   evaluating residual .......... : 0:00:26 (25.8024 sec)
+
+	   model update ................. : 0:00:33 (33.3702 sec)
+
+	   QN updates ................... : 0:00:00 (0.000566585 sec)
+
+	   time in linear solver ........ : 0:19:20 (1160 sec)
+
+	Total elapsed time .............. : 0:25:51 (1550.52 sec)
+
+
+ N O R M A L   T E R M I N A T I O N
+

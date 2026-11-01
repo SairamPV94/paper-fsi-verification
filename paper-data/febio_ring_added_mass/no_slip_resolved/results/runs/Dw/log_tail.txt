@@ -1,0 +1,91 @@
+ solution status: time= 0.0257971
+	stiffness updates             = 0
+	right hand side evaluations   = 25
+	stiffness matrix reformations = 24
+	step from line search         = 1.000000
+	convergence norms :     INITIAL         CURRENT         REQUIRED
+	   residual            4.668956e-03    4.790844e-21    4.668956e-13 
+	   energy              4.412502e-05    4.646224e-26    4.412502e-13 
+	   displacement        0.000000e+00    1.559269e-28    2.386354e-18 
+	   velocity            0.000000e+00    3.413223e-24    1.165419e-14 
+	   dilatation          0.000000e+00    2.009808e-27    3.749939e-29 
+Reforming stiffness matrix: reformation #25
+
+ 25
+ Nonlinear solution status: time= 0.0257971
+	stiffness updates             = 0
+	right hand side evaluations   = 26
+	stiffness matrix reformations = 25
+	step from line search         = 1.000000
+	convergence norms :     INITIAL         CURRENT         REQUIRED
+	   residual            4.668956e-03    4.776968e-21    4.668956e-13 
+	   energy              4.412502e-05    4.338697e-26    4.412502e-13 
+	   displacement        0.000000e+00    1.707504e-28    2.386354e-18 
+	   velocity            0.000000e+00    2.481843e-24    1.165419e-14 
+	   dilatation          0.000000e+00    2.500702e-27    3.749938e-29 
+Reforming stiffness matrix: reformation #26
+
+
+ *************************************************************************
+ *                                ERROR                                  *
+ * Max nr of reformations reached.                                       *
+ *************************************************************************
+
+
+------- failed to converge at time : 0.0257971
+
+
+
+ N O N L I N E A R   I T E R A T I O N   I N F O R M A T I O N
+
+	Number of time steps completed .................... : 0
+
+	Total number of equilibrium iterations ............ : 24
+
+	Average number of equilibrium iterations .......... : 0
+
+	Total number of right hand evaluations ............ : 26
+
+	Total number of stiffness reformations ............ : 25
+
+
+ L I N E A R   S O L V E R   S T A T S
+
+	Total calls to linear solver ........ : 25
+
+	Avg iterations per solve ............ : 1
+
+	Time in linear solver: 0:00:11
+
+
+ Elapsed time : 0:00:14
+
+ T I M I N G   I N F O R M A T I O N
+
+	Input time ...................... : 0:00:00 (0.194053 sec)
+
+	Initialization time ............. : 0:00:00 (0.00961656 sec)
+
+	Solve time ...................... : 0:00:14 (14.4624 sec)
+
+	   IO-time (plot, dmp, data) .... : 0:00:00 (0.0493243 sec)
+
+	   serialization ................ : 0:00:00 (0 sec)
+
+	   reforming stiffness .......... : 0:00:00 (0.0398123 sec)
+
+	   evaluating stiffness ......... : 0:00:03 (2.9045 sec)
+
+	   evaluating residual .......... : 0:00:00 (0.21172 sec)
+
+	   model update ................. : 0:00:00 (0.256926 sec)
+
+	   QN updates ................... : 0:00:00 (8.251e-06 sec)
+
+	   time in linear solver ........ : 0:00:11 (10.9665 sec)
+
+	Total elapsed time .............. : 0:00:15 (14.7126 sec)
+
+
+ E R R O R   T E R M I N A T I O N
+

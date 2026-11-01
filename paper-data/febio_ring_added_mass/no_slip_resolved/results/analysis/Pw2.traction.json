@@ -1,0 +1,23 @@
+{
+ "run": "OVERNIGHT2/runs/Pw2",
+ "tag": "Pw2",
+ "n_faces": 96,
+ "qpot": -1.6319252533228055,
+ "omega": 2.43561524,
+ "stokes_layer": 0.0002865567588796694,
+ "pressure_traction_n2_amp_Pa": 0.039734919815222154,
+ "viscous_tangential_traction_n2_amp_Pa": 1.7407878450107822e-05,
+ "viscous_normal_traction_n2_amp_Pa": 3.327315790429118e-09,
+ "viscous_over_pressure": 0.0004381002536574641,
+ "interface_radial_velocity_amp": 0.001363845576467815,
+ "mismatch_tangential_velocity_amp": 0.002806982803751183,
+ "thin_layer_shear_estimate_Pa": 1.9394211577162234e-05,
+ "measured_over_estimate": 0.8975811355284259,
+ "work": {
+  "W_pressure_end": -1.3470399704593294e-06,
+  "W_viscous_end": -3.555922602692909e-09,
+  "W_total_end": -1.3505958930620224e-06,
+  "W_abs_max": 3.581100475523494e-06,
+  "W_viscous_over_pressure_peak": 0.000992978186053847
+ }
+}
