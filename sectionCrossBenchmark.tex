@@ -110,10 +110,39 @@ A benchmark should therefore report several QoI types (a displacement, a mean fo
 
 The iterative error is the least systematically quantified component of the error budget in the present suite.
 
-\emph{Direct tolerance evidence is limited.}
+\emph{Direct tolerance evidence.}
 Hron--Turek FSI2 contains a coupling-tolerance sweep, and it shows that a tolerance of $10^{-5}$ inflates the lift amplitude by $13\%$ (1x) and $30\%$ (2x): the effect grows with refinement, so a tolerance chosen on a coarse mesh can contaminate a fine-mesh result.
 FSI3 shows the same mechanism in time: at a fixed tolerance of $10^{-5}$ the step-to-step force noise grows as $\Delta t$ falls (lift $7.3\,\mathrm{N/m}$ rms at the 4x step against $1.7\,\mathrm{N/m}$ at the 2x step), inflating extrema-based force amplitudes while leaving the displacements unaffected, and at the finest step IQN-ILS stalls above a tolerance of $10^{-6}$.
+Two strict-test sweeps (Table~\ref{tab:tol_sweeps}; solids4foam \texttt{a421f063d}, OpenFOAM-v2512, MeluXina) bound the iterative error directly at fixed discretisation.
+In ringAddedMass (strong level, mesh 2, 100 steps per period) reducing the tolerance from $10^{-4}$ to $10^{-8}$ changes the wet/dry ratio error by at most $1\times10^{-5}$ percentage points with IQN-ILS, and by at most $3\times10^{-5}$ below $10^{-5}$ with Robin--Neumann ($1\times10^{-3}$ at $10^{-4}$), against a change of $0.015$ percentage points between meshes 2 and 4; the IQN-ILS amplitude loss ($1.15\%$ per period) and the $0.04\%$ frequency difference between the two couplings do not change with the tolerance, so neither is an iterative error.
+In collapsibleChannel (fluid level 3, $\Delta t = 1/160\,\mathrm{s}$) Robin--Neumann changes the maximum error against the reference by $0.002$ percentage points between $10^{-4}$, the tutorial tolerance, and $10^{-5}$, against $0.03$ between fluid levels 3 and 4; a tolerance of $10^{-6}$ could not be reached (the first step stalled at the iteration limit).
+With the strict test, IQN-ILS did not complete this collapsibleChannel calculation at any tolerance from $10^{-3}$ to $10^{-6}$: it stalled at the iteration limit early in the run for $10^{-5}$ and $10^{-6}$, and the coupling diverged after the external-pressure ramp for $10^{-3}$ and $10^{-4}$.
+The IQN-ILS collapsibleChannel results of Section~\ref{sec:collapsible}, computed with the legacy test, therefore rest on iterations that were accepted unconverged (Section~\ref{sec:convergence_method}), which is consistent with the IQN-ILS/Robin--Neumann gap that does not decrease with refinement there.
 Elsewhere, the iterative error is bounded only indirectly.
+
+\begin{table}[htbp]
+	\centering
+	\small
+	\caption{Coupling-tolerance sweeps with the strict test (RN: Robin--Neumann) at fixed discretisation. ringAddedMass: strong level, mesh 2, 100 steps per period, standard solid; wet/dry frequency-ratio error against the exact value. collapsibleChannel: fluid level 3, solid $160\times8$ (high order), $\Delta t = 1/160\,\mathrm{s}$; maximum wall-midpoint error against the oomph-lib reference (percent of the peak) and first trough. Robin--Neumann pressure and flux tolerances scale with the displacement tolerance. Source: \texttt{paper-data/tolerance\_sweeps/}.}
+	\label{tab:tol_sweeps}
+	\setlength{\tabcolsep}{4pt}
+	\begin{tabular}{llrrr}
+		\toprule
+		Quantity & Tol. & IQN-ILS & RN & Iter./step (IQN-ILS / RN) \\
+		\midrule
+		ring: ratio error (\%) & $10^{-4}$ & $+0.03316$ & $-0.00949$ & 4.7 / 2.3 \\
+		 & $10^{-5}$ & $+0.03315$ & $-0.00853$ & 5.0 / 3.8 \\
+		 & $10^{-6}$ & $+0.03315$ & $-0.00851$ & 5.2 / 11.7 \\
+		 & $10^{-7}$ & $+0.03315$ & $-0.00851$ & 5.9 / 17.3 \\
+		 & $10^{-8}$ & $+0.03315$ & $-0.00851$ & 7.0 / 23.5 \\
+		\midrule
+		collapsible: max error (\%) & $10^{-3}$ & failed & $0.574$ & -- / 16.3 \\
+		 & $10^{-4}$ & failed & $0.522$ & -- / 27.9 \\
+		 & $10^{-5}$ & failed & $0.520$ & -- / 42.7 \\
+		 & $10^{-6}$ & failed & failed & -- / -- \\
+		\bottomrule
+	\end{tabular}
+\end{table}
 
 \emph{A converged-looking QoI can carry an accumulated coupling error.}
 In the Hessenthaler verification campaign (Section~\ref{sec:hessenthaler}; OpenFOAM-v2412, IQN-ILS, tolerance $10^{-4}$, $\Delta t = 0.002\,\mathrm{s}$, 40\,000 steps to $t = 80\,\mathrm{s}$), the legacy test $\min(r_1, r_2)$ of Eq.~\eqref{eq:coupling_residuals} accepted steps after about three iterations once the flow had become quasi-steady, because $r_2$, normalised by the total tip deflection of $\approx17\,\mathrm{mm}$, was small (median $3.5\times10^{-5}$) whatever the reduction within the step.
@@ -137,7 +166,6 @@ FSI3 shows that the two need not agree to the coupling tolerance when the Robin-
 \emph{Coupling algorithms can affect solution quality as well as cost.}
 In ringAddedMass, IQN-ILS produces a mesh-dependent amplitude loss that Robin--Neumann does not (mechanism unknown); and the cheaper algorithm is case dependent (IQN-ILS in ringAddedMass and FSI3, Robin--Neumann in womersleyTube and 3dTube).
 
-\todo{ESSENTIAL: one or two representative coupling-tolerance sweeps (at least two decades, strict test) at fixed discretisation, e.g.\ ringAddedMass (strong level) and collapsibleChannel, so that the claim ``iterative error $\ll$ discretisation error'' rests on more than the Hron--Turek cases; and the $r_1$-at-acceptance audit of Section~\ref{sec:convergence_method}.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Defects exposed by verification}\label{sec:defects}
