@@ -679,7 +679,11 @@ Without an experimental uncertainty, which is not available, the remaining discr
 
 \paragraph{Status.}
 The case is retained as provisional: the solid, temporal and iterative errors are controlled, but the fluid convergence of the tip is open, and there is no independent numerical reference.
-A fourth uniform fluid level (4.2 million cells, about 800 node-hours with the strict test) was not run; a locally refined fluid series, refining by $\sqrt2$ per level only the flap-sweep, interface and merging regions, is the proposed route.
+The fluid increments are resolved, not noise: the standard error of the averaged tip is at most $0.0006\,\mathrm{mm}$, the drift over the last tenth of each run at most $0.0005\,\mathrm{mm}$, and two independent F1S2 runs agree to $0.0002\,\mathrm{mm}$ (\texttt{paper-data/hessenthaler\_noise\_audit.csv}), against increments of $0.037$ and $0.030\,\mathrm{mm}$.
+What is not established is the asymptotic range: three levels determine a three-parameter power law exactly, and on non-nested meshes they cannot show that its order holds beyond them, so the observed order 0.62 is not used to extrapolate.
+For orientation only, assuming the formal order 2 or an order of 1 for the F2$\to$F3 increment gives a remaining fluid error of about $0.04$ or $0.09\,\mathrm{mm}$ (with the safety factor 1.25); these are estimates under assumed orders, not bounds.
+Two cheaper routes were examined and rejected: the flow domain is not exactly symmetric about the flap mid-plane (the mirrored wall surface departs from the original by at most $0.5\,\mathrm{mm}$ over $99\%$ of its area, and by up to $8.5\,\mathrm{mm}$ locally), so a half model would change the problem; and on these octree meshes the flap-sweep and merging regions hold most of the cells, so refining them alone costs about as much as a uniform level.
+A fourth uniform fluid level (4.2 million cells, about $10^{5}$ core-hours with the strict test from $t = 0$) is the remaining route to an asymptotic statement.
 The campaign's main contribution to this paper is methodological: with the legacy coupling test, an accumulated iterative error mimicked a slow physical creep (Section~\ref{sec:iterative_errors}).
 
 %%-------------------------------------------------------------------
