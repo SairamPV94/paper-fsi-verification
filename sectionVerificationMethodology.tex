@@ -42,7 +42,7 @@ The category describes the reference, not the benchmark problem and not the qual
 		\midrule
 		A & Analytical or semi-analytical solution of the stated continuum problem, with any numerical error of its own (e.g.\ collocation) controlled to near round-off. & ringAddedMass, womersleyTube \\
 		B & Independently computed numerical solution, by a different code and with its own convergence evidence, either of the same problem or of a problem with a small, explicitly identified model-form difference whose effect on the QoIs is quantified and small compared with the numerical errors of interest. & Hron--Turek FSI1 (Featflow, six levels); collapsibleChannel (oomph-lib, beam wall model) \\
-		C & Published benchmark value whose own discretisation error is only partly quantified. & Hron--Turek FSI2, FSI3 (Featflow level 4); beamInCrossFlow (\citet{Richter2012}; in progress) \\
+		C & Published benchmark value whose own discretisation error is only partly quantified. & Hron--Turek FSI2, FSI3 (Featflow level 4); beamInCrossFlow (\citet{Richter2012}; inflow unresolved) \\
 		C-weak & As C, but digitised from figures, single-mesh, mutually inconsistent, preprint-only, or from the same code lineage as the code under test. & 3dTube, mokLidDrivenCavity, cavityFlexibleBottom, blobInTreacle \\
 		\bottomrule
 	\end{tabular}
@@ -163,6 +163,7 @@ Results computed before that PR are affected only where an interface is three-di
 		cavityFlexibleBottom$^\ast$ & n.r. & v2512 & n.r. & macOS & n.r. \\
 		blobInTreacle$^\ast$ & README & v2512 & n.r. & Linux & before \\
 		Hessenthaler$^\ast$ & \texttt{aee0c8e35} & v2412 & GCC 13.3 \texttt{-O2} & MeluXina & before; A/B on S2, S3 \\
+		beamInCrossFlow$^\ast$ (Appendix~\ref{app:beam}) & \texttt{aee0c8e35} & v2412 & GCC 13.3 \texttt{-O2} & MeluXina & before \\
 		Tolerance sweeps & \texttt{a421f063d} & v2512 & n.r. & MeluXina & after \\
 		FEBio ring (solids4foam side) & \texttt{1576edcc} & n.r. & n.r. & Linux & after \\
 		\bottomrule
