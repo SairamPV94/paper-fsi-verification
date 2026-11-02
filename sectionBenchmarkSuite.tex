@@ -535,17 +535,17 @@ In group A (Mok, Wall, Gerbeau and Vidrascu) the openings are defined through th
 Group B (Vald\'es~\citep{Valdes2007}, the Kratos example~\citep{KratosLDC}, Tiba et al.~\citep{Tiba2026}) specifies inflow over a fixed $0.125\,\mathrm{m}$ opening and $p = 0$ at the outlet; within it the peak varies by $5.7\%$ and the oscillation amplitude by $20\%$.
 \citet{Kassiotis2011} lies between the groups.
 None of the cited sources provides a convincing spatial and temporal convergence demonstration.
-Pilot runs show that the group-B definition reproduces group B, whereas traction-free openings reproduce neither group.
+Pilot runs show that the group-B definition reproduces group B, whereas traction-free openings reproduce neither group (not shown).
 The reference is C-weak, and no published value is treated as the correct one.
 
 \begin{figure}[htbp]
 	\centering
-	% Source: solids4foam development, tutorials/fluidSolidInteraction/mokLidDrivenCavity/verification/reference/references_and_pilots.png (PR #497).
-	\includegraphics[width=0.85\textwidth]{figures/verification/mokLidDrivenCavity_references_and_pilots}
-	\caption{Modified lid-driven cavity: published membrane-midpoint histories (group A: Mok, Wall, Gerbeau and Vidrascu; group B: Vald\'es, Kratos; Kassiotis et al.) and two pilot solids4foam runs ($32\times32$ mesh) with the group-B opening definition and with both openings traction free. Interim figure reproduced from the solids4foam verification output.}
+	% Source: paper-data/figure_scripts/mok_figure.py on the published curves
+	% (tutorial verification/reference) and paper-data/mok_coupling_test/.
+	\includegraphics[width=\textwidth]{figures/verification/mokLidDrivenCavity_study}
+	\caption{Modified lid-driven cavity. (a) Membrane-midpoint histories over the last four lid periods: published group-A curves (Mok, Gerbeau and Vidrascu; the published curve of Wall ends before this window), Kassiotis et al., the group-B curves of Vald\'es and Kratos, and the present solution of the group-B definition on the $96^2$ mesh. (b) Peak, mean and trough over $t = 20$--$70\,\mathrm{s}$ under combined mesh and time-step refinement ($n^2$ fluid cells; $\Delta t = 0.2$, $0.1$, $0.05$ and $0.025\,\mathrm{s}$ for $n = 16$, $32$, $64$ and $96$), with the legacy (black) and strict (red) coupling tests, and the range of the published group-B values (shaded). Five published curves are exact extractions of the PDF vector paths; the Kratos curve is raster-digitised (about $0.5\%$ of the peak).}
 	\label{fig:mok_refs}
 \end{figure}
-\todo{Replace Figure~\ref{fig:mok_refs} with a publication-quality figure that adds the converged ($96\times96$) solids4foam history and the group-B envelope, and drops the traction-free pilot or moves it to a separate panel. Confirm the extraction method and calibration of every curve; the Kratos curve is raster-digitised (about $0.5\%$ of peak).}
 
 \paragraph{Evidence.}
 Midpoint statistics over $t = 20$--$70\,\mathrm{s}$ under combined mesh and time refinement are given in Table~\ref{tab:mok}; a $128^2$ run diverged (cause not isolated).
@@ -571,15 +571,16 @@ Midpoint statistics over $t = 20$--$70\,\mathrm{s}$ under combined mesh and time
 \end{table}
 
 \begin{itemize}
-	\item \emph{Self-convergence.} Successive changes in the peak are $1.56\%$, $1.26\%$ and $0.78\%$; the observed order of the peak is $\approx1.2$ (non-uniform final ratio) and that of the trough below 0.5, so neither sequence is shown to be asymptotic and no limit is extrapolated; the trough is uncertain by at least $\approx1$--$2\%$. A separate time-step study on $64^2$ changes the response by $0.17\%$ and $0.04\%$ of the peak, so the error is dominated by the mesh.
+	\item \emph{Self-convergence.} Successive changes in the response (the larger of the peak and trough changes, relative to the finest peak) are $1.56\%$, $1.26\%$ and $0.78\%$, dominated from $32^2$ on by the trough; the peak alone changes by $1.53\%$, $0.66\%$ and $0.31\%$; the observed order of the peak is $\approx1.2$ (non-uniform final ratio) and that of the trough below 0.5, so neither sequence is shown to be asymptotic and no limit is extrapolated; the trough is uncertain by at least $\approx1$--$2\%$. A separate time-step study on $64^2$ changes the response by $0.17\%$ and $0.04\%$ of the peak, so the error is dominated by the mesh.
 	\item \emph{Comparison.} On $96^2$ the trough and mean lie within or just outside the group-B envelope, and the peak is $3.3\%$ above the largest group-B peak; since the group-B values are single-mesh results differing by $5.7\%$, this cannot be attributed to either side.
 	\item \emph{Solid and coupling.} The standard and high-order solids agree to $0.04\%$: for a tension-dominated membrane the high-order solid gives no benefit, unlike the bending-dominated collapsible channel. IQN-ILS and Aitken give the same response (difference not quantified).
+	\item \emph{Coupling test.} The study used the legacy coupling test, which accepted about $98\%$ of the steps with $r_1$ above the tolerance of $10^{-5}$ (median $3\times10^{-4}$; Section~\ref{sec:convergence_method}). Repeated with the strict test (solids4foam \texttt{a421f063d}, OpenFOAM-v2512, which reproduces Table~\ref{tab:mok} to the digits given), the peak, trough and mean change by at most $0.024\%$ on $32^2$ and $64^2$, two orders of magnitude below the changes between meshes, and reusing IQN-ILS modes from earlier steps changes them by at most $0.025\%$. The accepted iterative error is therefore negligible for these QoIs. At the same tolerance the strict test could not be met in every step on $16^2$, $96^2$ and $128^2$, or on $64^2$ at $\Delta t = 0.1\,\mathrm{s}$: IQN-ILS stalled at $r_1 \approx 10^{-3}$--$10^{-2}$ and stopped at the iteration limit, on the finer meshes after $t \approx 14\,\mathrm{s}$ (\texttt{paper-data/mok\_coupling\_test/}).
 \end{itemize}
 
 \paragraph{Lesson.}
 A long-established benchmark can be ill defined.
 The present results are a self-convergence sequence for the fully specified group-B definition (last change $0.78\%$ in the peak; the trough less certain), not verification against an external reference.
-\todo{HIGH-VALUE: an independent converged solution (COMSOL or another code) of the group-B definition, with its own mesh and time study, would make this a category-B case. Also: diagnose the $128^2$ divergence; quantify the IQN-ILS/Aitken difference. No Richardson estimate is justified by the present (sub-nominal, non-uniform) sequence.}
+\todo{HIGH-VALUE: an independent converged solution (COMSOL or another code) of the group-B definition, with its own mesh and time study, would make this a category-B case. Also: diagnose the $128^2$ divergence and the strict-test stalls on the finer meshes from $t \approx 14\,\mathrm{s}$; quantify the IQN-ILS/Aitken difference. No Richardson estimate is justified by the present (sub-nominal, non-uniform) sequence.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

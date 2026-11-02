@@ -152,6 +152,7 @@ Restarted from the $80\,\mathrm{s}$ state with the strict test $\max(r_1, r_2)$ 
 Strict restarts from different default-test states did not return to one value ($17.02$ and $16.90\,\mathrm{mm}$), so the accumulated error leaves history in the solution, and a clean reference requires the strict test from $t = 0$ (solids4foam issue \#552; \texttt{paper-data/hessenthaler\_phaseI\_verification.md}).
 A steadiness check on the QoI --- for example a change below $0.04\%$ over the last second --- would have accepted the drifting solution.
 The lesson is general to partitioned codes: a convergence measure normalised by a large total quantity can be met without converging the step, and the error it admits is invisible to checks on the solution itself; the residual reduction at acceptance should be reported.
+Accepted unconverged steps do not always matter: in mokLidDrivenCavity the legacy test accepted about $98\%$ of the steps with $r_1$ above the tolerance, yet the strict test changes the periodic statistics by at most $0.024\%$, two orders of magnitude below the spatial changes (Section~\ref{sec:mok}). Without the strict-test repeat, however, neither outcome could have been known in advance.
 
 
 \emph{Iterative floors can limit refinement studies.}
