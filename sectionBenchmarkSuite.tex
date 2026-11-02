@@ -37,7 +37,7 @@ All calculations use the cell-centred finite volume solvers of solids4foam~\cite
 		Hessenthaler$^\ast$ & 3-D & steady (Phase I) & large & -- & 3 (fluid), 3 (solid) & 3 & tolerance pair \\
 		blobInTreacle$^\ast$ & 2-D & trans.\,$\to$\,steady & large & C-weak & 4 & 4 & none \\
 		\bottomrule
-		\multicolumn{8}{l}{$^\ast$ Provisional (Section~\ref{sec:provisional}); beamInCrossFlow: inflow definition unresolved (Appendix~\ref{app:beam}). $^\dagger$ Iteration counts only; no quantitative difference recorded.}
+		\multicolumn{8}{l}{$^\ast$ Provisional (Section~\ref{sec:provisional}); beamInCrossFlow: corrected inflow (Appendix~\ref{app:beam}). $^\dagger$ Iteration counts only; no quantitative difference recorded.}
 	\end{tabular}
 \end{table}
 
@@ -587,7 +587,7 @@ The present results are a self-convergence sequence for the fully specified grou
 \subsection{Provisional and in-development benchmarks}\label{sec:provisional}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Each of the four cases below would add a feature not otherwise covered, but none yet supports a complete verification claim. beamInCrossFlow is held back because its published inflow is inconsistent (Appendix~\ref{app:beam}), and the Hessenthaler campaign is complete except for the fluid convergence of its principal QoI; no statement below depends on simulations that have not been completed.
+Each of the four cases below would add a feature not otherwise covered, but none yet supports a complete verification claim. beamInCrossFlow is reported in Appendix~\ref{app:beam}, with a correction of its published inflow, and the Hessenthaler campaign is complete except for the fluid convergence of its principal QoI; no statement below depends on simulations that have not been completed.
 
 %%-------------------------------------------------------------------
 \subsubsection{Flexible-bottom cavity [PROVISIONAL]}\label{sec:cavity}
@@ -622,8 +622,8 @@ Agreement in force with disagreement in displacement points to a difference in t
 %%-------------------------------------------------------------------
 
 A thick elastic plate clamped in a three-dimensional channel flow~\citep{Richter2012} would be the only steady three-dimensional external-flow case in the suite ($E_S = 1.4\,\mathrm{MPa}$), with a reference from an independent monolithic finite element code that converges cleanly over five levels.
-Its published inflow is, however, internally inconsistent: the printed inlet profile, with a peak of $0.3\,\mathrm{m/s}$, has a mean of $0.133\,\mathrm{m/s}$, whereas the text states $0.15\,\mathrm{m/s}$ and the preprint $0.2\,\mathrm{m/s}$, and the reference values are reproduced only with a $0.2\,\mathrm{m/s}$ peak.
-The case is therefore not used as verification evidence here; Appendix~\ref{app:beam} documents the definition problems and our four-level sequences for both inflows.
+Its published inflow contains an error: the printed inlet profile, with a peak of $0.3\,\mathrm{m/s}$, has a mean of $0.133\,\mathrm{m/s}$, whereas the text states $0.15\,\mathrm{m/s}$ and the preprint $0.2\,\mathrm{m/s}$ with $Re = 40$; with the printed profile we obtain $1.8$ times the reference values. We take the case of \citet{Richter2012} to have a $0.2\,\mathrm{m/s}$ peak, for which our level-3 solution lies within $0.1$--$0.2\%$ of the reference values, and its four-level sequence converges monotonically at observed orders rising to 1.6, short of a demonstrated asymptotic range.
+Appendix~\ref{app:beam} gives the evidence for the correction and both four-level sequences.
 
 %%-------------------------------------------------------------------
 \subsubsection{Hessenthaler three-dimensional benchmark (Phase I) [PROVISIONAL]}\label{sec:hessenthaler}
