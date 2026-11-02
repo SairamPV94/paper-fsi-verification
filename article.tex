@@ -199,7 +199,7 @@ Several directions remain:
 \begin{enumerate}
 	\item \textbf{Independent references where none exists}, above all for 3dTube, Hessenthaler and mokLidDrivenCavity, computed with their own mesh and time studies.
 	\item \textbf{Further levels where the evidence stops at two or three}: Hron--Turek FSI1 and FSI2, and a fourth fluid level for Hessenthaler.
-	\item \textbf{Completion of the provisional cases}: beamInCrossFlow, cavityFlexibleBottom and blobInTreacle.
+	\item \textbf{Completion of the provisional cases}: cavityFlexibleBottom and blobInTreacle, and, once its inflow is confirmed, beamInCrossFlow.
 	\item \textbf{Wider coverage}: compressible and non-Newtonian fluids, contact and free surfaces; the companion paper~\citep{CardiffBatistic2026QM} applies the same suite to a quasi-monolithic coupling.
 	\item \textbf{Higher-order discretisation}, for which the exact references of the suite can measure orders above two.
 \end{enumerate}
@@ -230,6 +230,7 @@ The authors wish to acknowledge the Irish Centre for High-End Computing (ICHEC) 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bmhead{CRediT authorship contribution statement}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo{All authors: check and complete the CRediT entries (roles of each author, and any further co-authors) during the full-draft review.}
 \hl{TBD: to be completed and confirmed by each author}
 \textbf{Philip Cardiff:} Conceptualization, Methodology, Software, Investigation, Formal analysis, Writing -- original draft, Writing -- review \& editing, Supervision, Funding acquisition.
 \textbf{Emad Tandis:} Investigation, Validation (independent ANSYS and COMSOL solutions of the flexible-bottom cavity), Writing -- review \& editing \hl{TBD: confirm}.
@@ -244,6 +245,7 @@ The authors declare that they have no known competing financial interests or per
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \bmhead{Declaration of generative AI and AI-assisted technologies in the writing process}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo{All authors: agree the wording of this declaration against the journal's policy during the full-draft review.}
 \hl{TBD: wording to be confirmed by the authors}
 During the preparation of this work the authors used AI coding and writing assistants (Anthropic Claude and OpenAI Codex) to help set up and run the verification campaigns, post-process the results, implement and test parts of the software, and draft and edit the text.
 After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the publication.
@@ -255,9 +257,49 @@ After using these tools, the authors reviewed and edited the content as needed a
 \begin{appendices}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{WIP}
-\label{app:WIP}
+\section{Supplementary material: definition of the beamInCrossFlow benchmark}
+\label{app:beam}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo{beamInCrossFlow: (i) ask the author of \citet{Richter2012} to confirm the inflow (record the request and any reply in \texttt{paper-data/beam\_richter\_findings.md}); if a $0.2\,\mathrm{m/s}$ peak is confirmed, the case can return to the main text with the $0.2\,\mathrm{m/s}$ sequence below. (ii) The runs used a build without the fixes of solids4foam PR \#546 (\texttt{-O2}, so the aliasing defect does not apply); an A/B check of the interface point transfer on level 1 is needed before the values are used as evidence.}
+
+\citet{Richter2012} (Section~6.2; Section~7.2 of the preprint) defines a steady three-dimensional benchmark: a duct $(0,1.5)\times(0,0.4)\times(-0.4,0.4)\,\mathrm{m}$ with a St Venant--Kirchhoff plate $(0.4,0.5)\times(0,0.2)\times(-0.2,0.2)\,\mathrm{m}$ clamped to its floor ($E_S = 1.4\,\mathrm{MPa}$, $\nu_S = 0.4$), fluid density $1000\,\mathrm{kg/m^3}$ and kinematic viscosity $10^{-3}\,\mathrm{m^2/s}$, and a bi-parabolic inlet profile. The quantities of interest are the streamwise displacement $u_x$ at point A $= (0.45, 0.15, -0.15)\,\mathrm{m}$ and the drag $F_x$ on the plate. The published reference values, $u_x(A) = 5.95\times10^{-5}\,\mathrm{m}$ and $F_x = 1.33\,\mathrm{N}$ with a stated accuracy of $1\%$ ($5.924\times10^{-5}\pm10^{-7}\,\mathrm{m}$ and $1.327\pm0.01\,\mathrm{N}$ in the preprint), are extrapolated from the finest three of five uniformly refined levels, whose displacements converge cleanly ($4.93$, $5.57$, $5.85$, $5.908$ and $5.920\times10^{-5}\,\mathrm{m}$); they are often attributed to \citet{Richter2015}.
+
+\paragraph{Definition problems.}
+\begin{itemize}
+	\item \emph{Inflow.} The printed inlet profile has a peak of $0.3\,\mathrm{m/s}$, so its area mean is $0.133\,\mathrm{m/s}$; the published text states a mean of $0.15\,\mathrm{m/s}$ ($Re \approx 25$) and the preprint $0.2\,\mathrm{m/s}$ ($Re = 40$). The three statements cannot all hold.
+	\item \emph{Earlier calculations.} The earlier solids4foam tutorial placed the plate $0.05\,\mathrm{m}$ further downstream, sampled point A on the upstream face instead of mid-thickness, used a different peak inflow and a transient start-up. A same-lineage calculation~\citep{Tukovic2018} on one polyhedral mesh with a $0.2\,\mathrm{m/s}$ peak gives $u_x(A) = 5.93\times10^{-5}\,\mathrm{m}$ and $F_x = 1.31\,\mathrm{N}$, but its transverse displacement at A, about twelve times ours, is consistent with the shifted plate.
+\end{itemize}
+
+\paragraph{Sequences.}
+Both inflows were computed on the Richter geometry, on the half domain $z \le 0$ with a symmetry plane, by partitioned transient-to-steady continuation (IQN-ILS with the strict coupling test at $10^{-5}$, three PIMPLE outer correctors, a Newton solid) on four uniformly refined levels (fluid $8\,112$, $64\,896$, $519\,168$ and $4\,153\,344$ cells; solid $512$ to $262\,144$ cells, 8 to 64 cells through the thickness) at a fixed $\Delta t = 0.00625\,\mathrm{s}$; $F_x$ is integrated over the wetted plate surface of the computed half (Table~\ref{tab:beam_seq}).
+The non-spatial errors are small against the level-2-to-3 changes: coupling tolerances from $10^{-4}$ to $10^{-8}$ change $u_x(A)$ and $F_x$ by at most $2\times10^{-6}$ (relative), starting from rest or from the converged rigid-plate flow by at most $1.6\times10^{-6}$, and halving $\Delta t$, which acts on the steady state through the Rhie--Chow interpolation, by $8\times10^{-5}$ in $u_x(A)$ on level 3, a twentieth of the level-2-to-3 change.
+
+\begin{table}[htbp]
+	\centering
+	\footnotesize
+	\caption{beamInCrossFlow on the geometry of \citet{Richter2012}: steady $u_x(A)$ and $F_x$ for the printed inflow (peak $0.3\,\mathrm{m/s}$) and for a $0.2\,\mathrm{m/s}$ peak, with observed orders from levels 0--2 and 1--3, against the reference values. Level 3 for the printed inflow is the mean over $t = 4.0$--$4.5\,\mathrm{s}$, after a damped $7.9\,\mathrm{Hz}$ bending oscillation has decayed. Source: \texttt{paper-data/beam\_richter/} (\texttt{production\_sequence.csv}, \texttt{r02\_sequence.csv}).}
+	\label{tab:beam_seq}
+	\begin{tabular}{lrrrr}
+		\toprule
+		& \multicolumn{2}{c}{peak $0.3\,\mathrm{m/s}$ (printed)} & \multicolumn{2}{c}{peak $0.2\,\mathrm{m/s}$} \\
+		Level & $u_x(A)$ ($10^{-5}\,\mathrm{m}$) & $F_x$ (N) & $u_x(A)$ ($10^{-5}\,\mathrm{m}$) & $F_x$ (N) \\
+		\midrule
+		0 & 8.139 & 2.1574 & 4.617 & 1.1988 \\
+		1 & 9.626 & 2.3057 & 5.479 & 1.2844 \\
+		2 & 10.245 & 2.3636 & 5.831 & 1.3166 \\
+		3 & 10.448 & 2.3831 & 5.944 & 1.3272 \\
+		\midrule
+		Order, levels 0--2 / 1--3 & 1.26 / 1.61 & 1.36 / 1.58 & 1.29 / 1.64 & 1.41 / 1.60 \\
+		\citet{Richter2012} & 5.95 & 1.33 & 5.95 & 1.33 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Both sequences converge monotonically with orders rising from 1.3--1.4 to 1.6, the same for both inflows; the asymptotic range is suggested but not demonstrated, and no extrapolated value or error bound is given.
+The comparison was made after the sequences were characterised. With the printed inflow the solution approaches $1.05\times10^{-4}\,\mathrm{m}$ and $2.38\,\mathrm{N}$, $1.8$ times the reference values and far beyond the numerical uncertainty of either solution. With a $0.2\,\mathrm{m/s}$ peak, level 3 lies within $0.1\%$ ($u_x$) and $0.2\%$ ($F_x$) of the reference values, and conditional Richardson extrapolations from levels 1--3 lie $0.5$--$0.8\%$ above them, within the stated $1\%$.
+The reference values are therefore consistent with a $0.2\,\mathrm{m/s}$ peak, i.e.\ a velocity scale of $0.2\,\mathrm{m/s}$ ($Re = 40$ with the plate height), and not with the printed profile. This is strongly suggested, not established, and the case is not used as verification evidence until the inflow is confirmed.
+The computations cost $158$ node-hours on MeluXina (128 cores per node), of which $45$ for level 3 of the printed inflow; a fourth level (about $3.3\times10^{7}$ fluid cells) is estimated at $340$--$930$ node-hours per inflow.
+
 
 
 
