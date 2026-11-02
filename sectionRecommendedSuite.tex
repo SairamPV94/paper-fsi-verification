@@ -22,13 +22,13 @@ We therefore propose a tiered suite (Table~\ref{tab:suite_tiers}), with membersh
 		womersleyTube & A & viscous wave propagation; amplitude versus phase/attenuation; truncated-domain boundary consistency & core \\
 		collapsibleChannel & B & thin bending wall, large deformation, strong added mass; solid discretisation & core \\
 		Hron--Turek FSI1 & B & steady large-deformation coupling & core; third level desirable \\
-		mokLidDrivenCavity & C-weak & tension-dominated membrane; definition sensitivity & candidate; see note \\
 		\midrule
 		\multicolumn{4}{l}{\emph{Extended / high-cost suite}} \\
 		Hron--Turek FSI2, FSI3 & C & self-excited oscillation; lift amplitude; tolerance sensitivity; mesh-motion history; set-up-induced sub-nominal order & FSI3 three levels (tutorial and corrected set-ups); FSI2 two levels \\
 		3dTube & C-weak & 3-D wave propagation with added mass; time-discretisation sensitivity; cross-platform and toolchain checks & three levels; $u_{r,\max}$ not yet converging \\
 		beamInCrossFlow$^\ast$ & C & 3-D steady external flow; displacement and force convergence & in progress \\
 		Hessenthaler$^\ast$ & -- & realistic 3-D geometry, large deformation; steady-state iterative error; validation data kept separate & solid, $\Delta t$ and coupling converged; fluid convergence open \\
+		mokLidDrivenCavity & C-weak & tension-dominated membrane; problem-definition sensitivity; coupling robustness & four levels, combined refinement; orders below nominal; $128^2$ diverges \\
 		cavityFlexibleBottom$^\ast$ & C-weak & steady internal flow, large deformation & provisional \\
 		blobInTreacle$^\ast$ & C-weak & temporal order in viscous large-deformation flow & provisional; possibly supplementary \\
 		\bottomrule
@@ -47,7 +47,10 @@ The requirement is not a fixed matrix of studies but the principle of Section~\r
 The benchmarks therefore emphasise different studies: ringAddedMass isolates temporal, solid-discretisation and added-mass effects; womersleyTube requires careful temporal and phase analysis and a flux-consistent treatment of its truncated ends; collapsibleChannel requires control of the solid discretisation and of the coupling tolerance; and, in the extended suite, Hron--Turek FSI3 requires separate solid, rigid-fluid and prescribed-motion studies to interpret its sub-nominal coupled order.
 Each core result should state its reference category, the number of levels and the observed behaviour for at least one displacement-type and one force- or phase-type QoI, the evidence that the iterative error is subordinate (including the convergence test used and the residual reduction at acceptance), and the code version, compiler and platform.
 
-\todo{Decide whether mokLidDrivenCavity belongs in the core suite (cheap; tests a different solid regime; but C-weak and only self-convergence evidence) or in the extended suite. An independent converged COMSOL solution of the group-B definition would justify core membership.}
+% mokLidDrivenCavity placed in the extended suite (Philip, 2 Nov 2026): cheap
+% and a different solid regime, but C-weak, self-convergence only, sub-nominal
+% orders and no clean further refinement.
+\todo{mokLidDrivenCavity: there may be value in an independent FEBio solution of the group-B definition (Sairam), which could make it category B. In that case the divergence of the solids4foam runs on finer meshes ($128^2$, and the strict-coupling-test stalls on $96^2$ and $128^2$ from $t \approx 14\,\mathrm{s}$) would also need to be debugged, so that the two codes can be compared on converged sequences.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Extended and high-cost suite}\label{sec:extended_suite}
@@ -55,6 +58,7 @@ Each core result should state its reference category, the number of levels and t
 
 The extended suite does not establish formal order, which the core suite does more cheaply and reliably, but tests whether that accuracy carries over to three dimensions, complex geometry, large mesh motion and slowly converging QoIs.
 Hron--Turek FSI2/FSI3 belong here despite being two-dimensional, because their slowest QoIs need resolutions well beyond the core suite, the FSI3 displacements converge at an observed order of about one unless the mesh motion and wall-pressure treatment are chosen with care, and even then are not in the asymptotic range on a fluid mesh of $7.5\times10^5$ cells, and the FSI3 reference itself carries a $3$--$5\%$ uncertainty in $u_x$ and the force amplitudes.
+mokLidDrivenCavity is inexpensive but belongs here too: its published references are mutually inconsistent and its own sequence is not in the asymptotic range, so it cannot show that a code is right; its value is as a test of sensitivity to the problem definition and of coupling robustness (Section~\ref{sec:mok}).
 Published values should be quoted with their source (e.g.\ Featflow table or summary value) and reference category, and agreement with them should not be presented as verification without self-convergence evidence.
 
 \todo{Final extended-suite membership depends on: the beamInCrossFlow (Richter) campaign and an independent reference; the Hessenthaler verification campaign; cavityFlexibleBottom resolution; for 3dTube, a fourth level or an independent converged solution for $u_{r,\max}$. A case without at least three mesh levels should not be listed as ``verified'' in any final suite table.}
