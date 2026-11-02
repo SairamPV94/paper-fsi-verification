@@ -1,0 +1,21 @@
+# Coupling-tolerance sweeps with the strict test
+
+Iterative-error evidence for Section `sec:iterative_errors` (Table `tab:tol_sweeps`).
+Strict test (`requireAllResidualMeasures yes`), IQN-ILS `couplingReuse 0`.
+solids4foam `a421f063d`, OpenFOAM-v2512, MeluXina (jobs 5410800 ring, 5410835 collapsible), 2026-11-01.
+
+- `ring_strong_m2_n100_strict.csv`: ringAddedMass, strong level, mesh 2, 100 steps
+  per period, standard solid; IQN-ILS and Robin–Neumann at tolerances 1e-4 to 1e-8.
+  The ratio error is the wet/dry frequency ratio against the exact ratio, with the
+  dry ring at the same discretisation (`ts-ram-dry-m2-n100`). Driver: `ring_tol.py`
+  (wraps the campaign driver `ma_run.py`; the Robin–Neumann pressure and flux
+  tolerances are 10x and 5000x the displacement tolerance, the tutorial ratios).
+- `collapsible_F3_dt160_strict.txt`: collapsibleChannel, fluid level 3, solid
+  160x8 high order, dt = 1/160 s; Robin–Neumann and IQN-ILS at 1e-3 to 1e-6
+  (driver summary lines). Driver: `coll_tol.py` (wraps the tutorial's
+  `collapsible_channel_verification.py`; Robin–Neumann pressure tolerance equals
+  the displacement tolerance, as in the tutorial). IQN-ILS failed at every
+  tolerance (1e-5, 1e-6: stalled at nOuterCorr = 200 early in the run; 1e-3, 1e-4:
+  coupling divergence after the external-pressure ramp, ending in the
+  interface-to-interface face-mismatch check); Robin–Neumann 1e-6 stalled at
+  nOuterCorr in the first step.

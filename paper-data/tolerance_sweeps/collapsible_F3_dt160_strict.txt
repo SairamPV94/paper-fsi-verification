@@ -1,0 +1,16 @@
+== iqnils-1e-3
+  FAILED: F3_S160x8_dt160_highOrder_outerCorrTolerance1e-3 did not finish; see coll/iqnils-1e-3/F3_S160x8_dt160_highOrder_outerCorrTolerance1e-3
+== iqnils-1e-4
+  FAILED: F3_S160x8_dt160_highOrder_outerCorrTolerance1e-4 did not finish; see coll/iqnils-1e-4/F3_S160x8_dt160_highOrder_outerCorrTolerance1e-4
+== iqnils-1e-5
+  FAILED: F3_S160x8_dt160_highOrder_outerCorrTolerance1e-5 did not finish; see coll/iqnils-1e-5/F3_S160x8_dt160_highOrder_outerCorrTolerance1e-5
+== iqnils-1e-6
+  FAILED: F3_S160x8_dt160_highOrder_outerCorrTolerance1e-6 did not finish; see coll/iqnils-1e-6/F3_S160x8_dt160_highOrder_outerCorrTolerance1e-6
+== robin-1e-3
+  F3_S160x8_dt160_highOrder_robin_outerCorrTolerance1e-3_robinPressureTolerance0.001: max error 0.574%, trough -0.21600 at 0.4701, 16.3 FSI iterations/step, 2952 s
+== robin-1e-4
+  F3_S160x8_dt160_highOrder_robin_outerCorrTolerance1e-4_robinPressureTolerance0.0001: max error 0.522%, trough -0.21605 at 0.4699, 27.9 FSI iterations/step, 4547 s
+== robin-1e-5
+  F3_S160x8_dt160_highOrder_robin_outerCorrTolerance1e-5_robinPressureTolerance1e-05: max error 0.520%, trough -0.21606 at 0.4699, 42.7 FSI iterations/step, 6273 s
+== robin-1e-6
+  FAILED: F3_S160x8_dt160_highOrder_robin_outerCorrTolerance1e-6_robinPressureTolerance1e-06 did not finish; see coll/robin-1e-6/F3_S160x8_dt160_highOrder_robin_outerCorrTolerance1e-6_robinPressureTolerance1e-06
