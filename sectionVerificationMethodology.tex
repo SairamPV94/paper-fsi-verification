@@ -152,7 +152,7 @@ Results computed before that PR are affected only where an interface is three-di
 		\midrule
 		ringAddedMass & README & v2412 & n.r. & Linux & before \\
 		womersleyTube & \texttt{a507bfd41} (PR \#533) & v2512 & n.r. & Linux & before \\
-		collapsibleChannel & README & v2412 & n.r. & Linux; macOS (static study) & before \\
+		collapsibleChannel & README; mesh-study figure \texttt{a421f063d}$^\dagger$ & v2412; v2512 & n.r. & Linux; macOS (static study); MeluXina & before; after \\
 		Hron--Turek FSI1, FSI2 & README & v2412 & n.r. & macOS & before \\
 		FSI3, tutorial set-up and diagnostics & \texttt{d49552f4c} and diagnostic branches & v2512 & GCC 11.4, \texttt{-O3} & Linux & before; A/B identical \\
 		FSI3, corrected 1x$'$--4x$'$ & \texttt{636d567c6} & v2512 & n.r. & Linux & before; 2-D argument \\
@@ -166,7 +166,7 @@ Results computed before that PR are affected only where an interface is three-di
 		Tolerance sweeps & \texttt{a421f063d} & v2512 & n.r. & MeluXina & after \\
 		FEBio ring (solids4foam side) & \texttt{1576edcc} & n.r. & n.r. & Linux & after \\
 		\bottomrule
-		\multicolumn{6}{l}{$^\ast$ Provisional cases.}
+		\multicolumn{6}{l}{$^\ast$ Provisional cases. $^\dagger$ Rerun that reproduces the tabulated errors to the digits given.}
 	\end{tabular}
 \end{table}
 % Provenance compiled 2026-11-02 from paper-data evidence files and the case
