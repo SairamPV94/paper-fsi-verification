@@ -234,7 +234,13 @@ The tube ends carry the exact pressure and the exact normal velocity gradient, a
 	\item \emph{Coupling.} IQN-ILS and Robin--Neumann agree to $2.2\times10^{-4}$ or better in every QoI (14.6 against 9.3 coupling iterations per step).
 \end{itemize}
 
-\todo{The numbers in Table~\ref{tab:womersley} use the \texttt{pimpleFluid} option \texttt{fluxConsistentPatches} on the tube ends (solids4foam PR \#533, branch \texttt{womersley-temporal-investigation}, commit a507bfd41; OpenFOAM-v2512, Linux), where the option and the exact old-time boundary values are set in the tutorial and the table is the output of the full \texttt{Allverify} on that commit. Not yet merged: confirm the commit hash after merging. Investigation, data and the original-set-up results: \texttt{womersleyTube/verification/womersley\_temporal\_investigation.md} (formal order of the end treatment: Section 15 there).}
+% The numbers in Table womersley use the pimpleFluid option
+% fluxConsistentPatches on the tube ends: solids4foam PR #533 (branch
+% womersley-temporal-investigation, a507bfd41, merged as d5801183e),
+% OpenFOAM-v2512, Linux; the table is the output of the full Allverify on
+% that commit. Investigation, data and the original-set-up results:
+% womersleyTube/verification/womersley_temporal_investigation.md (formal
+% order of the end treatment: Section 15 there).
 
 \paragraph{Lesson.}
 This viscous wave-propagation case complements ringAddedMass (inviscid, standing mode) with separate amplitude and phase QoIs.
@@ -482,7 +488,7 @@ Table~\ref{tab:3dtube} gives the results obtained after correcting the two solve
 	\centering
 	\small
 	\setlength{\tabcolsep}{4pt}
-	\caption{3dTube: QoIs at point A on three mesh levels ($\Delta t$ halved with the mesh), successive relative changes and observed order (Eq.~\eqref{eq:observed_order}, reported only for monotone sequences with decreasing changes). Levels 1--2: OpenFOAM-v2512 (Linux, GCC, \texttt{-O3}), confirmed to the reported digits on OpenFOAM-v2412 (Linux, GCC, \texttt{-O2}); level 3: OpenFOAM-v2412 only. Both defects corrected (solids4foam PR \#546). $c_p$: pressure-wave speed from probes on the axis.}
+	\caption{3dTube: QoIs at point A on three mesh levels ($\Delta t$ halved with the mesh), successive relative changes and observed order (Eq.~\eqref{eq:observed_order}, reported only for monotone sequences with decreasing changes). Levels 1--2: OpenFOAM-v2512 (Linux, GCC, \texttt{-O3}), confirmed to the reported digits on OpenFOAM-v2412 (Linux, GCC, \texttt{-O2}); level 3: OpenFOAM-v2412 only. Both defects corrected, with the fixes later merged as solids4foam PR \#546. $c_p$: pressure-wave speed from probes on the axis.}
 	\label{tab:3dtube}
 	\begin{tabular}{lrrrrrr}
 		\toprule
