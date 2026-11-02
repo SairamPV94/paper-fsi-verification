@@ -136,4 +136,41 @@ Errors are relative, $(f - f_\mathrm{ref})/|f_\mathrm{ref}|$, or normalised by a
 Periodic statistics are taken over complete periods after the start-up transient, with the period-to-period change checked to be small compared with the reported errors: forced responses through the complex Fourier coefficient at the forcing frequency, self-excited oscillations through window mean, amplitude (half the mean peak-to-peak range) and frequency~\citep{Turek2006}, and free vibrations through zero-crossing frequencies.
 Transient problems are compared on characteristic events (first trough, wavefront arrival) as well as full histories.
 The drivers and reference files that produce these quantities are described in Section~\ref{sec:infrastructure}.
-\todo{State the exact solids4foam commit(s), OpenFOAM release, compiler/optimisation flags and platform for every result. Current record: womersleyTube OpenFOAM-v2512 (solids4foam a507bfd41, PR \#533, Linux); Hron--Turek FSI3 1x/2x/4x and all FSI3 diagnostics OpenFOAM-v2512 (Linux, GCC 11.4, \texttt{-O3}; 1x replicate on v2412), FSI1/FSI2 v2412 (to be confirmed); 3dTube levels 1--2 v2512 (Linux, GCC 11.4, \texttt{-O3}) confirmed on v2412 (GCC 13.3, \texttt{-O2}), level 3 v2412 only; ringAddedMass, collapsibleChannel, mokLidDrivenCavity v2412; cavityFlexibleBottom, blobInTreacle v2512; Hessenthaler campaign v2412 (MeluXina). Which results predate solids4foam PR \#546 must be stated (the Hron--Turek FSI3 study was shown to be unaffected, Section~\ref{sec:fsi23}; for other cases an A/B check or an argument from the interface type and dimensionality is needed). See paper-data/manuscript\_update\_2026-10.md. Plan a Zenodo archive of case set-ups, drivers, raw CSV outputs and reference files.}
+\paragraph{Code, build and platform.}
+Table~\ref{tab:provenance} records, for each result, the solids4foam commit, the OpenFOAM release, the compiler and the platform, and whether the build contains the fixes of solids4foam PR~\#546 (the two defects of Section~\ref{sec:3dtube}).
+Results computed before that PR are affected only where an interface is three-dimensional and transferred non-conformally, or where the aliasing defect can occur (\texttt{-O3} builds); this is checked case by case in Section~\ref{sec:benchmark_suite}.
+
+\begin{table}[htbp]
+	\centering
+	\footnotesize
+	\setlength{\tabcolsep}{3pt}
+	\caption{Provenance of the reported results. ``n.r.'': not recorded; ``README'': values recorded in the case's verification README in solids4foam by commit \texttt{7c928c55}, which precedes PR~\#546. \#546: whether the build contains the fixes of solids4foam PR~\#546. Sources: \texttt{paper-data/} evidence files and the case READMEs.}
+	\label{tab:provenance}
+	\begin{tabular}{p{2.9cm}p{2.5cm}p{1.5cm}p{2.4cm}p{1.8cm}p{2.1cm}}
+		\toprule
+		Case or study & solids4foam & OpenFOAM & Compiler & Platform & \#546 \\
+		\midrule
+		ringAddedMass & README & v2412 & n.r. & Linux & before \\
+		womersleyTube & \texttt{a507bfd41} (PR \#533) & v2512 & n.r. & Linux & before \\
+		collapsibleChannel & README & v2412 & n.r. & Linux; macOS (static study) & before \\
+		Hron--Turek FSI1, FSI2 & README & v2412 & n.r. & macOS & before \\
+		FSI3, tutorial set-up and diagnostics & \texttt{d49552f4c} and diagnostic branches & v2512 & GCC 11.4, \texttt{-O3} & Linux & before; A/B identical \\
+		FSI3, corrected 1x$'$--4x$'$ & \texttt{636d567c6} & v2512 & n.r. & Linux & before; 2-D argument \\
+		FSI3, corrected 8x$'$ & \texttt{636d567c6} & v2512 & GCC 13.3 & MeluXina & before; 2-D argument \\
+		3dTube levels 1--2 & \texttt{c45b30b7e} & v2512; v2412 & GCC 11.4 \texttt{-O3}; GCC 13.3 \texttt{-O2} & Linux; MeluXina & fixes before merge \\
+		3dTube level 3 & \texttt{c45b30b7e} & v2412 & GCC 13.3 \texttt{-O2} & MeluXina & fixes before merge \\
+		mokLidDrivenCavity & README & v2412 & n.r. & macOS & before \\
+		cavityFlexibleBottom$^\ast$ & n.r. & v2512 & n.r. & macOS & n.r. \\
+		blobInTreacle$^\ast$ & README & v2512 & n.r. & Linux & before \\
+		Hessenthaler$^\ast$ & \texttt{aee0c8e35} & v2412 & GCC 13.3 \texttt{-O2} & MeluXina & before; A/B on S2, S3 \\
+		Tolerance sweeps & \texttt{a421f063d} & v2512 & n.r. & MeluXina & after \\
+		FEBio ring (solids4foam side) & \texttt{1576edcc} & n.r. & n.r. & Linux & after \\
+		\bottomrule
+		\multicolumn{6}{l}{$^\ast$ Provisional cases.}
+	\end{tabular}
+\end{table}
+% Provenance compiled 2026-11-02 from paper-data evidence files and the case
+% READMEs; ancestry of commits relative to PR #546 (978ffc8dd) checked with
+% git merge-base. 3dTube used the branch commits 635ff464f and 0ff7f462b,
+% the fixes later merged (rebased) as #546.
+\todo{Provenance gaps to close before submission: the commit of the README-recorded results (ring, collapsible, FSI1/FSI2, Mok, blob) and hence whether they predate the \texttt{predictor} default change (solids4foam PR \#492); compiler and flags for every macOS run, for womersleyTube and for the v2512 MeluXina runs; PETSc versions (recorded only for 3dTube, beamInCrossFlow and collapsibleChannel); OpenFOAM release of the FSI3 corrected 1x$'$--4x$'$ runs (v2512 assumed from the branch); the cavityFlexibleBottom four-level study (commit and platform), whose level-1 and level-3 $u_y$ differ in the fourth digit from \texttt{paper-data/cavity\_plate\_material\_law\_findings.md}. Plan a Zenodo archive of case set-ups, drivers, raw CSV outputs and reference files.}
