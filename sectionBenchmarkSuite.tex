@@ -274,12 +274,13 @@ The QoI is the wall-midpoint vertical displacement history, with the first troug
 
 \begin{figure}[htbp]
 	\centering
-	% Source: solids4foam development, tutorials/fluidSolidInteraction/collapsibleChannel/verification/reference/mesh_study_wallMid.png (PR #507).
-	\includegraphics[width=0.85\textwidth]{figures/verification/collapsibleChannel_mesh_study_wallMid}
-	\caption{collapsibleChannel: wall-midpoint vertical displacement for fluid-mesh levels F1--F4 (solid mesh $160\times8$, $\Delta t = 0.00625\,\mathrm{s}$, high-order solid, Robin--Neumann coupling) against the oomph-lib reference. Interim figure reproduced from the solids4foam verification output.}
+	% Source: paper-data/figure_scripts/collapsible_mesh_figure.py on
+	% paper-data/collapsible_mesh_study/ (rerun on a421f063d/v2512, MeluXina,
+	% which reproduces the v2412 errors 4.65/1.43/0.53/0.50% to the digits given).
+	\includegraphics[width=\textwidth]{figures/verification/collapsibleChannel_mesh_study}
+	\caption{collapsibleChannel fluid-mesh study (solid mesh $160\times8$, high-order solid, $\Delta t = 0.00625\,\mathrm{s}$, Robin--Neumann coupling): (a) wall-midpoint vertical displacement on fluid levels F1--F4 and the oomph-lib solution at the same time step; (b, c) the first trough and the second peak (shaded in (a)); (d) maximum error against oomph-lib, as a percentage of the reference peak, with the reference uncertainty ($\approx0.3\%$). The levels have 3\,200, 12\,800, 28\,800 and 51\,200 fluid cells (refinement ratios 2, 1.5 and 1.33).}
 	\label{fig:collapsible_mesh}
 \end{figure}
-\todo{Replace Figure~\ref{fig:collapsible_mesh} with a publication-quality version (legend labels, inset at first trough and second peak, error-versus-$h$ panel). The current PNG legend shows raw run identifiers.}
 
 \begin{itemize}
 	\item \emph{Solid.} In a static wall test the cubic high-order solid is within $0.25\%$ of oomph-lib on all solid meshes and converges to the $0.05\%$ model-form difference; the linear-reconstruction solid has errors from $-16.7\%$ to $-0.22\%$. In the coupled problem on the tutorial mesh the solid contributes $0.44\%$ (cubic) against $17.4\%$ (linear).
