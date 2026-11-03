@@ -1,9 +1,14 @@
 # cavityFlexibleBottom: plate material law and the reference differences — findings
 
-Data and script: `paper-data/cavity_plate_material_law/`
-(`plate_laws.py`, `results.csv`). Status: plate-only check complete
-(2026-10-20); the law behind the Tuković et al. (2018) values and the Ansys
-material model are not yet confirmed (PR #12).
+Data and scripts: `paper-data/cavity_plate_material_law/`
+(`plate_laws.py`, `results.csv`; `reference_convergence.py`,
+`reference_levels.csv`, `reference_richardson.csv`). Status: plate-only check
+complete (2026-10-20); COMSOL results and the Tuković force correction added
+(2026-10-26, see "Four references"); COMSOL to 5 decimal places and the
+Ansys and COMSOL material models confirmed by E. Tandis on PR #12
+(2 November 2026): both used linear elastic material with geometric
+nonlinearity, Ansys as a 3-D slab with symmetry planes front and back,
+COMSOL in 2-D.
 
 ## The difference to explain
 
@@ -51,6 +56,7 @@ Run (numpy 2.5.4, scipy 1.18.1; about 25 s per law on 20 × 2 and 2 min per law 
 python plate_laws.py 20 2
 python plate_laws.py 40 4 1.315 stvk,neohookean,hencky
 python plate_laws.py 20 2 1.315 neohookean,nh_s4f,nh_ansys
+python plate_laws.py 20 2 1.3245 stvk   # load sensitivity, +0.72% (COMSOL force)
 ```
 
 | Law | u_y at A, 20 × 2 (m) | u_y at A, 40 × 4 (m) | Ratio to StVK (40 × 4) |
@@ -75,10 +81,39 @@ python plate_laws.py 20 2 1.315 neohookean,nh_s4f,nh_ansys
 | Tuković et al. (2018), finest | −0.2506 | 1.041 | neo-Hookean: 1.047–1.052 |
 | Ansys, extrapolated | ≈ −0.2535 | 1.053 | Hencky: 1.057 |
 
+## Four references: Richardson extrapolation (2026-10-26)
+
+`python reference_convergence.py` writes `reference_levels.csv` and
+`reference_richardson.csv`. All forces are per unit depth.
+
+- **Tuković et al. (2018) forces:** the published F_y values are per 0.05 m depth, not per unit depth (confirmed by Ž. Tuković, October 2026), so they are divided by 0.05. The Fig. 12(a) values are read from the vector paths of the published PDF (page 16), not hand digitised; they reproduce the paper's stated orders (1.85 for u_y, 1.91 for F_y).
+- **COMSOL:** PR #12, `ComsolResults/cavityFlexibleBottom_comsol_steadyStateResults.csv` at `4f8a582` (steady solver), to 5 decimal places (updated 2 November 2026; the earlier `551e91e` gave 3 significant figures). Solid model: linear elastic material with geometric nonlinearity, i.e. St Venant–Kirchhoff, in 2-D (E. Tandis, PR #12). Element types and the coupling are not yet stated.
+
+| Δx (m) | solids4foam u_y | Tuković u_y | Ansys u_y | COMSOL u_y | solids4foam F_y | Tuković F_y | Ansys F_y | COMSOL F_y |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 0.1 | −0.2036 | −0.23324 | −0.24727 | −0.23632 | −5.123 | −5.1603 | −5.144 | −5.1088 |
+| 0.05 | −0.2314 | −0.24571 | −0.25054 | −0.24076 | −5.228 | −5.2290 | −5.218 | −5.2276 |
+| 0.025 | −0.2385 | −0.24955 | −0.25197 | −0.24315 | −5.251 | −5.2494 | −5.250 | −5.2956 |
+| 0.0125 | −0.2401 | −0.25062 | −0.25274 | −0.24306 | −5.256 | −5.2548 | −5.263 | −5.2952 |
+
+Richardson extrapolation from the three finest levels (r = 2):
+
+| Source | u_y extrapolated (m) | Order | F_y extrapolated (N/m) | Order |
+|---|---:|---:|---:|---:|
+| solids4foam | −0.24057 | 2.15 | −5.2574 | 2.20 |
+| Tuković et al. (2018) | −0.25103 | 1.84 | −5.2567 | 1.92 |
+| Ansys | −0.25364 | 0.89 | −5.2719 | 1.30 |
+| COMSOL | −0.2431 (plateau, two finest within 0.04%) | – | −5.2954 (plateau) | – |
+
+- **COMSOL extrapolation is not possible on the finest three levels**, now with 5 decimal places as well. Both u_y and F_y converge and then reverse slightly on the finest level: u_y changes by −4.44e-3 and −2.39e-3 m, then by +9e-5 m (0.04%); F_y by −0.119 and −0.068, then by +0.0004 N/m (0.008%). The three coarse levels give orders of 0.89 (u_y) and 0.80 (F_y), so the coarse-level extrapolations (−0.2459 m, −5.387 N/m) are not credible. The two finest levels agree to 0.04%, so the plateau −0.2431 m (F_y −5.2954 N/m) is used, with an uncertainty of about 1e-4 m from their spread. A floor of this kind is typical of a steady solver tolerance or of a non-nested mesh sequence; COMSOL's element types and tolerances are still to be confirmed.
+- **Tuković force = solids4foam force.** With the depth correction, the extrapolated forces agree to 0.01%. Tuković and solids4foam apply the same fluid load, so the 4.3% displacement difference (−0.2510 vs −0.2406 m) is entirely a plate response, consistent with a neo-Hookean plate (plate-only ratio 1.047–1.052).
+- **Ansys force** is 0.3% above solids4foam and Tuković; **COMSOL force** is 0.7% above. The cause of the COMSOL offset (integration surface, viscous traction, depth convention) is asked on PR #12.
+- **COMSOL displacement after allowing for its load.** In the plate-only StVK model, raising the load by the same 0.72% (q = 1.315 → 1.3245 Pa, 20 × 2) raises u_y by 0.50% (−0.23887 → −0.24007 m), less than proportional because the plate stiffens. A StVK solution under COMSOL's load would therefore give about −0.2406 × 1.005 ≈ −0.2418 m. COMSOL's −0.2431 m is 1.05% above solids4foam's extrapolated −0.24057 m and 0.55% above the load-corrected −0.2418 m, against 4–5% for a neo-Hookean or Hencky plate. With the solid model now confirmed as StVK, COMSOL converges to the StVK solution of solids4foam to within about 0.5% after allowing for its load, and within 1.05% without that allowance.
+
 ## Status and open points
 
-1. **Which law did Tuković et al. use?** Their published displacement matches a neo-Hookean plate, although the case is stated as StVK. Philip is checking this with Ž. Tuković.
-2. **Which material model did Ansys use?** Asked on PR #12.
-3. **COMSOL with StVK.** COMSOL's "Linear Elastic Material" with geometric nonlinearity is StVK. Requested on PR #12; the expected value is about −0.241 m.
+1. **Which law did Tuković et al. use?** Their published displacement matches a neo-Hookean plate, although the case is stated as StVK. Philip is checking this with Ž. Tuković. Their forces (per 0.05 m depth, now corrected) match solids4foam to 0.01%.
+2. **Ansys material model: answered.** Linear elastic material with geometric nonlinearity (large deflection), 3-D slab with symmetry planes. As noted above, Ansys Mechanical's large-deflection linear elastic setting is, as far as we know, a logarithmic-strain (Hencky-type) law, not StVK. Its displacement ratio to solids4foam, 1.053, matches the plate-only Hencky ratio, 1.057. The element type and formulation (e.g. SOLID186 or SOLID185 with enhanced strain) are still to be confirmed; if Ansys has a StVK option (for example a user material), a StVK Ansys run would close the comparison.
+3. **COMSOL with StVK: confirmed.** The solid model is linear elastic with geometric nonlinearity (StVK), in 2-D. COMSOL's −0.2431 m is within 1.05% of solids4foam (0.55% at its 0.7% higher load). Still needed from PR #12: how F_y is integrated (the cause of the 0.7% force offset), element types and orders, and the coupling and its tolerance.
 4. **Proposed redefinition if StVK is impractical in Ansys.** Use a compressible neo-Hookean plate with μ = 178.57 Pa and K = 833.33 Pa (Ansys Neo-Hookean with d = 0.0024 Pa⁻¹; solids4foam `neoHookeanElastic`). Ansys, COMSOL, solids4foam and, if confirmed, Tuković et al. (2018) would then solve the same problem. The case was proposed recently, by Tuković et al. (2018), so there is no long legacy to preserve. The solids4foam four-level study would then need rerunning with `neoHookeanElastic`.
 5. **For the paper:** the case illustrates how an independent reference can agree in force and still solve a different constitutive problem. Matching the integrated load does not verify the structural response.
