@@ -1,0 +1,23 @@
+{
+ "run": "OVERNIGHT2/runs/Ds",
+ "tag": "Ds",
+ "n_faces": 48,
+ "qpot": -1.6319252533228055,
+ "omega": 0.7686546,
+ "stokes_layer": 0.0005100930220826292,
+ "pressure_traction_n2_amp_Pa": 1.364513562156644,
+ "viscous_tangential_traction_n2_amp_Pa": 0.001059955474729243,
+ "viscous_normal_traction_n2_amp_Pa": 4.985116745217241e-07,
+ "viscous_over_pressure": 0.0007768009817754832,
+ "interface_radial_velocity_amp": 0.0014707294296755343,
+ "mismatch_tangential_velocity_amp": 0.00302603642503929,
+ "thin_layer_shear_estimate_Pa": 0.0011745399748999644,
+ "measured_over_estimate": 0.902443081870857,
+ "work": {
+  "W_pressure_end": 3.827726867069774e-05,
+  "W_viscous_end": -7.106596337035648e-07,
+  "W_total_end": 3.7566609036994176e-05,
+  "W_abs_max": 0.0001104653009313321,
+  "W_viscous_over_pressure_peak": 0.006434487449499847
+ }
+}

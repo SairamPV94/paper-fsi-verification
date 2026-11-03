@@ -1,0 +1,10 @@
+variant,nx,peak,trough,mean
+legacy,16,0.29342,0.19421,0.24257
+legacy,32,0.28893,0.19864,0.24268
+legacy,64,0.28701,0.20223,0.24376
+legacy,96,0.28612,0.20443,0.24451
+strict,32,0.28895,0.19859,0.24266
+strict,64,0.28701,0.20219,0.24374
+groupB_envelope,peak,0.2619,0.2769,
+groupB_envelope,trough,0.1967,0.2033,
+groupB_envelope,mean,0.2316,0.2466,

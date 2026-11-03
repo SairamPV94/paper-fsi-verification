@@ -91,6 +91,22 @@ textheight=24cm, % llncs has 19.3cm
 	\noindent\textcolor{red}{\rule{\linewidth}{0.8pt}}\par}
 \newcommand{\citetodo}[1]{\textcolor{red}{[\textbf{cite:}~#1]}}
 
+%% Supplement toggle. false (default): the FEBio ring comparison is Appendix B of this file.
+%% true: it is only in the standalone supplement_febio_ring.tex (Sec. S1, Figs. S1-S2) and
+%% Appendix B is omitted here. See supplement_febio_ring.tex for the build command.
+\newif\ifsupplementseparate
+\supplementseparatefalse
+%\supplementseparatetrue
+\ifsupplementseparate
+  \newcommand{\suppRef}{the Supplementary Material, Sec.~S1}
+  \newcommand{\suppFigDecay}{Figure~S1 of the Supplementary Material}
+  \newcommand{\suppFigBoth}{Figures~S1 and~S2}
+\else
+  \newcommand{\suppRef}{Appendix~\ref{app:ring_febio}}
+  \newcommand{\suppFigDecay}{Figure~\ref{fig:ring_febio_decay} of Appendix~\ref{app:ring_febio}}
+  \newcommand{\suppFigBoth}{Figures~\ref{fig:ring_febio_decay} and~\ref{fig:ring_febio_traction}}
+\fi
+
 \begin{document}
 
 \title[Verification benchmarks for fluid--solid interaction]{Benchmark problems are not benchmark solutions: an open verification suite for continuum fluid--solid interaction with quantified numerical uncertainty}
@@ -100,13 +116,17 @@ textheight=24cm, % llncs has 19.3cm
 %\author[1,2,3]{\fnm{Dylan} \sur{Armfield}}
 %%\author[5]{\fnm{Hiroaki} \sur{Nishikawa}}
 %\author[4]{\fnm{\v{Z}eljko} \sur{Tukovi\'{c}}}
+\author[3]{\fnm{Emad} \sur{Tandis}}
+% ORCID 0000-0002-2409-7332 (https://orcid.org/0000-0002-2409-7332): not typeset because sn-jnl.cls \orcid needs Orcidlogo.eps, which is not in the repository.
+\author[1]{\fnm{Sairam} \sur{Pamulaparthi Venkata}}
+% Ivan Batisti\'{c} stays the final (senior) author: add any further authors above this line.
 \author[1,2]{\fnm{Ivan} \sur{Batisti\'{c}}}
-\author[1]{Add others}
 
 \affil[1]{\orgdiv{School of Mechanical and Materials Engineering}, \orgname{University College Dublin}, \orgaddress{\country{Ireland}}}
 %\affil[2]{\orgdiv{UCD Centre for Mechanics}, \orgname{University College Dublin}, \orgaddress{\country{Ireland}}}
 %\affil[3]{\orgdiv{I-Form Centre}, \orgname{University College Dublin}, \orgaddress{\country{Ireland}}}
 \affil[2]{\orgdiv{Faculty of Mechanical Engineering and Naval Architecture}, \orgname{University of Zagreb}, \orgaddress{\country{Croatia}}}
+\affil[3]{\orgname{Aston University}, \orgaddress{\city{Birmingham}, \country{United Kingdom}}}% TODO: add the school/department
 %\affil[5]{\orgname{National Institute of Aerospace}, \orgaddress{\country{Hampton, VA 23666, USA}}}
 
 
@@ -118,7 +138,7 @@ For each benchmark the spatial, temporal and iterative errors are studied separa
 All calculations use the partitioned finite volume FSI framework of the open-source toolbox solids4foam: a PIMPLE-type arbitrary Lagrangian--Eulerian fluid, small-strain and total Lagrangian solids of standard and high-order accuracy, and Dirichlet--Neumann (Aitken, IQN-ILS) or Robin--Neumann coupling.
 For two analytical problems (an added-mass ring and a thick-walled Womersley tube) and an independently computed collapsible channel, most quantities converge at observed orders close to the nominal two, and the finest solutions agree with the references to within the reference uncertainty or a small identified error.
 The widely used benchmarks are less conclusive.
-For the Hron--Turek FSI3 problem, a two-level agreement with the Featflow reference disappears on a third level: with the tutorial set-up the displacements converge at an observed order of about one. This was traced to a path-dependent mesh motion and a first-order wall-pressure condition. With these corrected, the displacements converge to within their time-step and coupling sensitivities, and differ from the reference by 3\% ($u_y$) and 7\% ($u_x$); the reference itself changes by up to 4\% between its two finest levels.
+For the Hron--Turek FSI3 problem, a two-level agreement with the Featflow reference disappears on a third level: with the tutorial set-up the displacements converge at an observed order of about one. This was traced to a path-dependent mesh motion and a first-order wall-pressure condition. With these corrected, the large changes between levels disappear, but a fourth level ($7.5\times10^5$ fluid cells) shows that the displacements are still not in the asymptotic range: they change by 1--2\% from the third level, towards the reference, and differ from it by 2\% ($u_y$) and 4.5\% ($u_x$), while the reference itself changes by up to 4\% between its two finest levels.
 For a three-dimensional pressure-pulse tube, verification exposed two solver defects, a compiler-dependent aliasing error and a mesh-dependent degeneracy of the interface interpolation, and showed that much of a 20--25\% discrepancy between published solutions is reproduced by the difference in time integration.
 A third finding concerns the iterative error: a widely used form of the coupling convergence test can accept unconverged steps in slowly varying phases, producing a drift that a steadiness check on the quantity of interest does not detect.
 The suite, its drivers and its machine-readable references are released so that verification claims can be re-executed rather than accepted on trust.
@@ -128,7 +148,7 @@ The suite, its drivers and its machine-readable references are released so that 
 
 \maketitle
 
-\todo{Title, abstract, Introduction and Section~\ref{sec:numerical_methods} rewritten (October 2026) around the partitioned solution procedures that produced every result. Section~\ref{sec:math_model} is that of the parent paper, amended (October 2026) for the displacement-based partitioned solids and the small-strain formulation; its notation should remain consistent with the companion solver paper. Abstract numbers must be re-checked against Sections~\ref{sec:benchmark_suite}--\ref{sec:cross_benchmark} before submission.}
+\todo{Title, abstract, Introduction and Section~\ref{sec:numerical_methods} rewritten (October 2026) around the partitioned solution procedures that produced every result. Section~\ref{sec:math_model} is that of the parent paper, amended (October 2026) for the displacement-based partitioned solids and the small-strain formulation; its notation should remain consistent with the companion solver paper. Abstract numbers checked against Sections~\ref{sec:benchmark_suite}--\ref{sec:cross_benchmark} on 2 November 2026; recheck after any later change of results.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -163,19 +183,25 @@ The suite, its drivers and its machine-readable references are released so that 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions} \label{sec:conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-WIP
-The key conclusions of the work are:
+% Draft of 2026-11-02; numbers repeated from Sections benchmark_suite and
+% cross_benchmark.
+An open, executable verification suite for continuum FSI has been assembled, with each reference classified by its quality and the spatial, temporal and iterative errors studied separately for a partitioned finite volume code.
+The main conclusions are:
 \begin{itemize}
-	\item \textbf{WIP}: WIP
+	\item \textbf{Where the reference is exact or independent, the code converges as designed.} In ringAddedMass and womersleyTube most quantities converge at observed orders close to two; the ringAddedMass frequency error at a practical resolution ($-0.13\%$) is the BDF2 phase error, and the finest womersleyTube solutions lie within $0.12\%$ of the exact solution ($0.2\%$ for the attenuation); in collapsibleChannel the error against the oomph-lib reference falls to $0.5\%$ of the peak, where it reaches the reference uncertainty and the quantified model-form difference.
+	\item \textbf{The quality of the reference, not the popularity of the problem, sets what can be verified.} Among the literature problems, only two references are both independent and converged at the resolution used; the two published sets of FSI3 values differ by $18\%$ in one QoI.
+	\item \textbf{Two levels are not enough.} Third and fourth levels reversed conclusions drawn from two: with the tutorial set-up the FSI3 displacements converge at an observed order of about one, and with a corrected set-up they still change by 1--2\% at $7.5\times10^5$ fluid cells, so a difference from the reference of that size cannot yet be attributed to either code.
+	\item \textbf{Verification exposed defects that agreement with a reference did not.} An $O(\Delta t)$ end-flux inconsistency, a compiler-dependent aliasing error, a mesh-dependent interpolation degeneracy and a coupling test that accepts unconverged steps were all found by convergence, cross-platform or residual checks, none by comparison with a published value.
+	\item \textbf{The iterative error must be measured, not assumed.} A coupling test that takes the smaller of two residual measures accepted unconverged steps in every benchmark audited, and in a quasi-steady case produced a drift larger than the spatial differences under study, which a steadiness check on the QoI did not detect; requiring every residual measure to meet the tolerance removes it.
 \end{itemize}
 
-
-
-WIP, yet several areas for future exploration remain:
+Several directions remain:
 \begin{enumerate}
-	\item{WIP}: WIP
-	
-	\item{Higher order discretisation}: WIP
+	\item \textbf{Independent references where none exists}, above all for 3dTube, Hessenthaler and mokLidDrivenCavity, computed with their own mesh and time studies.
+	\item \textbf{Further levels where the evidence stops at two or three}: Hron--Turek FSI1 and FSI2, and a fourth fluid level for Hessenthaler.
+	\item \textbf{Completion of the provisional cases}: beamInCrossFlow (a fourth level), cavityFlexibleBottom and blobInTreacle.
+	\item \textbf{Wider coverage}: compressible and non-Newtonian fluids, contact and free surfaces; the companion paper~\citep{CardiffBatistic2026QM} applies the same suite to a quasi-monolithic coupling.
+	\item \textbf{Higher-order discretisation}, for which the exact references of the suite can measure orders above two.
 \end{enumerate}
 
 
@@ -196,8 +222,33 @@ The solids4foam toolbox is publicly available at \url{https://github.com/solids4
 This project has received funding from the European Research Council (ERC) under the European Union’s Horizon 2020 research and innovation programme (Grant Agreement No. 101088740).
 %Financial support is gratefully acknowledged from the Irish Research Council through the Laureate programme, grant number IRCLA/2017/45, from Bekaert through the University Technology Centre (UTC phases I and II) at UCD (www.ucd.ie/bekaert),
 Financial support is gratefully acknowledged from I-Form, funded by Science Foundation Ireland (SFI) Grant Numbers {16/RC/3872} and {21/RC/10295\_P2}, co-funded under European Regional Development Fund and by I-Form industry partners, and from NexSys, funded by SFI Grant Number 21/SPP/3756.
-Additionally, the authors wish to acknowledge the DJEI/DES/SFI/HEA Irish Centre for High-End Computing (ICHEC) for the provision of computational facilities and support (www.ichec.ie), and part of this work has been carried out using the UCD ResearchIT Sonic cluster which was funded by UCD IT Services and the UCD Research Office.
+The authors wish to acknowledge the Irish Centre for High-End Computing (ICHEC) for the provision of computational facilities and support, including access to the MeluXina supercomputer of LuxProvide (projects p201136 and p201287). Part of this work has been carried out using the UCD ResearchIT Sonic cluster, which was funded by UCD IT Services and the UCD Research Office.
 %\hl{Ivan/Zeljko: add any additional acknowledgements here}
+% MeluXina access is through an ICHEC project (Philip, 2 Nov 2026); wording
+% from the ICHEC website, as in the companion paper.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bmhead{CRediT authorship contribution statement}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo{All authors: check and complete the CRediT entries (roles of each author, and any further co-authors) during the full-draft review.}
+\hl{TBD: to be completed and confirmed by each author}
+\textbf{Philip Cardiff:} Conceptualization, Methodology, Software, Investigation, Formal analysis, Writing -- original draft, Writing -- review \& editing, Supervision, Funding acquisition.
+\textbf{Emad Tandis:} Investigation, Validation (independent ANSYS and COMSOL solutions of the flexible-bottom cavity), Writing -- review \& editing \hl{TBD: confirm}.
+\textbf{Sairam Pamulaparthi Venkata:} Investigation, Validation (independent FEBio solutions of the ring added-mass problem), Formal analysis, Writing -- review \& editing \hl{TBD: confirm}.
+\textbf{Ivan Batisti\'{c}:} Software (high-order solid discretisation), Writing -- review \& editing \hl{TBD: confirm}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bmhead{Declaration of competing interest}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bmhead{Declaration of generative AI and AI-assisted technologies in the writing process}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo{All authors: agree the wording of this declaration against the journal's policy during the full-draft review.}
+\hl{TBD: wording to be confirmed by the authors}
+During the preparation of this work the authors used AI coding and writing assistants (Anthropic Claude and OpenAI Codex) to help set up and run the verification campaigns, post-process the results, implement and test parts of the software, and draft and edit the text.
+After using these tools, the authors reviewed and edited the content as needed and take full responsibility for the content of the publication.
 
 
 
@@ -206,11 +257,85 @@ Additionally, the authors wish to acknowledge the DJEI/DES/SFI/HEA Irish Centre 
 \begin{appendices}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{WIP}
-\label{app:WIP}
+\section{Supplementary material: beamInCrossFlow and its published inflow}
+\label{app:beam}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\todo{Philip: contact the author of \citet{Richter2012} to confirm that the reference values were computed with a $0.2\,\mathrm{m/s}$ inlet peak and that the printed $0.3\,\mathrm{m/s}$ profile is an error; record the request and the reply in \texttt{paper-data/beam\_richter\_findings.md}, and revise this appendix if the answer differs. Also before submission: the runs used a build without the fixes of solids4foam PR \#546 (\texttt{-O2}, so the aliasing defect does not apply); an A/B check of the interface point transfer on level 1 is needed.}
+
+\citet{Richter2012} (Section~6.2; Section~7.2 of the preprint) defines a steady three-dimensional benchmark: a duct $(0,1.5)\times(0,0.4)\times(-0.4,0.4)\,\mathrm{m}$ with a St Venant--Kirchhoff plate $(0.4,0.5)\times(0,0.2)\times(-0.2,0.2)\,\mathrm{m}$ clamped to its floor ($E_S = 1.4\,\mathrm{MPa}$, $\nu_S = 0.4$), fluid density $1000\,\mathrm{kg/m^3}$ and kinematic viscosity $10^{-3}\,\mathrm{m^2/s}$, and a bi-parabolic inlet profile. The quantities of interest are the streamwise displacement $u_x$ at point A $= (0.45, 0.15, -0.15)\,\mathrm{m}$ and the drag $F_x$ on the plate. The published reference values, $u_x(A) = 5.95\times10^{-5}\,\mathrm{m}$ and $F_x = 1.33\,\mathrm{N}$ with a stated accuracy of $1\%$ ($5.924\times10^{-5}\pm10^{-7}\,\mathrm{m}$ and $1.327\pm0.01\,\mathrm{N}$ in the preprint), are extrapolated from the finest three of five uniformly refined levels, whose displacements converge cleanly ($4.93$, $5.57$, $5.85$, $5.908$ and $5.920\times10^{-5}\,\mathrm{m}$); they are often attributed to \citet{Richter2015}.
+
+\paragraph{An error in the published inflow.}
+The printed inlet profile has a peak of $0.3\,\mathrm{m/s}$, so its area mean is $0.133\,\mathrm{m/s}$; the published text states a mean of $0.15\,\mathrm{m/s}$ ($Re \approx 25$), and the preprint a velocity of $0.2\,\mathrm{m/s}$ with $Re = 40$. The three statements cannot all hold. The preprint's $Re = 40$ with the plate height ($0.2\,\mathrm{m}$) and $\nu_F = 10^{-3}\,\mathrm{m^2/s}$ corresponds to a velocity scale of $0.2\,\mathrm{m/s}$, and the computations below reproduce the reference values to their stated accuracy only with a $0.2\,\mathrm{m/s}$ peak, while the printed profile gives $1.8$ times those values. We therefore take the $0.3\,\mathrm{m/s}$ peak of the printed profile to be an error in the published definition, and the case of \citet{Richter2012} to be the same profile with a peak of $0.2\,\mathrm{m/s}$. Anyone using these reference values should do the same.
+
+\paragraph{Earlier calculations.}
+The earlier solids4foam tutorial placed the plate $0.05\,\mathrm{m}$ further downstream, sampled point A on the upstream face instead of mid-thickness, used a different peak inflow and a transient start-up, and so solved a different problem. A same-lineage calculation~\citep{Tukovic2018} on one polyhedral mesh with a $0.2\,\mathrm{m/s}$ peak gives $u_x(A) = 5.93\times10^{-5}\,\mathrm{m}$ and $F_x = 1.31\,\mathrm{N}$, but its transverse displacement at A, about twelve times ours, is consistent with the shifted plate.
+
+\paragraph{Sequences.}
+Both inflows were computed on the Richter geometry, on the half domain $z \le 0$ with a symmetry plane, by partitioned transient-to-steady continuation (IQN-ILS with the strict coupling test at $10^{-5}$, three PIMPLE outer correctors, a Newton solid) on four uniformly refined levels (fluid $8\,112$, $64\,896$, $519\,168$ and $4\,153\,344$ cells; solid $512$ to $262\,144$ cells, 8 to 64 cells through the thickness) at a fixed $\Delta t = 0.00625\,\mathrm{s}$; $F_x$ is integrated over the wetted plate surface of the computed half (Table~\ref{tab:beam_seq}).
+The non-spatial errors are small against the level-2-to-3 changes: coupling tolerances from $10^{-4}$ to $10^{-8}$ change $u_x(A)$ and $F_x$ by at most $2\times10^{-6}$ (relative), starting from rest or from the converged rigid-plate flow by at most $1.6\times10^{-6}$, and halving $\Delta t$, which acts on the steady state through the Rhie--Chow interpolation, by $8\times10^{-5}$ in $u_x(A)$ on level 3 (printed inflow), a twentieth of the level-2-to-3 change.
+
+\begin{table}[htbp]
+	\centering
+	\footnotesize
+	\caption{beamInCrossFlow on the geometry of \citet{Richter2012}: steady $u_x(A)$ and $F_x$ for the corrected inflow (peak $0.2\,\mathrm{m/s}$) and for the printed inflow (peak $0.3\,\mathrm{m/s}$), with observed orders from levels 0--2 and 1--3, against the reference values. Level 3 for the printed inflow is the mean over $t = 4.0$--$4.5\,\mathrm{s}$, after a damped $7.9\,\mathrm{Hz}$ bending oscillation has decayed. Source: \texttt{paper-data/beam\_richter/} (\texttt{r02\_sequence.csv}, \texttt{production\_sequence.csv}).}
+	\label{tab:beam_seq}
+	\begin{tabular}{lrrrr}
+		\toprule
+		& \multicolumn{2}{c}{peak $0.2\,\mathrm{m/s}$ (corrected)} & \multicolumn{2}{c}{peak $0.3\,\mathrm{m/s}$ (as printed)} \\
+		Level & $u_x(A)$ ($10^{-5}\,\mathrm{m}$) & $F_x$ (N) & $u_x(A)$ ($10^{-5}\,\mathrm{m}$) & $F_x$ (N) \\
+		\midrule
+		0 & 4.617 & 1.1988 & 8.139 & 2.1574 \\
+		1 & 5.479 & 1.2844 & 9.626 & 2.3057 \\
+		2 & 5.831 & 1.3166 & 10.245 & 2.3636 \\
+		3 & 5.944 & 1.3272 & 10.448 & 2.3831 \\
+		\midrule
+		Order, levels 0--2 / 1--3 & 1.29 / 1.64 & 1.41 / 1.60 & 1.26 / 1.61 & 1.36 / 1.58 \\
+		\citet{Richter2012} & 5.95 & 1.33 & 5.95 & 1.33 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+With the corrected inflow, $u_x(A)$ and $F_x$ converge monotonically with observed orders rising from 1.3--1.4 (levels 0--2) to 1.6 (levels 1--3), as they do with the printed inflow; the asymptotic range is suggested but not demonstrated, so no error bound is given.
+The comparison was made after the sequence was characterised: level 3 lies within $0.1\%$ ($u_x$) and $0.2\%$ ($F_x$) of the reference values, and conditional Richardson extrapolations from levels 1--3 lie $0.5$--$0.8\%$ above them, within their stated $1\%$; $F_y$ is within $0.3\%$ of the same-lineage value of \citet{Tukovic2018}.
+The case is kept provisional until a level with consistent observed orders confirms the asymptotic range; a fourth level (about $3.3\times10^{7}$ fluid cells) is estimated at $340$--$930$ node-hours.
+The computations cost $158$ node-hours on MeluXina (128 cores per node) for both inflows, of which $53$ for the corrected inflow.
 
 
+
+
+
+\ifsupplementseparate\else
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Supplementary material: FEBio comparison for the ring added-mass problem}
+\label{app:ring_febio}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This appendix gives the supporting detail for the independent FEBio comparison of Section~\ref{sec:ring} (Table~\ref{tab:ring_febio}, Figure~\ref{fig:ring_febio_ratio}).
+
+\emph{Graded-mesh ladder.}
+Controlled refinement of the first fluid cell at both walls (all else fixed: $4\delta$, $\delta$, $\delta/4$, $\delta/16$ for the moderate level, with a potential-flow start) moved the ratio error against the finite-viscosity eigenvalue from $-0.13\%$ to $+0.02$, $+0.001$ and $+0.013\%$ and the fitted decay from an amplitude growth ($-0.47$ times the exact rate at $4\delta$) to $0.56$, $1.02$ and $1.03$ times the exact rate, and reduced the net energy creation over four periods from $1.4\%$ of the initial energy at $4\delta$ to $0.31\%$, $0.26\%$ and $-0.23\%$; neither the time step, the tangential resolution nor the initial fluid velocity changed this behaviour.
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{figures/verification/ringAddedMass_febio_R3}
+	\caption{ringAddedMass, FEBio displacement histories $D=(u_r(0^\circ)-u_r(90^\circ))/2$ at the f1 resolution with the fluid at rest, normalised by the first peak, for the weak, moderate and strong levels, with the exact viscous envelope $\exp(-\alpha_V t)$. The fitted decay rates are $0.998$, $0.984$ and $0.983$ times $\alpha_V$.}
+	\label{fig:ring_febio_decay}
+\end{figure}
+
+\emph{Interface mechanics.}
+The pressure and viscous traction that FEBio's fluid--FSI surface load applies to the ring were reconstructed from logged nodal dilatation and element stress (Figure~\ref{fig:ring_febio_traction}).
+The work of the reconstructed traction equals the ring's kinetic plus strain energy change to $0.02$--$0.09\%$ of the energy swing ($1.9\%$ for the strong level started at rest), which checks the orientation, the area measure and the sign independently of the force magnitude, and the $n=2$ viscous shear amplitude is $0.84$--$0.90$ of the thin-Stokes-layer estimate computed from the logged velocities, with a shear-to-pressure traction ratio of $4\times10^{-4}$ to $8\times10^{-4}$.
+For the strong level started from the potential-flow field, the energy lost by the fluid including the integrated viscous dissipation balances the work on the ring to $0.5\%$ of the ring's energy swing, and the discrete energy balance is closed to $0.3\%$ of the initial energy.
+These are reconstructions and one-element-gradient dissipation estimates, not measured interface forces; the weak level started from the potential-flow field did not converge in its first step and is not reported.
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{figures/verification/ringAddedMass_febio_R4}
+	\caption{ringAddedMass, FEBio interface traction on the ring, reconstructed from logged fields. Left: $n=2$ amplitudes of the pressure traction, the viscous shear traction and the thin-Stokes-layer shear estimate (fluid at rest, and the strong level from the potential-flow field). Right: strong level, potential-flow start, the ring's energy change and the work of the reconstructed traction (the viscous part, multiplied by 50, is dissipative). Source: \texttt{paper-data/febio\_ring\_added\_mass/no\_slip\_resolved/}.}
+	\label{fig:ring_febio_traction}
+\end{figure}
+
+
+
+\fi
 
 \end{appendices}
 

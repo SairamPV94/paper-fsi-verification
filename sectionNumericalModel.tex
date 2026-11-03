@@ -52,7 +52,7 @@ Which variant is used is stated per case, because for thin bending-dominated wal
 
 Displacements are transferred from the solid to the fluid interface at the interface points, and tractions from the fluid to the solid interface at the faces.
 Where the two interface meshes coincide (ringAddedMass, womersleyTube, collapsibleChannel, mokLidDrivenCavity), a direct one-to-one map is used.
-Where they do not (Hron--Turek, 3dTube, Hessenthaler), face tractions are transferred conservatively with arbitrary-mesh-interface (AMI) weights, and point displacements by barycentric interpolation on a triangulation of the donor interface faces.
+Where they do not (Hron--Turek, 3dTube, Hessenthaler), face tractions are interpolated with arbitrary-mesh-interface (AMI) weights, and point displacements by barycentric interpolation on a triangulation of the donor interface faces.
 The interface transfer is part of the discretisation: it is an operator that must converge with refinement like any other, and in 3dTube a defect in it changed with mesh level (Section~\ref{sec:3dtube}).
 
 %%--------------------------------------------------------------------------------------------------------------------%%
@@ -109,6 +109,6 @@ The partitioned procedure for one time step is summarised in Algorithm~\ref{alg:
 \end{algorithmic}
 \end{algorithm}
 
-The calculations used the OpenCFD releases OpenFOAM-v2412 and OpenFOAM-v2512 with PETSc, on Linux (x86\_64) and, for some of the inexpensive cases, macOS; the release, platform and solids4foam commit are stated with each result.
+The calculations used the OpenCFD releases OpenFOAM-v2412 and OpenFOAM-v2512 with PETSc, on Linux (x86\_64) and, for some of the inexpensive cases, macOS; the release, platform and solids4foam commit of each result are listed in Section~\ref{sec:qoi}.
 The compiler and its optimisation level are recorded as part of the configuration: the default OpenFOAM build rules compile at \texttt{-O3}, whereas the EasyBuild toolchain used on one of the clusters compiles at \texttt{-O2}, and this difference exposed a solver defect (Section~\ref{sec:3dtube}).
-\todo{State per case the exact solids4foam commit, OpenFOAM release, compiler and optimisation flags, PETSc version and platform (see Section~\ref{sec:qoi} and paper-data/manuscript\_update\_2026-10.md). Confirm that the predictor/relaxation description matches the commit used for each result (the \texttt{predictor} default changed in solids4foam PR \#492).}
+Table~\ref{tab:provenance} gives them per case.

@@ -1,0 +1,14 @@
+# Hessenthaler Phase I steady-tip noise audit (strict coupling test from t = 0, dt = 0.002 s).
+# Source: verification/postProcessing/runs/<run>.json "qoi" block of the campaign driver
+# (MeluXina, hv_S tree, solids4foam aee0c8e35, OpenFOAM-v2412); extracted 2026-11-02.
+# batch_se: standard error of the tip mean over batches of the averaging window;
+# window_change: difference of the means of the two halves of the window;
+# drift_last_tenth: tip change over the last tenth of the run; final: tip at the end time.
+run,mean_mm,batch_se_mm,window_change_mm,drift_last_tenth_mm,final_mm
+F1_S1_T40,16.1991,0.0004,0.0045,0.0002,16.2006
+F1_S2_T45_tol1e-3,16.6552,0.0000,0.0003,0.0001,16.6553
+F1_S2_T45_rep1,16.6544,0.0002,0.0021,0.0001,16.6551
+F1_S3_T45,16.7529,0.0001,0.0008,0.0005,16.7532
+F2_S2_T45,16.6912,0.0002,0.0026,0.0004,16.6922
+F3_S2_T40,16.7211,0.0002,0.0025,0.0003,16.7219
+F3_S3_T40_tol1e-3,16.8129,0.0006,0.0066,0.0003,16.8134
