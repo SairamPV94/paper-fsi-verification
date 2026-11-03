@@ -30,7 +30,7 @@ The observations are specific to this suite and to one code family, and are not 
 		ringAddedMass & freq.\ converged on coarsest mesh; ratio 1.68--1.77; standard solid 1.66 & 1.90--2.14 & vs exact; Richardson \\
 		womersleyTube & 2.01--2.05 (amplitudes, profile, speed); 1.92 (flow phase); 1.40 (wall phase); attenuation at linear-theory level & 1.86--2.14 (1.29--1.84 before end-flux fix) & SD; errors vs exact \\
 		collapsibleChannel & 1.7, 2.4, then reference floor & 1.8, 2.0 & vs ref.\ (B); SD (time) \\
-		Hron--Turek FSI1 & 1.5--1.7 & -- & 2-level vs ref.\ (B) \\
+		Hron--Turek FSI1 & $u_x$ 1.0--1.1; $u_y$, lift 1.6--1.9; drag 1.5 & pseudo-time step $\leq0.012\%$ & SD (four levels); vs ref.\ (B) \\
 		Hron--Turek FSI3 & tutorial set-up: displacements 0.9--1.1; corrected set-up: displacements not asymptotic (2x$'$/4x$'$ plateau, then $1$--$2\%$ change to 8x$'$), frequency 1.4 & time and coupling $\leq0.07$ of the 4x$'\to$8x$'$ displacement change & SD \\
 		3dTube & $u_{z,\min}$ 0.87, $t_\mathrm{arr}$ 0.72; $u_{r,\max}$ not defined (changes grow) & 0.1--0.2\% change at the fine-level $\Delta t$ & SD \\
 		mokLidDrivenCavity & peak $\approx1.2$; trough $<0.5$ (scaled) & changes $0.17$, $0.04\%$ & SD \\
@@ -53,10 +53,10 @@ With a flux-consistent end treatment every QoI converges at second order in time
 In ringAddedMass, by contrast, the exact reference allows the remaining $-0.13\%$ frequency error at a practical resolution to be attributed to the BDF2 phase error.
 
 \emph{Two levels do not establish convergence, and super-nominal orders are a warning.}
-Third levels changed the conclusions drawn from two in both cases where they were added.
+Third levels changed the conclusions drawn from two in two of the three cases where they were added.
 In Hron--Turek FSI3 the two-level apparent orders of 2.6--3.8 arose from a sequence crossing the reference value, and the three-level observed order of the displacements with the tutorial set-up is about one; with a corrected set-up the displacements form a plateau at 2x$'$/4x$'$ that a fourth level shows to be non-asymptotic (Section~\ref{sec:fsi23}).
 In 3dTube the small two-level change in $u_{r,\max}$ reported earlier was obtained with an interface interpolation operator that changed between the levels; after correction its changes grow on the third level.
-FSI1 and FSI2 still have two levels, so the most widely used benchmarks in the suite remain the least completely verified.
+In FSI1 the third and fourth levels confirmed convergence towards Featflow, but showed that $u_x$, first order, crosses the reference between 4x and 8x. FSI2 still has two levels, so the large-amplitude Hron--Turek case remains the least completely verified.
 Orders well above the formal value (the FSI3 filtered lift amplitude, 3.1; the rigid-flag force amplitudes, 2.8--3.3; the blobInTreacle temporal orders, 2.4--2.5) are interpreted as pre-asymptotic; no super-convergence is claimed, and they are not used for extrapolation.
 
 \emph{Coupled limit-cycle QoIs can converge sub-nominally when the components behave well.}
@@ -86,7 +86,7 @@ In every case with more than one QoI, the QoIs converge at substantially differe
 		Case & Faster & Slower \\
 		\midrule
 		womersleyTube & flow-rate, wall amplitude, wave speed: order $\approx2$, error $\leq0.04\%$ & wall phase (order 1.40); attenuation (error $-0.2\%$, at the linear-theory level) \\
-		Hron--Turek FSI1 (2x) & drag $0.24\%$ & $u_y$ $4.64\%$ \\
+		Hron--Turek FSI1 (8x) & drag $0.02\%$, lift $0.05\%$ & $u_y$ $0.64\%$; $u_x$ first order, crossing the reference \\
 		Hron--Turek FSI3 (8x$'$, corrected) & drag mean and frequency: within $0.15\%$ of the reference; $u_y$ amplitude $2.2\%$, $u_x$ $4.5\%$ and lift amplitude $3.5\%$ above the reference; displacements and force amplitudes not in the asymptotic range \\
 		Hron--Turek FSI2 (2x) & drag mean $0.5\%$; $u_y$ amplitude $1.3\%$ & lift amplitude $7.8\%$, not converging \\
 		3dTube & $u_{z,\min}$, $t_\mathrm{arr}$: monotone, orders 0.87, 0.72 & $u_{r,\max}$, $c_p$: changes grow ($u_{r,\max}$ $0.20\%$, $0.60\%$) \\
@@ -248,7 +248,7 @@ Disagreements between codes can originate in the discretisation of the reference
 		ringAddedMass & tutorial $\approx75$\,s serial; full study (35 runs) $\approx30$\,min with 32 concurrent serial runs \\
 		womersleyTube & runs 2.5--25\,min serial; full study $\approx30$\,min on 5 cores \\
 		collapsibleChannel & tutorial $\approx10$\,min; finest fluid mesh 70\,min; full sweep $\approx2.5$\,h (one case per core); serial only \\
-		Hron--Turek FSI1 & 1x 781\,s serial; 2x 3\,062\,s on 2 ranks; 4x estimated $>14$\,h on 3 ranks \\
+		Hron--Turek FSI1 & to $t = 30\,\mathrm{s}$ at $\Delta t = 0.00625\,\mathrm{s}$: 1x 1\,754\,s serial; 2x 1.2\,h on 4 ranks; 4x 5.5\,h on 16 ranks; 8x $\approx25$\,h on 64 ranks (MeluXina) \\
 		Hron--Turek FSI3 & 1x 1.4\,h serial; 2x 5.5\,h on 8 ranks; 4x 40.8\,h on 32 ranks (no speed-up beyond 32 ranks); OpenFOAM-v2512 \\
 		Hron--Turek FSI2 & 1x 1.1--1.2\,h serial; 2x 4.0--4.1\,h on 7--8 ranks \\
 		3dTube & level 1 504\,s on 4 ranks; level 2 3\,641\,s on 8 ranks; level 3 22\,502\,s (6.25\,h) on 32 ranks ($\approx200$ core-hours) \\
