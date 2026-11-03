@@ -24,7 +24,7 @@ Velocity and pressure are collocated at cell centres; the face fluxes are obtain
 Spatial operators are the standard second-order finite volume operators: midpoint quadrature, linear face interpolation, least-squares or Gauss cell gradients, and Laplacian face fluxes with explicit non-orthogonal correction~\citep{Jasak1996}.
 Convection is discretised with central (\texttt{linear}) or limited linear-upwind interpolation, depending on the case.
 The time derivative is discretised with the second-order backward difference formula (BDF2, \texttt{backward}) unless stated; implicit Euler is used only in the deliberate time-scheme comparison of Section~\ref{sec:3dtube}.
-On the moving mesh the convective flux is the relative flux $\bb{\Gamma}_f\cdot(\bb{v}_f - \bb{v}^\Gamma_f)$, where the mesh flux $\bb{\Gamma}_f\cdot\bb{v}^\Gamma_f$ is the volume swept by face $f$.
+On the moving mesh the convective flux is the relative flux $\bb{\Gamma}_f\cdot(\bb{v}_f - \bb{v}^\Gamma_f)$, where $\bb{\Gamma}_f$ is the face area vector and the mesh flux $\bb{\Gamma}_f\cdot\bb{v}^\Gamma_f$ is the volume swept by face $f$ per unit time, evaluated from the face swept volumes with the coefficients of the time scheme (BDF2 here).
 With BDF2 the swept volumes of the last two steps are combined with the BDF2 weights, so that the discrete space-conservation law (Equation~\eqref{eqn:gcl}) holds for the backward volume derivative.
 On the interface the fluid velocity equals the velocity of the moving wall, and the interface traction passed to the solid is the sum of the pressure and viscous tractions on the fluid interface faces.
 
