@@ -12,7 +12,7 @@ Sources (per unit depth, steady state):
 - Ansys: PR #12 (E. Tandis), AnsysResults/cavityFlexibleBottom-Ansys-Dx*.csv
   at fe69944, last row (t = 1000 s), F_y x 100 for the 10 mm slab depth.
 - COMSOL: PR #12, ComsolResults/cavityFlexibleBottom_comsol_steadyStateResults.csv
-  at 551e91e (steady solver). u_y is given to 3 significant figures only.
+  at 4f8a582 (steady solver; 5 decimal places, updated 2 Nov 2026).
 - Tukovic et al. (2018), Fig. 12(a): read from the vector paths of the
   published PDF (page 16), not hand digitised. The page coordinates of the
   four markers and of the axis ticks are listed below. The published forces
@@ -49,7 +49,7 @@ SOURCES = {
                     [round(tuk_fy(y), 4) for y in TUK_FY_Y]),
     "Ansys": ([-0.24727, -0.25054, -0.25197, -0.25274],
               [-5.144, -5.218, -5.250, -5.263]),
-    "COMSOL": ([-0.236, -0.241, -0.243, -0.243],
+    "COMSOL": ([-0.23632, -0.24076, -0.24315, -0.24306],
                [-5.1088, -5.2276, -5.2956, -5.2952]),
 }
 
