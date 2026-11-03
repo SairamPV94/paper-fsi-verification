@@ -83,11 +83,12 @@ Table~\ref{tab:driver_properties} states which of these properties the present d
 \begin{table}[htbp]
 	\centering
 	\footnotesize
-	\caption{Reproducibility properties implemented by the verification driver of each case (solids4foam \texttt{development}, November 2026): non-zero exit status on failure, CSV output, hashes of the case files, the OpenFOAM version, a fingerprint of the solver executable and libraries, and the solids4foam commit. The Hessenthaler driver is on a campaign branch and is not included.}
+	\setlength{\tabcolsep}{4pt}
+	\caption{Reproducibility properties implemented by the verification driver of each case (solids4foam \texttt{development}, November 2026): non-zero exit status on failure (Exit), CSV output, hashes of the case files, the OpenFOAM version, a fingerprint of the solver executable and libraries, and the solids4foam commit. The Hessenthaler driver is on a campaign branch and is not included.}
 	\label{tab:driver_properties}
 	\begin{tabular}{lcccccc}
 		\toprule
-		Case & Exit status & CSV & Case hashes & OpenFOAM version & Solver fingerprint & Commit \\
+		Case & Exit & CSV & Hashes & OF version & Fingerprint & Commit \\
 		\midrule
 		ringAddedMass & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & -- \\
 		womersleyTube & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\

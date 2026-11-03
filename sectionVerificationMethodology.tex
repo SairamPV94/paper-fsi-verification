@@ -144,34 +144,34 @@ Results computed before that PR are affected only where an interface is three-di
 	\centering
 	\footnotesize
 	\setlength{\tabcolsep}{3pt}
-	\caption{Provenance of the reported results. ``n.r.'': not recorded; ``README'': values recorded in the case's verification README in solids4foam by commit \texttt{7c928c55}, which precedes PR~\#546. \#546: whether the build contains the fixes of solids4foam PR~\#546. Sources: \texttt{paper-data/} evidence files and the case READMEs.}
+	\caption{Provenance of the reported results. ``n.r.'': not recorded. \#546: whether the build contains the fixes of solids4foam PR~\#546. Sources: \texttt{paper-data/} evidence files and the case READMEs.}
 	\label{tab:provenance}
 	\begin{tabular}{p{2.9cm}p{2.5cm}p{1.5cm}p{2.4cm}p{1.8cm}p{2.1cm}}
 		\toprule
 		Case or study & solids4foam & OpenFOAM & Compiler & Platform & \#546 \\
 		\midrule
-		ringAddedMass & README & v2412 & n.r. & Linux & before \\
-		womersleyTube & \texttt{a507bfd41} (PR \#533) & v2512 & n.r. & Linux & before \\
-		collapsibleChannel & README; mesh-study figure \texttt{a421f063d}$^\dagger$ & v2412; v2512 & n.r. & Linux; macOS (static study); MeluXina & before; after \\
-		Hron--Turek FSI1, FSI2 & README & v2412 & n.r. & macOS & before \\
+		ringAddedMass & \texttt{0a3719424}$^a$ & v2412 & GCC 11.4 \texttt{-O3} & Linux & before \\
+		womersleyTube & \texttt{a507bfd41} (PR \#533) & v2512 & GCC 11.4 \texttt{-O3} & Linux & before \\
+		collapsibleChannel & \texttt{c59dbf84a}$^a$; mesh-study figure \texttt{a421f063d}$^\dagger$ & v2412; v2512 & GCC 11.4 \texttt{-O3}; Clang \texttt{-O3}; GCC 13.3 \texttt{-O2}$^\ddagger$ & Linux; macOS (static study); MeluXina & before; after \\
+		Hron--Turek FSI1, FSI2 & \texttt{223adae07}, \texttt{18a052637}$^a$ & v2412 & Clang \texttt{-O3} & macOS & before \\
 		FSI3, tutorial set-up and diagnostics & \texttt{d49552f4c} and diagnostic branches & v2512 & GCC 11.4, \texttt{-O3} & Linux & before; A/B identical \\
-		FSI3, corrected 1x$'$--4x$'$ & \texttt{636d567c6} & v2512 & n.r. & Linux & before; 2-D argument \\
-		FSI3, corrected 8x$'$ & \texttt{636d567c6} & v2512 & GCC 13.3 & MeluXina & before; 2-D argument \\
-		3dTube levels 1--2 & \texttt{c45b30b7e} & v2512; v2412 & GCC 11.4 \texttt{-O3}; GCC 13.3 \texttt{-O2} & Linux; MeluXina & fixes before merge \\
-		3dTube level 3 & \texttt{c45b30b7e} & v2412 & GCC 13.3 \texttt{-O2} & MeluXina & fixes before merge \\
-		mokLidDrivenCavity & README; coupling-test study \texttt{a421f063d}$^\dagger$ & v2412; v2512 & n.r. & macOS; MeluXina & before; after \\
-		cavityFlexibleBottom$^\ast$ & n.r. & v2512 & n.r. & macOS & n.r. \\
-		blobInTreacle$^\ast$ & README & v2512 & n.r. & Linux & before \\
-		Hessenthaler$^\ast$ & \texttt{aee0c8e35} & v2412 & GCC 13.3 \texttt{-O2} & MeluXina & before; A/B on S2, S3 \\
-		beamInCrossFlow$^\ast$ (Appendix~\ref{app:beam}) & \texttt{aee0c8e35} & v2412 & GCC 13.3 \texttt{-O2} & MeluXina & before \\
-		Tolerance sweeps & \texttt{a421f063d} & v2512 & n.r. & MeluXina & after \\
-		FEBio ring (solids4foam side) & \texttt{1576edcc} & n.r. & n.r. & Linux & after \\
+		FSI3, corrected 1x$'$--4x$'$ & \texttt{30d6e22f3} & v2512 & GCC 11.4 \texttt{-O3} & Linux & before; 2-D argument \\
+		FSI3, corrected 8x$'$ & \texttt{30d6e22f3} with PR \#562 & v2512 & GCC 13.3 \texttt{-O2}$^\ddagger$ & MeluXina & before; 2-D argument \\
+		3dTube levels 1--2 & \texttt{c45b30b7e} & v2512; v2412 & GCC 11.4 \texttt{-O3}; GCC 13.3 \texttt{-O2}$^\ddagger$ & Linux; MeluXina & fixes before merge \\
+		3dTube level 3 & \texttt{c45b30b7e} & v2412 & GCC 13.3 \texttt{-O2}$^\ddagger$ & MeluXina & fixes before merge \\
+		mokLidDrivenCavity & \texttt{6e69ddb6c}$^a$; coupling-test study \texttt{a421f063d}$^\dagger$ & v2412; v2512 & Clang \texttt{-O3}; GCC 13.3 \texttt{-O2}$^\ddagger$ & macOS; MeluXina & before; after \\
+		cavityFlexibleBottom$^\ast$ & \texttt{0698d55cd} (results \texttt{5f6f7a6da}) & v2512 & Clang \texttt{-O3} & macOS & after \\
+		blobInTreacle$^\ast$ & \texttt{14672e1d6}$^a$ & v2512 & n.r. & Linux & before \\
+		Hessenthaler$^\ast$ & \texttt{aee0c8e35} & v2412 & GCC 13.3 \texttt{-O2}$^\ddagger$ & MeluXina & before; A/B on S2, S3 \\
+		beamInCrossFlow$^\ast$ (Appendix~\ref{app:beam}) & \texttt{aee0c8e35} & v2412 & GCC 13.3 \texttt{-O2}$^\ddagger$ & MeluXina & before \\
+		Tolerance sweeps & \texttt{a421f063d} & v2512 & GCC 13.3 \texttt{-O2}$^\ddagger$ & MeluXina & after \\
+		FEBio ring (solids4foam side) & as ringAddedMass; definition \texttt{1576edcc} & v2412 & GCC 11.4 \texttt{-O3} & Linux & before \\
 		\bottomrule
-		\multicolumn{6}{l}{$^\ast$ Provisional cases. $^\dagger$ Rerun that reproduces the tabulated errors to the digits given.}
+		\multicolumn{6}{p{0.95\linewidth}}{$^\ast$ Provisional cases. $^\dagger$ Rerun that reproduces the tabulated errors to the digits given. $^a$ Commit that first recorded the values, an upper bound on the commit of the run; all precede PR \#492, and every one of these runs sets the IQN-ILS predictor explicitly or uses Robin--Neumann coupling with a relaxation factor of~1, so the change of the predictor default in PR \#492 does not affect them. $^\ddagger$ \texttt{-O2 -fno-tree-vectorize -march=znver2} (v2412 also \texttt{-fno-math-errno}). Clang is Apple Clang (Xcode 27.0). PETSc: 3.24.1 (Linux), 3.22.0 (MeluXina), 3.22.2 (macOS).}
 	\end{tabular}
 \end{table}
 % Provenance compiled 2026-11-02 from paper-data evidence files and the case
-% READMEs; ancestry of commits relative to PR #546 (978ffc8dd) checked with
+% READMEs, completed 2026-11-03 (paper-data/provenance_audit_2026-11-03.md); ancestry of commits relative to PR #546 (978ffc8dd) checked with
 % git merge-base. 3dTube used the branch commits 635ff464f and 0ff7f462b,
 % the fixes later merged (rebased) as #546.
-\todo{Provenance gaps to close before submission: the commit of the README-recorded results (ring, collapsible, FSI1/FSI2, Mok, blob) and hence whether they predate the \texttt{predictor} default change (solids4foam PR \#492); compiler and flags for every macOS run, for womersleyTube and for the v2512 MeluXina runs; PETSc versions (recorded only for 3dTube, beamInCrossFlow and collapsibleChannel); OpenFOAM release of the FSI3 corrected 1x$'$--4x$'$ runs (v2512 assumed from the branch); the cavityFlexibleBottom four-level study (commit and platform), whose level-1 and level-3 $u_y$ differ in the fourth digit from \texttt{paper-data/cavity\_plate\_material\_law\_findings.md}. Plan a Zenodo archive of case set-ups, drivers, raw CSV outputs and reference files.}
+\todo{womersleyTube was run with a GCC 11.4 \texttt{-O3} build before PR~\#546 and is not covered by the case-by-case check: its axis is $x$, so the axial wall shear, the first component formed, is unaffected, but the radial component picks up a spurious term of the order of the product of two wall shear components. Expected to be negligible against the pressure load; confirm with a level-1 A/B run on the current build before submission. Provenance not recoverable: the working-tree state behind the README-recorded results (the commits are upper bounds, and no logs survive for ring, collapsible and blob), the host of the blobInTreacle runs (Linux, probably the xenosim node) and its compiler, and the exact Apple Clang build. Evidence: \texttt{paper-data/provenance\_audit\_2026-11-03.md}. Plan a Zenodo archive of case set-ups, drivers, raw CSV outputs and reference files.}

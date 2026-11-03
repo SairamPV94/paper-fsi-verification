@@ -91,7 +91,7 @@ In every case with more than one QoI, the QoIs converge at substantially differe
 		Hron--Turek FSI2 (2x) & drag mean $0.5\%$; $u_y$ amplitude $1.3\%$ & lift amplitude $7.8\%$, not converging \\
 		3dTube & $u_{z,\min}$, $t_\mathrm{arr}$: monotone, orders 0.87, 0.72 & $u_{r,\max}$, $c_p$: changes grow ($u_{r,\max}$ $0.20\%$, $0.60\%$) \\
 		mokLidDrivenCavity & peak (order $\approx1.2$) & trough (order $<0.5$) \\
-		cavityFlexibleBottom$^\ast$ & $F_y$: within $0.01\%$ of the published values, $0.3\%$ of ANSYS and $0.7\%$ of COMSOL; $u_y$: $1.05\%$ of COMSOL (St Venant--Kirchhoff) & published and ANSYS $u_y$ $4.3\%$ and $5.4\%$ larger in magnitude, from other constitutive laws \\
+		cavityFlexibleBottom$^\ast$ & $F_y$: within $0.07\%$ of the published values, $0.2\%$ of ANSYS and $0.7\%$ of COMSOL; $u_y$: $1.0\%$ of COMSOL (St Venant--Kirchhoff) & published and ANSYS $u_y$ $4.3\%$ and $5.4\%$ larger in magnitude, from other constitutive laws \\
 				\bottomrule
 	\end{tabular}
 \end{table}
@@ -221,7 +221,7 @@ This is a statement about the specific values used, not about the quality of the
 		mokLidDrivenCavity & Two inconsistent problem definitions; mesh-dependent openings; no convincing convergence studies; group-B spread 5.7\% (peak) & No published value can be treated as correct \\
 		collapsibleChannel & Published problem (pre-stressed, massless wall) unsuitable for continuum/partitioned comparison & Modified problem and regenerated reference used \\
 		beamInCrossFlow & Quoted values ($5.95\times10^{-5}\,\mathrm{m}$, $1.33\,\mathrm{N}$) are rounded extrapolations of \citet{Richter2012}, often cited to a later paper; printed inflow peak ($0.3\,\mathrm{m/s}$) is an error, inconsistent with the stated mean and $Re$; earlier calculations solved a different beam position, monitoring point and inflow & The printed inflow gives $1.8$ times the reference values; with the corrected $0.2\,\mathrm{m/s}$ peak level 3 is within $0.1$--$0.2\%$ (Appendix~\ref{app:beam}) \\
-		cavityFlexibleBottom & Same-lineage, from the figure; published forces per $0.05\,\mathrm{m}$ depth; the published and ANSYS displacements are consistent with neo-Hookean and logarithmic-strain plates, not St Venant--Kirchhoff & Forces agree to $0.01$--$0.7\%$; the independent St Venant--Kirchhoff (COMSOL) displacement agrees to $1.05\%$ \\
+		cavityFlexibleBottom & Same-lineage, from the figure; published forces per $0.05\,\mathrm{m}$ depth; the published and ANSYS displacements are consistent with neo-Hookean and logarithmic-strain plates, not St Venant--Kirchhoff & Forces agree to $0.07$--$0.7\%$; the independent St Venant--Kirchhoff (COMSOL) displacement agrees to $1.0\%$ \\
 		blobInTreacle & Preprint figures only; first-order time, coarse steady mesh & Steady offset of 7--20\% unexplained \\
 		\bottomrule
 	\end{tabular}
