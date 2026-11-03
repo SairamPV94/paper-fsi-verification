@@ -17,14 +17,14 @@ We therefore propose a tiered suite (Table~\ref{tab:suite_tiers}), with membersh
 		\toprule
 		Case & Ref. & Principal challenge & Status \\
 		\midrule
-		\multicolumn{4}{l}{\emph{Core suite (routine; a few hours on a workstation)}} \\
+		\multicolumn{4}{l}{\emph{Core suite (routine subset a few hours on a workstation; full refinement studies longer)}} \\
 		ringAddedMass & A & added mass over $m^* = 0.1$--$10$; temporal phase error; solid-independent coupling check & core \\
 		womersleyTube & A & viscous wave propagation; amplitude versus phase/attenuation; truncated-domain boundary consistency & core \\
 		collapsibleChannel & B & thin bending wall, large deformation, strong added mass; solid discretisation & core \\
 		Hron--Turek FSI1 & B & steady large-deformation coupling & core \\
 		\midrule
 		\multicolumn{4}{l}{\emph{Extended / high-cost suite}} \\
-		Hron--Turek FSI2, FSI3 & C & self-excited oscillation; lift amplitude; tolerance sensitivity; mesh-motion history; set-up-induced sub-nominal order & FSI3 three levels (tutorial and corrected set-ups); FSI2 two levels \\
+		Hron--Turek FSI2, FSI3 & C & self-excited oscillation; lift amplitude; tolerance sensitivity; mesh-motion history; set-up-induced sub-nominal order & FSI3 three levels (tutorial set-up) and four (corrected set-up); FSI2 two levels \\
 		3dTube & C-weak & 3-D wave propagation with added mass; time-discretisation sensitivity; cross-platform and toolchain checks & three levels; $u_{r,\max}$ not yet converging \\
 		beamInCrossFlow$^\ast$ & C & 3-D steady external flow; displacement and force convergence & four levels, corrected inflow; orders rising to 1.6 (Appendix~\ref{app:beam}) \\
 		Hessenthaler$^\ast$ & -- & realistic 3-D geometry, large deformation; steady-state iterative error; validation data kept separate & solid, $\Delta t$ and coupling converged; fluid convergence open \\
@@ -40,7 +40,7 @@ We therefore propose a tiered suite (Table~\ref{tab:suite_tiers}), with membersh
 \subsection{Core suite}\label{sec:core_suite}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The core suite is cheap enough to run after any change to a discretisation or coupling algorithm.
+The routine subset of the core suite (the default levels of each driver) is cheap enough to run after any change to a discretisation or coupling algorithm; the full refinement studies behind the statements of Section~\ref{sec:benchmark_suite} (for FSI1, $\approx25$\,h on 64 ranks for the finest level) are a verification campaign, not a routine check.
 Its backbone is the two category-A problems, which alone measure the total error directly; the category-B problems extend it to large deformation within reference uncertainties of $\approx0.3\%$ (collapsibleChannel) and $\approx0.2\%$ (FSI1).
 
 The requirement is not a fixed matrix of studies but the principle of Section~\ref{sec:convergence_method}: for each QoI on which a claim is made, the error sources that materially affect it must be shown to be controlled below the uncertainty relevant to the claim.
