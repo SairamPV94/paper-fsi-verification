@@ -6,9 +6,11 @@ Writes reference_levels.csv (per-level values) and reference_richardson.csv
 levels). Run: python reference_convergence.py
 
 Sources (per unit depth, steady state):
-- solids4foam: u_y from sectionBenchmarkSuite.tex; F_y from the
-  quasi-monolithic rerun (solids4foam f356c3242,
-  cavityFlexibleBottom/verification/results/four_level_partitioned_monolithic.csv).
+- solids4foam: partitioned solver, strict coupling test, point A on the top
+  surface (PR #584): u_y and F_y from solids4foam f356c3242,
+  cavityFlexibleBottom/verification/results/four_level_partitioned_monolithic.csv
+  (recorded at 5f6f7a6da). Until 4 Nov 2026 this script mixed the
+  pre-#597 quasi-monolithic u_y with the #597 quasi-monolithic F_y.
 - Ansys: PR #12 (E. Tandis), AnsysResults/cavityFlexibleBottom-Ansys-Dx*.csv
   at fe69944, last row (t = 1000 s), F_y x 100 for the 10 mm slab depth.
 - COMSOL: PR #12, ComsolResults/cavityFlexibleBottom_comsol_steadyStateResults.csv
@@ -43,8 +45,8 @@ def tuk_fy(y):
 
 
 SOURCES = {
-    "solids4foam": ([-0.2036, -0.2314, -0.2385, -0.2401],
-                    [-5.123, -5.228, -5.251, -5.256]),
+    "solids4foam": ([-0.204568, -0.231445, -0.238404, -0.240113],
+                    [-5.1528, -5.2388, -5.2566, -5.2599]),
     "Tukovic2018": ([round(tuk_uy(y), 5) for y in TUK_UY_Y],
                     [round(tuk_fy(y), 4) for y in TUK_FY_Y]),
     "Ansys": ([-0.24727, -0.25054, -0.25197, -0.25274],
