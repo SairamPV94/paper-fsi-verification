@@ -78,4 +78,27 @@ Independently of the code used, we recommend the following properties, which the
 \end{itemize}
 
 Such infrastructure allows a verification claim to be re-executed rather than accepted on trust.
-\todo{Not all drivers currently implement every property above (e.g.\ executable/library fingerprints and compiler flags are recorded by some drivers only). Audit before submission and state precisely which properties hold for each case. Add Zenodo DOI.}
+Table~\ref{tab:driver_properties} states which of these properties the present drivers implement. Every driver exits with a non-zero status when a criterion fails and writes its QoIs to CSV, and every case has a machine-readable reference file that records its source. The extraction method is recorded explicitly for 3dTube, Hron--Turek and beamInCrossFlow, and collapsibleChannel stores the oomph-lib driver that generates its reference. No driver records the compiler or its flags; where they are known, they are given in Table~\ref{tab:provenance}.
+
+\begin{table}[htbp]
+	\centering
+	\footnotesize
+	\caption{Reproducibility properties implemented by the verification driver of each case (solids4foam \texttt{development}, November 2026): non-zero exit status on failure, CSV output, hashes of the case files, the OpenFOAM version, a fingerprint of the solver executable and libraries, and the solids4foam commit. The Hessenthaler driver is on a campaign branch and is not included.}
+	\label{tab:driver_properties}
+	\begin{tabular}{lcccccc}
+		\toprule
+		Case & Exit status & CSV & Case hashes & OpenFOAM version & Solver fingerprint & Commit \\
+		\midrule
+		ringAddedMass & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & -- \\
+		womersleyTube & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+		collapsibleChannel & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & -- \\
+		Hron--Turek FSI1--FSI3 & \checkmark & \checkmark & -- & -- & -- & -- \\
+		3dTube & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark \\
+		mokLidDrivenCavity & \checkmark & \checkmark & \checkmark & -- & \checkmark & -- \\
+		cavityFlexibleBottom$^\ast$ & \checkmark & \checkmark & -- & -- & -- & -- \\
+		blobInTreacle$^\ast$ & \checkmark & \checkmark & -- & -- & -- & -- \\
+		beamInCrossFlow$^\ast$ & \checkmark & \checkmark & -- & -- & -- & -- \\
+		\bottomrule
+		\multicolumn{7}{l}{$^\ast$ Provisional cases.}
+	\end{tabular}
+\end{table}
