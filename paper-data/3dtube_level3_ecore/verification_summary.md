@@ -1,0 +1,56 @@
+# 3dTube verification summary
+
+## Mesh study (mesh and time step refined together; robin, backward)
+
+- Result: FAIL
+- Analytical wave-speed estimates (m/s): mk_inner_radius 5.477, mk_mean_radius 5.222, mk_inner_radius_tethered 5.742, thick_wall 5.066, thick_wall_inertia 4.811
+
+| Level | Fluid cells | Solid cells | Δt (s) | Cores | u_r,max(A) (mm) | t(u_r,max) (ms) | u_z,min(A) (mm) | u_r,min(A), t > 14 ms (mm) | t_arr(A) (ms) | c_wall (m/s) | c_p (m/s) | Mean FSI iter. | Clock (s) |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 16000 | 6400 | 2.5e-05 | 16 | 0.15978 | 7.201 | -0.08819 | -0.1001 | 5.873 | 5.066 | 4.663 | 4.78 | 121 |
+
+Checks:
+
+- PASS: all 1 run(s) completed, and every time step met the robin convergence criteria
+- FAIL: at least two levels are required
+- PASS: pressure-front speed 4.663 m/s vs the thick_wall_inertia estimate 4.811 m/s (approximate): 3.1% <= 10%
+- PASS: ur_max_A_m 0.0001598 vs Tukovic et al. (2018) 0.0001569 (vector graphics): 1.8% <= 5%
+- PASS: t_ur_max_A_s 0.007201 vs Tukovic et al. (2018) 0.00723 (vector graphics): 0.4% <= 3%
+- u_r(A) history vs Tukovic et al. (2018): largest difference 8.3% of the published peak (information)
+- u_r(A) history vs Lozovskiy et al. (2019): largest difference 35.3% of the published peak (information)
+- u_r(A) history vs Eken (2016): largest difference 39.5% of the published peak (information)
+
+- Data: `mesh_robin_backward.csv`
+
+
+## Mesh study (mesh and time step refined together; robin, backward)
+
+- Result: FAIL
+- Analytical wave-speed estimates (m/s): mk_inner_radius 5.477, mk_mean_radius 5.222, mk_inner_radius_tethered 5.742, thick_wall 5.066, thick_wall_inertia 4.811
+
+| Level | Fluid cells | Solid cells | Δt (s) | Cores | u_r,max(A) (mm) | t(u_r,max) (ms) | u_z,min(A) (mm) | u_r,min(A), t > 14 ms (mm) | t_arr(A) (ms) | c_wall (m/s) | c_p (m/s) | Mean FSI iter. | Clock (s) |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | 16000 | 6400 | 2.5e-05 | 32 | 0.15978 | 7.201 | -0.08819 | -0.1001 | 5.873 | 5.066 | 4.654 | 4.78 | 123 |
+| 2 | 128000 | 51200 | 1.25e-05 | 32 | 0.15946 | 7.215 | -0.08659 | -0.09409 | 5.843 | 5.138 | 4.635 | 3.87 | 1123 |
+| 3 | 1024000 | 409600 | 6.25e-06 | 32 | 0.15851 | 7.252 | -0.08571 | -0.09603 | 5.825 | 5.066 | 4.597 | 3.18 | 25166 |
+
+Checks:
+
+- PASS: all 3 run(s) completed, and every time step met the robin convergence criteria
+- PASS: ur_max_A_m: change between the two finest levels 0.60% <= 5%
+- FAIL: ur_max_A_m: successive changes decrease or are below 0.2% (0.202%, 0.595%; observed order -1.56)
+- PASS: uz_min_A_m: change between the two finest levels 1.01% <= 5%
+- PASS: uz_min_A_m: successive changes decrease or are below 0.2% (1.82%, 1.01%; observed order 0.872)
+- PASS: t_arrival_A_s: change between the two finest levels 0.31% <= 2%
+- PASS: t_arrival_A_s: successive changes decrease or are below 0.2% (0.508%, 0.309%; observed order 0.723)
+- PASS: wave_speed_pressure_m_s: change between the two finest levels 0.81% <= 3%
+- FAIL: wave_speed_pressure_m_s: successive changes decrease or are below 0.2% (0.404%, 0.812%; observed order -1)
+- PASS: pressure-front speed 4.597 m/s vs the thick_wall_inertia estimate 4.811 m/s (approximate): 4.4% <= 10%
+- PASS: ur_max_A_m 0.0001585 vs Tukovic et al. (2018) 0.0001569 (vector graphics): 1.0% <= 5%
+- PASS: t_ur_max_A_s 0.007252 vs Tukovic et al. (2018) 0.00723 (vector graphics): 0.3% <= 3%
+- u_r(A) history vs Tukovic et al. (2018): largest difference 2.2% of the published peak (information)
+- u_r(A) history vs Lozovskiy et al. (2019): largest difference 34.9% of the published peak (information)
+- u_r(A) history vs Eken (2016): largest difference 39.8% of the published peak (information)
+
+- Data: `mesh_robin_backward_pz7.8125e-05.csv`
+
