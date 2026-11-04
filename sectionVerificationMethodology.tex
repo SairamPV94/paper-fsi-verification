@@ -151,7 +151,7 @@ Results computed before that PR are affected only where an interface is three-di
 		Case or study & solids4foam & OpenFOAM & Compiler & Platform & \#546 \\
 		\midrule
 		ringAddedMass & \texttt{0a3719424}$^a$ & v2412 & GCC 11.4 \texttt{-O3} & Linux & before \\
-		womersleyTube & \texttt{a507bfd41} (PR \#533) & v2512 & GCC 11.4 \texttt{-O3} & Linux & before \\
+		womersleyTube & \texttt{a507bfd41} (PR \#533); rerun \texttt{b200718f4}$^\dagger$ & v2512 & GCC 11.4 \texttt{-O3} & Linux & before; rerun after \\
 		collapsibleChannel & \texttt{c59dbf84a}$^a$; mesh-study figure \texttt{a421f063d}$^\dagger$ & v2412; v2512 & GCC 11.4 \texttt{-O3}; Clang \texttt{-O3}; GCC 13.3 \texttt{-O2}$^\ddagger$ & Linux; macOS (static study); MeluXina & before; after \\
 		Hron--Turek FSI1 (four levels) & \texttt{a421f063d} & v2512 & GCC 13.3 \texttt{-O2}$^\ddagger$ & MeluXina & after \\
 		Hron--Turek FSI2 & \texttt{18a052637}$^a$ & v2412 & Clang \texttt{-O3} & macOS & before \\
@@ -159,7 +159,7 @@ Results computed before that PR are affected only where an interface is three-di
 		FSI3, corrected 1x$'$--4x$'$ & \texttt{30d6e22f3} & v2512 & GCC 11.4 \texttt{-O3} & Linux & before; 2-D argument \\
 		FSI3, corrected 8x$'$ & \texttt{30d6e22f3} with PR \#562 & v2512 & GCC 13.3 \texttt{-O2}$^\ddagger$ & MeluXina & before; 2-D argument \\
 		3dTube levels 1--2 & \texttt{c45b30b7e} & v2512; v2412 & GCC 11.4 \texttt{-O3}; GCC 13.3 \texttt{-O2}$^\ddagger$ & Linux; MeluXina & fixes before merge \\
-		3dTube level 3 & \texttt{c45b30b7e} & v2412 & GCC 13.3 \texttt{-O2}$^\ddagger$ & MeluXina & fixes before merge \\
+		3dTube level 3 & \texttt{c45b30b7e}; replicate \texttt{b200718f4} & v2412; v2512 & GCC 13.3 \texttt{-O2}$^\ddagger$; GCC 11.4 \texttt{-O3} & MeluXina; Linux & fixes before merge; after \\
 		mokLidDrivenCavity & \texttt{6e69ddb6c}$^a$; coupling-test study \texttt{a421f063d}$^\dagger$ & v2412; v2512 & Clang \texttt{-O3}; GCC 13.3 \texttt{-O2}$^\ddagger$ & macOS; MeluXina & before; after \\
 		cavityFlexibleBottom$^\ast$ & \texttt{0698d55cd} (results \texttt{5f6f7a6da}) & v2512 & Clang \texttt{-O3} & macOS & after \\
 		blobInTreacle$^\ast$ & \texttt{14672e1d6}$^a$ & v2512 & n.r. & Linux & before \\
@@ -175,4 +175,4 @@ Results computed before that PR are affected only where an interface is three-di
 % READMEs, completed 2026-11-03 (paper-data/provenance_audit_2026-11-03.md); ancestry of commits relative to PR #546 (978ffc8dd) checked with
 % git merge-base. 3dTube used the branch commits 635ff464f and 0ff7f462b,
 % the fixes later merged (rebased) as #546.
-\todo{womersleyTube was run with a GCC 11.4 \texttt{-O3} build before PR~\#546 and is not covered by the case-by-case check: its axis is $x$, so the axial wall shear, the first component formed, is unaffected, but the radial component picks up a spurious term of the order of the product of two wall shear components. Expected to be negligible against the pressure load; confirm with a level-1 A/B run on the current build before submission. Provenance not recoverable: the working-tree state behind the README-recorded results (the commits are upper bounds, and no logs survive for ring, collapsible and blob), the host of the blobInTreacle runs (Linux, probably the xenosim node) and its compiler, and the exact Apple Clang build. Evidence: \texttt{paper-data/provenance\_audit\_2026-11-03.md}. Plan a Zenodo archive of case set-ups, drivers, raw CSV outputs and reference files.}
+\todo{Provenance not recoverable: the working-tree state behind the README-recorded results (the commits are upper bounds, and no logs survive for ring, collapsible and blob), the host of the blobInTreacle runs (Linux, probably the xenosim node) and its compiler, and the exact Apple Clang build. Evidence: \texttt{paper-data/provenance\_audit\_2026-11-03.md}. Plan a Zenodo archive of case set-ups, drivers, raw CSV outputs and reference files.}
