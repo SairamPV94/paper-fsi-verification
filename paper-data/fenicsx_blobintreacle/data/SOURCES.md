@@ -16,4 +16,6 @@ Solver repository `fenicsx-fsi-verification` at commit 0fe2a15 (working-copy sha
 | `force_conservation_evidence.csv` | `verification/audit/FORCE_BALANCE_REPORT.md`, `REPRODUCTION_REPORT.md` | 358e7fe1ed7e4992f342a1336aa2dae9c98196ce26d23bc290325dc921680529; bd8bd8f9... |
 | `interface_transfer_ratios.csv` | RAW: `verification/audit/steady_obs2_f*.json` (e.g. f1: 68334879c5cb4574aa3b49704e2fdf07e2783ee0e38e124f3770853debc9de24), `s4f_side/series_results.json` (73ce6e59b15a5f33fd4722fd4b1bea12b89f9e42f919437c7c9833db2849569f), `s4f_side/data/dist_orig_x*.csv` | via `scripts/transfer_ratios_from_raw.py` |
 
-All solids4foam columns: legacy moving-wall BC, to be rerun after solids4foam PR #671 (not yet done).
+| `s4f_w671_*.csv` (#671 arm) | RAW tables `s4f_side/w671/WALL671_TABLES.md` (solver commit 5b004a2) via `scripts/extract_w671.py`; summary `s4f_side/WALL671_RESULTS.md`; `w671/WALL671_DIST.md`; `w671/BUILD_INFO_head.txt`; `w671/data/provenance.csv` | 9febb574275f4744ec81f14a839c4eeca41497a7f32adac70e3089a4941671b0; b526713645d0a132655154062170cf93380a70a19c1958700bf9ec7970b0ad43; 028610fb0e39b25c19515546f73616517c388785490f75fbf91b15e34f1b6fdb; df94b93c9ba67dc4423e0a67cd702c82d98db23745b7478818db1c8db4feedd3; 5b5e22fcc6d1ab67f7879065c88cf48fa8e91cea4439a4b6d1f15200c4601ccf |
+
+Historical solids4foam columns: legacy wall BC (build 1576edcc4). `s4f_w671_*`: proposed solids4foam PR #671 branch (head da1044a4f, unmerged, not an official release); LEGACY arm = same executable with `continuityNormalGradient no;`.
