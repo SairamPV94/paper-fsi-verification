@@ -13,15 +13,17 @@ The wording follows an independent referee-style review of the evidence package 
 | `data/steady_crosscode.csv` | FEniCSx M2 against solids4foam M2: same level and limits |
 | `data/modelform_M1_M2.csv`, `data/fourway_M1_M2.csv` | M1/M2 sensitivity; the four-way table |
 | `data/time_values_t1_F1_M2.csv`, `time_orders_t1_F1_M2.csv`, `time_errors_vs_finer_reference_t1_F1_M2.csv`, `time_rms_history_t0_1_F1_M2.csv` | temporal study at t = 1, F = 1, M2 |
+| `data/bdf2_transient_spatial_t1_M2.csv`, `bdf2_transient_spatial_t1_orders.csv`, `bdf2_transient_spatial_t1_crossF_ux.csv` | BDF2 transient spatial study at t = 1 (dt 0.005, F = 0.5 to 4; solver repo commit 7b4e4e1, code 1484d94), orders and limits, cross-F coincidence table |
+| `data/earea_ratio_reconciliation.csv` | E-AREA / M2 ratios, like-for-like (same triple) against mixed-level |
 | `data/s4f_time_sensitivity_t1.csv` | solids4foam time-step sensitivity at t = 1 (no order identified) |
 | `data/interface_force_bins_M2_F4.csv` | M2 load on the solid per 15-degree bin, F = 4 / x4 (coupled and fixed-shape fluid) |
 | `data/force_conservation_evidence.csv`, `data/uy_sensitivity_chain.csv` | closure, transmission and power evidence; the chain behind the 0.7% uy gap |
 | `scripts/convergence.py` | the campaign's convergence routine, copied unchanged (67 lines of standard-library Python) |
 | `scripts/analyze_steady.py` | regenerates `steady_convergence`, `steady_crosscode`, `modelform`, `fourway` CSVs from `steady_levels.csv` |
 | `scripts/make_figures.py` | figures from the CSVs (numpy, matplotlib) |
-| `figures/` | `fenicsx_blob_spatial`, `fenicsx_blob_temporal` (pdf, png) |
+| `figures/` | `fenicsx_blob_spatial`, `fenicsx_blob_temporal`, `fenicsx_blob_transient_spatial` (pdf, png) |
 
-Not included: raw solver histories, state dumps, meshes (regenerated and hash-checked, see below), the solver source. A BDF2 transient spatial study at t = 1 is **pending** (placeholder Table in the supplement; see the PR description).
+Not included: raw solver histories, state dumps, meshes (regenerated and hash-checked, see below), the solver source.
 
 ## Reproduce the tables and figures
 ```
@@ -50,7 +52,7 @@ The derived CSVs reproduce the sign-off values (e.g. M2 u_x p 1.414, limit 0.120
 F = 0.5, 1, 2: dt 0.01, t = 10, commit c8a4b0a; F = 4: dt 0.04, t = 6, commit 1484d94. The steady states are time-step independent to <= 4e-10 (8 printed digits), so the mixture does not enter the GCI at the printed level. Pinned and unpinned MPI wrappers were used (speed only). `git_dirty=true` in some manifests is from deleted environment symlink files only.
 
 ## What is not claimed
-No second-order temporal convergence for blobInTreacle; no independent verification (different group); no statement that M1 or M2 is the correct model, or that solids4foam is defective; no uy agreement within a propagated uncertainty (it agrees to 0.7 %, not resolved below about 1 %); no spatially converged transient or interface-shape comparison; E-AREA is a same-lineage diagnostic, not a verification of the coupling; no level-3 claim.
+No second-order temporal convergence for blobInTreacle; no independent verification (different group); no statement that M1 or M2 is the correct model, or that solids4foam is defective; no uy agreement within a propagated uncertainty (it agrees to 0.7 %, not resolved below about 1 %); no cross-code transient agreement (the t = 1 u_x limits differ by 1.41 x combined GCI; u_y and F_x not accepted; the time error at dt = 0.005 is not isolated) and no interface-shape comparison; the x-force statement is a difference between the fluid-reported force on the current surface and the solid-applied force on the reference areas, not an unconditional physical force loss; E-AREA is a same-lineage diagnostic, not a verification of the coupling; no level-3 claim.
 
 ## Known open points (from the review)
-Pointwise force closure 1.9 to 2.9 % at two levels only; x4 E-AREA level not run; Liu steady/transient values not obtained from the journal article; run directories `runs/a1_*` of the solver repository untracked at the review date and two R1 reference run directories (one used) not yet recorded in its failed-runs register; no review by a human outside the lineage.
+Pointwise stress closure misses by 1.9 to 2.9 % (explained as a corner strong-form defect, about h^0.6; the fluid-side weak-vs-facet difference and the M2 correction-term share of the base reaction are not decomposed); x4 E-AREA level not run; Liu steady/transient values not obtained from the journal article; run directories `runs/a1_*` of the solver repository untracked at the review date and two R1 reference run directories (one used) not yet recorded in its failed-runs register; no review by a human outside the lineage.

@@ -50,3 +50,15 @@ ax[0].legend(frameon=False, fontsize=6.5)
 ax[0].set_title("(a) apex $u_x$", fontsize=7.5); ax[1].set_title("(b) interface force $F_y$", fontsize=7.5)
 fig.tight_layout()
 for e in ("pdf", "png"): fig.savefig(os.path.join(figs, "fenicsx_blob_temporal." + e), dpi=200)
+
+# transient spatial study at t=1 (BDF2, dt=0.005): apex ux against h, with solids4foam at the same cell counts
+T = rd("bdf2_transient_spatial_t1_M2.csv")
+h = [int(r["cells_total"]) ** -0.5 for r in T]
+fig, ax = plt.subplots(figsize=(3.6, 2.8))
+ax.plot(h, [float(r["apex_ux_t1"]) for r in T], color="#0072B2", marker="o", lw=1, ms=4, label="FEniCSx M2, BDF2, $\\Delta t=0.005$")
+ax.plot(h, [float(r["s4f_M2_same_level_ux_t1"]) for r in T], color="#009E73", marker="^", ls="--", lw=1, ms=4, label="solids4foam M2")
+ax.plot([0], [0.0576543], color="#0072B2", marker="o", mfc="none", ms=6, ls="none")
+ax.plot([0], [0.0577633], color="#009E73", marker="^", mfc="none", ms=6, ls="none")
+ax.set_xlabel(r"$h=N_\mathrm{cells}^{-1/2}$"); ax.set_ylabel("apex $u_x(t=1)$ (m)"); ax.grid(alpha=0.25, lw=0.4); ax.legend(frameon=False, fontsize=6.5, loc="lower left")
+fig.tight_layout()
+for e in ("pdf", "png"): fig.savefig(os.path.join(figs, "fenicsx_blob_transient_spatial." + e), dpi=200)
