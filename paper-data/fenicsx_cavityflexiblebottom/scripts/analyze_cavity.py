@@ -1,7 +1,7 @@
 """Regenerate the derived CSVs of this package from the input CSVs in ../data (standard library only).
 usage (from this package directory):  python3 -B -I scripts/analyze_cavity.py
-Inputs : coupled_levels.csv, s4f_reference_variants_levels.csv, plate_only_ladder.csv, fluid_only_ladder.csv, context_references.csv, cost_cpuh.csv
-Outputs: coupled_orders.csv, coupled_uy_limit_vs_order.csv, reaction_deficit.csv, reference_comparison.csv, context_comparison.csv,
+Inputs : plate_only_nt32_control.csv, coupled_levels.csv, s4f_reference_variants_levels.csv, plate_only_ladder.csv, fluid_only_ladder.csv, context_references.csv, cost_cpuh.csv
+Outputs: plate_only_q2_nt32_orders.csv, williams_exponent.csv, coupled_orders.csv, coupled_uy_limit_vs_order.csv, reaction_deficit.csv, reference_comparison.csv, context_comparison.csv,
          plate_only_orders.csv, fluid_only_orders.csv, cost_summary.csv
 Acceptance rule: scripts/convergence.py (monotone, 0.5 <= p <= 3, Fs = 1.25); a triple that fails is reported as NOT ACCEPTED with no limit."""
 import csv, os, sys, math
@@ -115,6 +115,43 @@ fy_flat = float([r for r in fl if r["floor"] == "flat"][-1]["Fy_N_per_m"]); fy_d
 rows.append(["flat vs dump finest", "Fy flat/dump - 1 (percent)", 100 * (fy_flat / fy_dump - 1), "", "", "", "", "", ""])
 rows.append(["dump finest vs s4f strict level 2 (-5.238953, 80x8 plate)", "Fy relative difference (percent)", 100 * (fy_dump - (-5.238953)) / 5.238953 * -1, "", "", "", "", "", ""])
 wr("fluid_only_orders.csv", ["floor", "quantity", "observed_order_p", "status", "acceptance", "richardson_limit", "GCI_fine_percent", "fine_minus_limit_percent", "asymptotic_ratio"], rows)
+
+# 6b. uniform-mesh plate-only Q2 ladder extended to nt = 32 (h = 1/nt) and the Williams exponent of the linearised 90-degree clamped/free wedge
+nt = rd("plate_only_nt32_control.csv"); rows = []
+for ld in ("uniform", "follower"):
+    v = [float(r["uy_A_m"]) for r in nt if r["load"] == ld and r["source"].endswith("(job 16716)") or (r["load"] == ld and r["nt"] in ("4", "8", "16"))]
+    for name, ix in (("nt 4,8,16", [0, 1, 2]), ("nt 8,16,32", [1, 2, 3])):
+        rows.append([ld, name] + tri([v[i] for i in ix], [1.0 / [4, 8, 16, 32][i] for i in ix], ld))
+wr("plate_only_q2_nt32_orders.csv", ["load", "triple", "observed_order_p", "status", "acceptance", "richardson_limit", "GCI_fine_percent", "fine_minus_limit_percent", "asymptotic_ratio"], rows)
+def _root(k):
+    lo, hi = 0.3, 1.0
+    g = lambda l: 1 + k * k + 2 * k * math.cos(math.pi * l) - 4 * l * l
+    for _ in range(200):
+        m = 0.5 * (lo + hi)
+        if g(lo) * g(m) <= 0: hi = m
+        else: lo = m
+    return 0.5 * (lo + hi)
+wr("williams_exponent.csv", ["poisson_ratio", "kappa_plane_strain_3-4nu", "lambda_smallest_root", "two_lambda"], [[nu, 3 - 4 * nu, _root(3 - 4 * nu), 2 * _root(3 - 4 * nu)] for nu in (0.3, 0.4, 0.45, 0.49)])
+
+# 6c. sensitivity of the strict-partitioned limit to an unseen corner term (a least-squares fit, NOT a measurement): S = L + a h^2 + s c h^(2 lambda), c from the FEniCSx four-level fit
+def _lsq(cols, y):
+    n = len(cols); A = [[sum(ci * cj for ci, cj in zip(cols[i], cols[j])) for j in range(n)] for i in range(n)]; b = [sum(ci * yi for ci, yi in zip(cols[i], y)) for i in range(n)]
+    for i in range(n):
+        piv = A[i][i]
+        for j in range(i + 1, n):
+            f_ = A[j][i] / piv; A[j] = [x - f_ * w for x, w in zip(A[j], A[i])]; b[j] -= f_ * b[i]
+    sol = [0.0] * n
+    for i in reversed(range(n)): sol[i] = (b[i] - sum(A[i][j] * sol[j] for j in range(i + 1, n))) / A[i][i]
+    return sol
+lam2 = 1.2998200018987194; hh = H; fe_uy = col("uy_A_m")
+c_fe = _lsq([[1.0] * 4, [h ** lam2 for h in hh]], fe_uy)[1]
+sy = [float(x["uy_top_m"]) for x in ref if x["variant"] == "partitioned_strict"]
+base = None; rows = []
+for sc in (0.0, 0.5, 1.0, 2.0):
+    L_ = _lsq([[1.0] * 4, [h ** 2 for h in hh]], [v - sc * c_fe * h ** lam2 for v, h in zip(sy, hh)])[0]
+    if base is None: base = L_
+    rows.append([sc, c_fe, L_, 100 * (L_ - base) / abs(base), 100 * (L_ - float(tri([float(lv[i]["uy_A_m"]) for i in (1, 2, 3)], H[1:], "uy")[3])) / abs(L_)])
+wr("s4f_corner_term_sensitivity.csv", ["corner_term_scale_s", "FEniCSx_corner_amplitude_c", "s4f_strict_limit_from_fit", "shift_vs_s0_fit_percent_(negative=larger_|uy|)", "fit_limit_minus_FEniCSx_L2-L4_limit_percent_(over_|fit|)"], rows)
 
 # 7. cost
 cs = rd("cost_cpuh.csv")

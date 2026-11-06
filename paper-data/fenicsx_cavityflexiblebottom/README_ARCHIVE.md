@@ -13,12 +13,12 @@ Description (for the record): *Second implementation (FEniCSx, DOLFINx 0.10.0) o
 | reference audit | `CAVITY_AUDIT.md` at a3e056e | solver repository |
 | meshes L1-L4 | sha256 in `README.md` (msh and geo); `.msh` git-ignored; regenerate from the committed `.geo` with gmsh 4.14.0 (`-2 -order 2 -format msh41 -bin`, generator `mesh/make_cavity_mesh.py`); preflight meshes with sha256 in the C1 `meshes/SHA256SUMS` | evidence tarball (below) |
 | run directories and histories | `coupled/prod_P1_L1_dt10 ... prod_P4_L4_dt10`, `prod_T1_L2_dt5`, `prod_S1_L1_tol`, `prod_M2_L2_dt10`, `scan_L1_dt*`, `rigid_L1_*`, `scaling_L2_n4` (history.csv, summary.json) and `runs/<name>_n<N>_<UTC>_<hex>/` (SUBMIT_CMD, MANIFEST.json, EXIT, stdout) | evidence tarball |
-| extraction scripts | `scripts/extract_from_raw.py` (this directory), `analyze_coupled.py` and `run_cavity.py` (solver repository) | this PR; evidence tarball |
+| extraction scripts | `scripts/extract_from_raw.py`, `scripts/extract_local_and_corner.py` (this directory), `analyze_coupled.py` and `run_cavity.py` (solver repository) | this PR; evidence tarball |
 | environment | micromamba env `fenicsx010`, `environment/environment_explicit_lock.txt`, wrapper `environment/run_in_env.sh` (sha256 321dc817...8006) | evidence tarball |
 | solids4foam reference runs | sequences of PRs #14, #18, #23 and `four_level_partitioned_monolithic.csv` (sha256 874561ac...2b6, private campaign output) | repository data files in the paper repo; the raw CSV is private |
 
 ## Evidence tarball (proposed equivalent of the blob archive; NOT in git, nothing uploaded)
-`ARCHIVE/cavity_evidence_2026-11-06.tar.gz` (in the solver-repository checkout; not in git, not yet public), 742 files, about 23 MB, **sha256 `9db82def7376fa5ee61eff2b493cb01de8989826fe536d8b9d1e8fc2e692ef5f`** (also in `ARCHIVE/CAVITY_TARBALL.sha256`; per-file sha256 in `ARCHIVE/CAVITY_MANIFEST.sha256`; instructions in `ARCHIVE/REPRODUCE_CAVITY.md`, written like `ARCHIVE/REPRODUCE.md` of the blob archive). It holds the coupled and preflight worktree files and the cavity run directories (C2/, C1/), `CAVITY_AUDIT.md` (MAIN/) and the audit rerun output (D/), built with `--owner=0 --group=0 --numeric-owner --mtime=@0` and `gzip -9n` (per-root tars concatenated with `tar -A`; rebuilding reproduced the same sha256). The blob archive for comparison is `ARCHIVE/blob_evidence_2026-11-06.tar.gz` (sha256 ca5d5faf868cea7610e0e3b51a52eaaa88e7040632565bef85f39a9002a8865b).
+`ARCHIVE/cavity_evidence_2026-11-06.tar.gz` (in the solver-repository checkout; not in git, not yet public), 804 files, about 23 MB (rebuilt after the corner experiment; includes the corner-experiment runs, `CORNER_EXPERIMENT.md`, the novelty assessment and the C1 ledger), **sha256 `07baabea1c20e288a0955e42d7055c51dc62a6b2870000054a3bea7f4771f796`** (also in `ARCHIVE/CAVITY_TARBALL.sha256`; per-file sha256 in `ARCHIVE/CAVITY_MANIFEST.sha256`; instructions in `ARCHIVE/REPRODUCE_CAVITY.md`, written like `ARCHIVE/REPRODUCE.md` of the blob archive). It holds the coupled and preflight worktree files and the cavity run directories (C2/, C1/), `CAVITY_AUDIT.md` (MAIN/) and the audit rerun output (D/), built with `--owner=0 --group=0 --numeric-owner --mtime=@0` and `gzip -9n` (per-root tars concatenated with `tar -A`; rebuilding reproduced the same sha256). The blob archive for comparison is `ARCHIVE/blob_evidence_2026-11-06.tar.gz` (sha256 ca5d5faf868cea7610e0e3b51a52eaaa88e7040632565bef85f39a9002a8865b).
 Excluded: bytecode, other campaigns' runs, the archived-source copy and meshes of the audit rerun.
 
 ## Which source reproduces which item of the supplement
@@ -31,6 +31,8 @@ Excluded: bytecode, other campaigns' runs, the archived-source copy and meshes o
 | preflight (plate, fluid) | `plate_only_*`, `fluid_only_*` | `extract_from_raw.py` (ladders), `analyze_cavity.py` (orders) | evidence tarball / this directory |
 | Table S3 (solids4foam variants), context | `reference_comparison.csv`, `context_comparison.csv` | `analyze_cavity.py` | this directory |
 | sensitivity section | `m1_vs_labelled_sensitivity.csv` | `extract_from_raw.py` | evidence tarball |
+| local comparison, nt = 32 control, graded attempts | `floor_pressure_local_comparison.csv`, `plate_shape_bins.csv`, `plate_only_nt32_control.csv`, `graded_mesh_attempts.csv` | `scripts/extract_local_and_corner.py` | evidence tarball |
+| corner orders, Williams exponent, s4f corner sensitivity | `plate_only_q2_nt32_orders.csv`, `williams_exponent.csv`, `s4f_corner_term_sensitivity.csv` | `analyze_cavity.py` | this directory |
 | figures | `figures/*` | `scripts/make_figures.py` | numpy, matplotlib |
 
 ## Regeneration
