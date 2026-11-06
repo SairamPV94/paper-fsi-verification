@@ -27,4 +27,4 @@ T1_L2_dt5,4,16663,0.1756,0.177,OK,production
 P3_L3_dt10,8,16661,0.8222,0.827,OK,production
 M2_L2_dt10,4,16664,0.3867,0.389,OK,production
 P4_L4_dt10,12,16665,5.8533,5.853,OK,production
-"C1/C2 plate-only and fluid-only preflight (jobs 16633-16643, 16647)",<=8,16633-16647,0.250,0.263,see README,preflight C1/C2
+"C1/C2 plate-only and fluid-only preflight (jobs 16633-16638, 16641-16643, 16647; 16639 and 16640 are coupled-campaign jobs)",<=8,16633-16647 excluding 16639 and 16640,0.250,0.263,see README,preflight C1/C2

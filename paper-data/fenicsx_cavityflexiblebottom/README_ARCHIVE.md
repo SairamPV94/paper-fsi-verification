@@ -1,29 +1,40 @@
 # Archive package description (Zenodo-ready; NOT published, no DOI minted, no authorship assigned)
 
-Purpose: a public archived snapshot of what the CSVs and scripts in this directory cite, required before journal submission.
-Description (for the record): *Second implementation (FEniCSx, DOLFINx 0.10.0) of the cavityFlexibleBottom benchmark: four-level monolithic ALE results for a St Venant-Kirchhoff plane-strain plate with exact interface traction, preflight (plate-only and rigid-floor fluid-only) studies, a labelled interface-measure sensitivity, comparison with solids4foam variants, an internal AI audit and its corrections. Work by the same group and tooling lineage as the reference runs; not an independent verification.*
+**Raw data and the solver repository (`fenicsx-fsi-verification`) are not yet public. Reproducing the tables from this PR alone is possible only for the derived CSVs, figures and orders (from the input CSVs in `data/`); re-extracting the inputs from raw output, regenerating meshes or re-running the solver is not possible until the Zenodo snapshot exists.**
 
-## Snapshot to archive
-1. This directory (`paper-data/fenicsx_cavityflexiblebottom/`) at the commit that is merged.
-2. The solver repository `fenicsx-fsi-verification` at a tagged commit at or after the commit containing the preregistrations, the preflight and the audit (code commit dcbe8ca, results e18f9b5, C1/C2 8bb8dae, audit b94be85; the untracked `runs/` directories must be committed first). Not yet public; location and licence to be agreed.
-3. The four mesh files `cavity_L1..L4.msh` (git-ignored in the solver repository) or the committed `.geo` plus gmsh 4.14.0 and the hashes in `README.md`.
-4. Environment lock (`environment/environment_explicit_lock.txt`) and wrapper (`environment/run_in_env.sh`).
-5. Not included by default: raw `history.csv` of every run (size); include if the archive limit allows.
+Description (for the record): *Second implementation (FEniCSx, DOLFINx 0.10.0) of the cavityFlexibleBottom benchmark: four-level monolithic ALE results for a St Venant-Kirchhoff plane-strain plate with exact interface traction, preflight (plate-only and rigid-floor fluid-only) studies, a labelled interface-measure sensitivity, comparison with solids4foam variants, internal AI audits and their corrections. Work by the same group and tooling lineage as the reference runs; not an independent verification.*
+
+## What is to be archived and where it can be recovered today
+| item | identifier | where (today) |
+|---|---|---|
+| coupled code, preregistration, production runs | commit **dcbe8ca** (src tree 899ef3800d20f6ec8e1a0c4ab94cfb220a487341); results commit **e18f9b5** (same src tree) | solver repository, branch `cavity-coupled-c2` (worktree `fenicsx-cavity-C2`); not public |
+| plate-only / fluid-only preflight | preregistration c0cf331, results 62aa4fe, final **8bb8dae** (src tree aab0a8af673c6bc8529af7df6acf13f3a0b7448e at c0cf331) | solver repository, branch `cavity-struct-fluid-c1`; not public |
+| audits | rerun preregistration 2a25ef9, audit b94be85, erratum 05c91d5 (branch `cavity-coupled-c2`); copies of the audit and erratum in this directory | as above |
+| reference audit | `CAVITY_AUDIT.md` at a3e056e | solver repository |
+| meshes L1-L4 | sha256 in `README.md` (msh and geo); `.msh` git-ignored; regenerate from the committed `.geo` with gmsh 4.14.0 (`-2 -order 2 -format msh41 -bin`, generator `mesh/make_cavity_mesh.py`); preflight meshes with sha256 in the C1 `meshes/SHA256SUMS` | evidence tarball (below) |
+| run directories and histories | `coupled/prod_P1_L1_dt10 ... prod_P4_L4_dt10`, `prod_T1_L2_dt5`, `prod_S1_L1_tol`, `prod_M2_L2_dt10`, `scan_L1_dt*`, `rigid_L1_*`, `scaling_L2_n4` (history.csv, summary.json) and `runs/<name>_n<N>_<UTC>_<hex>/` (SUBMIT_CMD, MANIFEST.json, EXIT, stdout) | evidence tarball |
+| extraction scripts | `scripts/extract_from_raw.py` (this directory), `analyze_coupled.py` and `run_cavity.py` (solver repository) | this PR; evidence tarball |
+| environment | micromamba env `fenicsx010`, `environment/environment_explicit_lock.txt`, wrapper `environment/run_in_env.sh` (sha256 321dc817...8006) | evidence tarball |
+| solids4foam reference runs | sequences of PRs #14, #18, #23 and `four_level_partitioned_monolithic.csv` (sha256 874561ac...2b6, private campaign output) | repository data files in the paper repo; the raw CSV is private |
+
+## Evidence tarball (proposed equivalent of the blob archive; NOT in git, nothing uploaded)
+`/home/sairam/work/fenicsx-fsi-verification/ARCHIVE/cavity_evidence_2026-11-06.tar.gz`, 742 files, about 23 MB, **sha256 `9db82def7376fa5ee61eff2b493cb01de8989826fe536d8b9d1e8fc2e692ef5f`** (also in `ARCHIVE/CAVITY_TARBALL.sha256`; per-file sha256 in `ARCHIVE/CAVITY_MANIFEST.sha256`; instructions in `ARCHIVE/REPRODUCE_CAVITY.md`, written like `ARCHIVE/REPRODUCE.md` of the blob archive). It holds the coupled and preflight worktree files and the cavity run directories (C2/, C1/), `CAVITY_AUDIT.md` (MAIN/) and the audit rerun output (D/), built with `--owner=0 --group=0 --numeric-owner --mtime=@0` and `gzip -9n` (per-root tars concatenated with `tar -A`; rebuilding reproduced the same sha256). The blob archive for comparison is `ARCHIVE/blob_evidence_2026-11-06.tar.gz` (sha256 ca5d5faf868cea7610e0e3b51a52eaaa88e7040632565bef85f39a9002a8865b).
+Excluded: bytecode, other campaigns' runs, the archived-source copy and meshes of the audit rerun.
 
 ## Which source reproduces which item of the supplement
 | Supplement item | file | regenerated by | needs |
 |---|---|---|---|
-| Table S1 (levels) | `data/coupled_levels.csv` | `scripts/extract_from_raw.py` | solver repository |
+| Table S1 (levels) | `data/coupled_levels.csv` | `scripts/extract_from_raw.py` | evidence tarball |
 | Table S2 (orders), limit-versus-order text | `data/coupled_orders.csv`, `coupled_uy_limit_vs_order.csv` | `scripts/analyze_cavity.py` | this directory |
-| Reaction-deficit text | `data/reaction_deficit.csv` | same | this directory |
-| Gates, mass, pseudo-time, time, tolerance, rigid | `coupled_monitors.csv`, `pseudo_time_tail.csv`, `time_solver_rigid_checks.csv` | `extract_from_raw.py` | solver repository |
-| Preflight (plate, fluid) | `plate_only_*`, `fluid_only_*` | `extract_from_raw.py` (ladders), `analyze_cavity.py` (orders) | solver repository / this directory |
-| Table S4 (variants), context | `reference_comparison.csv`, `context_comparison.csv` | `analyze_cavity.py` | this directory |
-| Sensitivity section | `m1_vs_labelled_sensitivity.csv` | `extract_from_raw.py` | solver repository |
-| Figures | `figures/*` | `scripts/make_figures.py` | numpy, matplotlib |
+| reaction-deficit text | `data/reaction_deficit.csv` | same | this directory |
+| gates, mass, pseudo-time, time, tolerance, rigid | `coupled_monitors.csv`, `pseudo_time_tail.csv`, `time_solver_rigid_checks.csv` | `extract_from_raw.py` | evidence tarball |
+| preflight (plate, fluid) | `plate_only_*`, `fluid_only_*` | `extract_from_raw.py` (ladders), `analyze_cavity.py` (orders) | evidence tarball / this directory |
+| Table S3 (solids4foam variants), context | `reference_comparison.csv`, `context_comparison.csv` | `analyze_cavity.py` | this directory |
+| sensitivity section | `m1_vs_labelled_sensitivity.csv` | `extract_from_raw.py` | evidence tarball |
+| figures | `figures/*` | `scripts/make_figures.py` | numpy, matplotlib |
 
 ## Regeneration
 `python3 -B -I scripts/analyze_cavity.py && python3 -B -I scripts/make_figures.py && sha256sum -c SHA256SUMS`.
 
 ## Notes for the depositor
-Authors, licence, funding and the solids4foam #671 reruns are to be settled by the authors. This file only describes the content; nothing has been uploaded.
+Authors, licence, funding and the solids4foam #671 reruns are to be settled by the authors. The solver repository needs a public location and a tag at or after the commits above, and the untracked `runs/` directories committed (or the tarball deposited). This file only describes the content; nothing has been uploaded.
