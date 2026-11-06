@@ -3,7 +3,7 @@
 Status: **draft supplementary evidence, same research group, not an independent verification by a different group.**
 Text: `../../supplement_fenicsx_blobintreacle.tex` (builds alone with `latexmk -pdf supplement_fenicsx_blobintreacle.tex`). Related: issue #50 (this is *not* the FEBio run that issue asked for).
 
-The wording follows an independent referee-style review of the evidence package (a further agent of the same model family; reviewed state of the code repository: master ee9379f plus uncommitted run directories). That review accepted the steady-state sequences, the M2 transmission loss and the limited BDF2 result, and rejected the claims listed in "What is not claimed" below.
+The wording follows an internal review of the evidence package by a further agent of the same model family, followed by a second internal quality gate (neither is an external or human review; reviewed state of the code repository: master ee9379f plus uncommitted run directories). The first review accepted the steady-state sequences, the M2 transmission loss and the limited BDF2 result, and rejected the claims listed in "What is not claimed" below.
 
 ## Contents
 | file | content |
@@ -47,6 +47,11 @@ The derived CSVs reproduce the sign-off values (e.g. M2 u_x p 1.414, limit 0.120
 - Cost: FEniCSx campaign 46.9 CPU-h (all jobs including failed and cancelled; M1 mesh study 3.2 CPU-h, M2 backward-Euler family 13.2 CPU-h); solids4foam side runs about 2.2 CPU-h for the t = 1 time series plus the regenerated mesh series.
 - Preregistrations (26, sha256 files all re-verified) are in the solver repository.
 - Reproduction check: fresh archives of c8a4b0a and 6f85a48 reproduce the F = 1 runs to 4e-15 relative at every step.
+
+## Retained failed or excluded runs
+- A1 reference R1 (BDF2, dt 0.0025): the first launch, Slurm job 16419, run directory `runs/a1_R1_bdf2_dt0.0025_n2_20261106T144042Z_ecc75a`, ended `EXIT FAIL SystemExit(2)` and the solver never started; the valid R1 used throughout is job 16450, `..._20261106T145125Z_975b2a`.
+- A1 T1 restart runs at dt 0.04 (BDF2 and CN) end at t = 0.98 and are excluded from the t = 1 analysis (t = 1 is not on their time grid).
+- Also retained in the solver repository: cancelled and failed M2 and M1-CN runs (M1 CN failed or was killed at F = 2, at F = 1 with dt 0.02 and 0.005; only F = 0.5, 1 with dt 0.01 are valid), cancelled pinned M2 runs, and a mislaunched solids4foam run (Slurm COMPLETED with solver rc 1).
 
 ## Mixed composition of the M2 sequence (disclosed)
 F = 0.5, 1, 2: dt 0.01, t = 10, commit c8a4b0a; F = 4: dt 0.04, t = 6, commit 1484d94. The steady states are time-step independent to <= 4e-10 (8 printed digits), so the mixture does not enter the GCI at the printed level. Pinned and unpinned MPI wrappers were used (speed only). `git_dirty=true` in some manifests is from deleted environment symlink files only.
