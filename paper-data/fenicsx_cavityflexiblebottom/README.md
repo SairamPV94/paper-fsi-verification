@@ -1,7 +1,7 @@
 # cavityFlexibleBottom: second implementation (FEniCSx), exact StVK plane-strain model
 
 Status: **draft supplementary evidence. A second implementation by the same research group and tooling lineage; not an independent verification and not externally reviewed.**
-Text: `../../supplement_fenicsx_cavityflexiblebottom.tex` (build alone with `latexmk -pdf supplement_fenicsx_cavityflexiblebottom.tex`; 8 pages including references; it cites `Baratta2023` (DOLFINx), which is added to `bibliography.bib` by the open draft PR #69, plus `PETSc`, `MUMPS:1`, `MUMPS:2`, `Tukovic2018` that are already there, so until #69 is merged the DOLFINx citation is undefined in a standalone build).
+Text: `../../supplement_fenicsx_cavityflexiblebottom.tex` (build alone with `latexmk -pdf supplement_fenicsx_cavityflexiblebottom.tex`; 9 pages including references; it cites `Baratta2023` (DOLFINx), added to `bibliography.bib` here byte-identically to PR #69 (merge-tested in both orders), plus `PETSc`, `MUMPS:1`, `MUMPS:2`, `Tukovic2018` already in main).
 Layout follows `paper-data/fenicsx_blobintreacle/` of PR #69. Related cavity work in the paper: PRs #12, #14, #18, #20, #22, #23, #27, #67.
 
 ## Contents
