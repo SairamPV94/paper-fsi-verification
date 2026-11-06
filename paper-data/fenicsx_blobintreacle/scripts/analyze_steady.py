@@ -88,4 +88,32 @@ with open(os.path.join(here, "fourway_M1_M2.csv"), "w", newline="") as fh:
             a = res.get((m, o, "finest3"))
             row.append("" if a is None else "%.7g" % a["f_extrap"])
         w.writerow(row)
+# ratio table: every M1/M2-type ratio with its exact numerator, denominator and levels
+def lim(model, obs, trip):
+    a = res.get((model, obs, trip))
+    return None if a is None else a["f_extrap"]
+tab = []
+def add(label, num, den, levels, use, getter):
+    r = []
+    for o in ("apex_ux", "apex_uy", "Fx_fluid", "Fy_fluid"):
+        a, b = getter(num, o), getter(den, o)
+        r.append("" if a is None or b is None else "%.4f" % (a / b))
+    tab.append([label, num[0], den[0], levels, use] + r)
+L = lambda trip: (lambda m, o: lim(m[0] if isinstance(m, tuple) else m, o, trip))
+add("FEniCSx M1 / M2, extrapolated limits", ("fenicsx_M1_BE",), ("fenicsx_M2_BE",), "F1,F2,F4 in both", "preferred FEniCSx ratio", L("finest3"))
+add("FEniCSx M1 / M2, extrapolated limits", ("fenicsx_M1_BE",), ("fenicsx_M2_BE",), "F0.5,F1,F2 in both", "coarse-triple check", L("coarsest3"))
+add("solids4foam E-AREA / M2, like-for-like", ("s4f_EAREA_diagnostic",), ("s4f_M2_original",), "x0.5,x1,x2 in both (E-AREA has no x4)", "preferred s4f ratio", lambda m, o: lim(m[0], o, "finest3") if m[0].startswith("s4f_EAREA") else lim(m[0], o, "coarsest3"))
+add("solids4foam E-AREA / M2, MIXED level", ("s4f_EAREA_diagnostic",), ("s4f_M2_original",), "E-AREA x0.5,x1,x2 over M2 x1,x2,x4", "NOT to be used", lambda m, o: lim(m[0], o, "finest3"))
+with open(os.path.join(here, "modelform_ratio_table.csv"), "w", newline="") as fh:
+    w = csv.writer(fh)
+    w.writerow(["ratio", "numerator", "denominator", "levels", "use", "apex_ux", "apex_uy", "Fx_fluid", "Fy_fluid"])
+    w.writerows(tab)
+# base-reaction ratios: why M1 Rx converges slowly while M2 Rx/Fx is constant
+with open(os.path.join(here, "base_reaction_ratio.csv"), "w", newline="") as fh:
+    w = csv.writer(fh)
+    w.writerow(["level", "M2_abs_Rx_over_Fx_fluid", "M1_abs_Rx_over_Fx_applied", "M1_Rx_over_M2_Rx"])
+    for L_ in ["0.5", "1", "2", "4"]:
+        a2 = abs(val("fenicsx_M2_BE", "Rx_base", L_)) / val("fenicsx_M2_BE", "Fx_fluid", L_)
+        a1 = abs(val("fenicsx_M1_BE", "Rx_base", L_)) / val("fenicsx_M1_BE", "Fx_fluid", L_)
+        w.writerow(["F" + L_, "%.4f" % a2, "%.4f" % a1, "%.4f" % (val("fenicsx_M1_BE", "Rx_base", L_) / val("fenicsx_M2_BE", "Rx_base", L_))])
 print("written", os.path.abspath(here))

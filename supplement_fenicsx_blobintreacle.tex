@@ -6,6 +6,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath,amssymb,amsfonts,bm}
 \usepackage{xcolor}
+\usepackage{soul}
 \usepackage{manyfoot}
 \usepackage{booktabs}
 \usepackage{siunitx}
@@ -28,69 +29,55 @@
 	\noindent\textcolor{red}{\rule{\linewidth}{0.8pt}}\par}
 \newcommand{\citetodo}[1]{\textcolor{red}{[\textbf{cite:}~#1]}}
 \newcommand{\pending}[1]{\textcolor{red}{[\textbf{PENDING:}~#1]}}
+\newcommand{\legacy}{\textcolor{red!70!black}{legacy moving-wall BC; to be rerun after solids4foam PR~\#671}}
 
 \begin{document}
 
 \title[Supplementary material: FEniCSx blobInTreacle]{Supplementary material: a second implementation of blobInTreacle (FEniCSx) and an audit of the interface formulation}
 
-\author*[1]{\fnm{Philip} \sur{Cardiff}}\email{philip.cardiff@ucd.ie}
-\author[1]{\fnm{Sairam} \sur{Pamulaparthi Venkata}}
+\author*[1]{\fnm{Author} \sur{Placeholder}}\email{corresponding.author@example.org}
+\author[1]{\fnm{Author} \sur{Placeholder 2}}
 
 \affil[1]{\orgdiv{School of Mechanical and Materials Engineering}, \orgname{University College Dublin}, \orgaddress{\country{Ireland}}}
 
 
 \maketitle
 
+\todo{DRAFT (issue \#50, review of PR \#69). Author list, CRediT and the AI-use paragraph are placeholders for the authors to agree. All numbers come from the run records and CSV files in \texttt{paper-data/fenicsx\_blobintreacle/}; job identifiers, hashes, commits and the review lineage are in its README. \textbf{Every solids4foam value below was computed with the \legacy{} (the interface uses \texttt{newMovingWallVelocity}; the wall stretches, $J_s=0.89$--$1.28$, $\nu=1$) and may change.} The reruns are not done.}
 
-\todo{DRAFT for review (draft pull request, issue \#50). Author list and order are placeholders (corresponding author named without his review). Every number comes from the run records and CSV files in \texttt{paper-data/fenicsx\_blobintreacle/} (README there); the wording follows an internal review by a further agent of the same model family and a second internal quality gate. No review by a human outside the lineage that produced the evidence has taken place.}
-
-\section{Scope and independence}\label{sec:fx_scope}
-The only reference for blobInTreacle in the suite is category C-weak: figure-extracted interface shapes from a preprint~\citep{Liu2013} of~\citet{Liu2014} on a coarse mesh with first-order time integration.
-Issue \#50 asked for an independent numerical solution with mesh and time-step convergence.
-This supplement reports a second implementation (monolithic FEniCSx finite elements) on the same quadrilateral mesh topology as the solids4foam tutorial, and what it shows about the steady state, the time integration and the interface force transfer of the tutorial.
-It adds a cross-code steady-state check and a quantified model-form sensitivity; it does not replace the C-weak reference and does not settle the temporal accuracy of the suite.
-
-\paragraph{Independence.}\label{sec:fx_independence}
-Independent: the numerics (monolithic Taylor--Hood finite elements with Newton, against partitioned cell-centred finite volumes with IQN-ILS).
-Not independent: the same research group; AI agents of one model family implemented, verified and reviewed (the ``verifier'' of the E-AREA experiment is the lineage that wrote it); the problem definition, the mesh topology (480 fluid and 120 solid cells at the first level, the same 24 interface chords), the extraction of the solids4foam series and the Richardson/GCI routine are shared; and the M2 model was implemented by reading the solids4foam source, so a shared misreading of the problem would be invisible in the comparison.
-The reviews were internal (an agent of the same family, twice), not external; no human outside the lineage has reviewed this.
-The result is a second implementation by the same group, not an independent verification, and the FEBio run requested in \#50 is not delivered.
+\section{Scope and disclosure}\label{sec:fx_scope}
+The only reference for blobInTreacle in the suite is C-weak: figure-extracted interface shapes from a preprint~\citep{Liu2013} of~\citet{Liu2014}, coarse mesh, first-order time integration.
+Issue \#50 asked for an independent solution with mesh and time-step convergence.
+This supplement gives a second implementation (monolithic finite elements, FEniCSx) on the same quadrilateral mesh topology as the solids4foam tutorial, and what it shows about the steady state, the time integration and the interface force transfer.
+It adds a cross-code steady check and a quantified model-form sensitivity; it does not replace the C-weak reference or settle temporal accuracy.
+\textbf{Disclosure.} Only the numerics are independent (monolithic Taylor--Hood finite elements with Newton, against partitioned cell-centred finite volumes).
+The work is by the same group, with AI agents of one model family implementing, verifying and reviewing it internally (twice); problem definition, mesh topology, the extraction of the solids4foam series and the convergence routine are shared, and M2 was implemented from the solids4foam source, so a shared misreading would be invisible.
+No external or human review has taken place, and the FEBio run requested in \#50 is not delivered.
 
 \section{Solver, original model and the two interface formulations}\label{sec:fx_solver}
-\paragraph{Solver.}
-DOLFINx 0.10.0 (PETSc 3.25.6, MUMPS) on one mesh for fluid and solid: velocity $Q_2$ (continuous across the interface, so no-slip and kinematics hold exactly), pressure $Q_1$, displacement $Q_2$ (solid displacement; harmonic extension in the fluid), Galerkin ALE Navier--Stokes without stabilisation, SNES Newton.
-Backward Euler is used for the steady studies and BDF2 (backward Euler first step) for the transient ones.
-Meshes are the tutorial blocking refined by $F=0.5$, $1$, $2$, $4$ (150, 600, 2400, 9600 cells; 12 to 96 interface chords), hash-checked (README).
-
-\paragraph{Original model.}
-Channel $[0,6.5]\times[-0.5,1]\,\mathrm{m}$, half-cylinder of radius $0.5\,\mathrm{m}$ centred at $(1.5,-0.5)\,\mathrm{m}$ with a fixed base, plane strain; $\rho_f=\rho_s=1$, $\nu_f=1$, $\lambda=500$, $\mu=50\,\mathrm{Pa}$; inlet $u_x=g(t)(1+2y)(1-y)$, $g=\tfrac12[1-\cos(\pi t/2)]$ for $t\le2$, then $1$; no-slip walls and interface; $p=0$ at the outlet.
-The solid is \emph{linear-geometry} linear elastic (small strain on the undeformed mesh) in the tutorial and the preprint, although the apex moves $0.12\,\mathrm{m}$ on a radius of $0.5\,\mathrm{m}$; the FEniCSx code uses the same solid.
-A finite-strain St~Venant--Kirchhoff solid is a different model ($30\%$ larger $u_x(1)$ with solids4foam, no full-amplitude steady state in any code tried, issue \#50), so the suite's inventory entry ``large (TL, StVK)'' does not describe the original model.
-Differences from the tutorial that were not isolated: Galerkin $Q_2/Q_1$ against finite volumes with linear-upwind convection, harmonic mesh motion against a velocity Laplacian, $Q_2$ against a cell-centred solid, a natural against a $p=0$ outlet, monolithic against partitioned coupling.
+\paragraph{Solver and model.}
+DOLFINx~\citep{Baratta2023} with PETSc SNES~\citep{PETSc} and MUMPS~\citep{MUMPS:1,MUMPS:2}; one mesh for fluid and solid; velocity $Q_2$ (continuous across the interface), pressure $Q_1$, displacement $Q_2$; Galerkin ALE Navier--Stokes without stabilisation; backward Euler for steady studies, BDF2 for transient ones; meshes $F=0.5$, $1$, $2$, $4$ (150 to 9600 cells, 12 to 96 interface chords).
+The case is the solids4foam tutorial: channel $[0,6.5]\times[-0.5,1]\,\mathrm{m}$, half-cylinder radius $0.5\,\mathrm{m}$ at $(1.5,-0.5)\,\mathrm{m}$ with fixed base, plane strain, $\rho_f=\rho_s=\nu_f=1$, $\lambda=500$, $\mu=50\,\mathrm{Pa}$, inlet $u_x=g(t)(1+2y)(1-y)$ with $g=\tfrac12[1-\cos(\pi t/2)]$ for $t\le2$, then $1$, $p=0$ at the outlet.
+The solid is \emph{linear-geometry} elastic (tutorial and preprint) although the apex moves $0.12\,\mathrm{m}$; a St~Venant--Kirchhoff solid is a different model ($30\%$ larger $u_x(1)$; no full-amplitude steady state in any code tried, issue \#50), so the inventory entry ``large (TL, StVK)'' does not describe the original.
+Unisolated differences from the tutorial: $Q_2/Q_1$ Galerkin against finite volumes with linear-upwind convection, harmonic against velocity-Laplacian mesh motion, $Q_2$ against a cell-centred solid, natural against $p=0$ outlet, monolithic against partitioned coupling.
 
 \paragraph{M2 and M1.}
-Let $\bm\sigma_f$ be the fluid stress, $\bm n_\mathrm{cur}$ the current unit normal, $\bm a=J\bm F^{-T}\bm N$ the Nanson vector, $J_s=|\bm a|=\mathrm{d}s/\mathrm{d}S_0$.
-\textbf{M1} (exact force balance): the solid receives $\bm\sigma_f\bm a=J_s\bm\sigma_f\bm n_\mathrm{cur}$ per reference area, equal and opposite forces on corresponding patches; this is the condition stated in the preprint.
-\textbf{M2} (solids4foam tutorial, by source inspection: face-to-face traction copy without area weighting, applied on the undeformed solid mesh): the solid receives $\bm\sigma_f\bm n_\mathrm{cur}$ per reference area.
-They differ by $(1-J_s)\bm\sigma_f\bm n_\mathrm{cur}$, with $J_s$ between $0.89$ and $1.28$ around the blob; M2 is not power-conjugate with the no-slip kinematics at finite motion.
-This is a statement about a modelling choice in a linear-geometry benchmark (evidence levels~1 and~2 only, no level-3 claim): no claim that the solids4foam coupling is defective, and none that either measure is the correct continuum model, since both act on a small-strain solid at $24\%$ apex strain and M1 is exact only in the force balance.
-The benchmark is therefore not one model: the tutorial is M2, the preprint states M1, and M1 and M2 give steady apex displacements (FEniCSx; E-AREA on solids4foam) that differ by far more than any discretisation error (the link to the preprint is one digitised coarse-mesh value).
-Both are reported and never combined.
-
-\paragraph{E-AREA (same-lineage diagnostic).}
-A user-library boundary condition scales the transferred traction by the current-to-reference face-area ratio (solids4foam unmodified, checksums unchanged), written, run and checked by the same agent lineage.
-That applied and fluid-reported forces agree to $10^{-6}$ holds by construction.
-Its one non-tautological check, the base reaction against the fluid-reported force, is \emph{not} met in $x$ ($0.974$ at x1, $0.986$ at x2, against a preregistered $1.00\pm0.01$), and the stress estimator used is itself $1.8$--$2.5\%$ off on the interface patch where the true force is known.
-Three levels only (x0.5, x1, x2); x4 was not run.
+With $\bm\sigma_f$ the fluid stress, $\bm n_\mathrm{cur}$ the current unit normal, $\bm a=J\bm F^{-T}\bm N$ the Nanson vector and $J_s=|\bm a|=\mathrm{d}s/\mathrm{d}S_0$: \textbf{M1} gives the solid $\bm\sigma_f\bm a=J_s\bm\sigma_f\bm n_\mathrm{cur}$ per reference area (equal and opposite forces on corresponding patches, the condition stated in the preprint); \textbf{M2} gives it $\bm\sigma_f\bm n_\mathrm{cur}$ per reference area.
+By source inspection M2 is the solids4foam tutorial: \texttt{fluidSolidInterface::updateForce()} copies the current-configuration fluid traction face to face (\texttt{directMap}, no area weighting) onto a linear-geometry solid that integrates it over the \emph{reference} areas.
+They differ by $(1-J_s)\bm\sigma_f\bm n_\mathrm{cur}$.
+Under M2 the interface resultant is therefore not conserved, and M2 is not power-conjugate with the no-slip kinematics at finite motion: this is a real non-conservation under the audited transfer (Section~\ref{sec:fx_force}), the same mechanism, traction rather than force transferred, as solids4foam issue \#665 (hessenthalerFsi, $5$--$150\%$ mismatch; there the cause is differing fluid and solid interface areas, here the stretch of the wall).
+No claim is made that either measure is the correct continuum model (both act on a small-strain solid at $24\%$ apex strain; M1 is exact only in the force balance); evidence levels~1 and~2 only, no level-3 claim.
+The benchmark is thus a family of two models: the tutorial is M2, the preprint states M1, and they give steady apex displacements (FEniCSx; E-AREA on solids4foam) differing by far more than any discretisation error; the link to the preprint is one digitised coarse-mesh value.
+\textbf{E-AREA} is a force-conserving modification (a user-library boundary condition scaling the transferred traction by the current-to-reference face-area ratio; solids4foam unmodified), same-lineage, and a diagnostic: applied and fluid-reported force agree to $10^{-6}$ by construction, which demonstrates conservation within the tested configuration, not validity of every aspect of the continuum model; its one non-tautological check, base reaction over fluid-reported force, is \emph{not} met in $x$ ($0.974$, $0.986$ against $1.00\pm0.01$; the stress estimator is itself $1.8$--$2.5\%$ off on the interface), and only three levels (x0.5, x1, x2) exist.
 
 \section{Steady state: spatial convergence}\label{sec:fx_steady}
-Four levels, $h=N^{-1/2}$, finest three for the order and Richardson limit, rules of the main article (monotone, $0.5\le p\le3$, $F_s=1.25$); the coarsest triple gives the same limits within its GCI.
-All runs met the registered steady criterion, converged in every Newton step (a few step-norm acceptances in transients, none at steady state), and the steady states do not depend on time step or scheme: M2 at $\Delta t=0.04$ equals $\Delta t=0.01$ to eight digits ($F=0.5$, $1$, $2$); M1 agrees to $1.6\times10^{-10}$ ($F=1$, three $\Delta t$) and $2\times10^{-9}$ ($F=2$, $4$); M1 Crank--Nicolson agrees to $6\times10^{-8}$ at $F=0.5$, $1$, $\Delta t=0.01$.
-Disclosures: the M2 sequence mixes $\Delta t=0.01$ ($F\le2$, $t_\mathrm{end}=10$, commit c8a4b0a) and $0.04$ ($F=4$, $t_\mathrm{end}=6$, commit 1484d94); the minimum Jacobian of the fluid mesh falls with refinement ($0.766\to0.610$ for M2, $0.557$ for M1 at $F=4$) and $F=8$ was not run; the chords make the solid area $-0.285\%$ ($F=1$) to $-0.018\%$ ($F=4$) short, and a curved geometry changes the apex by up to $0.15\%$ at $F=1$, more than the $u_x$ GCI and not included in it.
+Four levels, $h=N^{-1/2}$, finest three for order and Richardson limit, rules of the main article (monotone, $0.5\le p\le3$, $F_s=1.25$).
+All runs met the registered steady criterion and the steady states do not depend on time step or scheme (M2 $\Delta t=0.04$ against $0.01$: eight digits; M1: $\le2\times10^{-9}$; M1 Crank--Nicolson at $F=0.5$, $1$, $\Delta t=0.01$: $6\times10^{-8}$).
+Disclosures: the M2 sequence mixes $\Delta t=0.01$ ($F\le2$, $t_\mathrm{end}=10$) and $0.04$ ($F=4$, $t_\mathrm{end}=6$); the minimum mesh Jacobian falls with refinement ($0.766\to0.610$); $F=8$ was not run; chords give a solid area $-0.285\%$ ($F=1$) to $-0.018\%$ ($F=4$) short, and a curved geometry changes the apex by up to $0.15\%$ at $F=1$, more than the $u_x$ GCI and not included in it.
 
 \begin{table}[htbp]
 \centering
-\caption{FEniCSx steady apex displacement and forces, finest three levels. $F_x$, $F_y$: exact interface integral of the fluid force (M1: force applied to the solid); ``weak'': weak-form force including corner nodes. Source: \texttt{data/steady\_convergence.csv}.}\label{tab:fx_steady}
+\caption{FEniCSx steady apex displacement and forces, finest three levels. $F_x$, $F_y$: exact interface integral of the fluid force (M1: force applied to the solid); weak: weak-form force including corner nodes. \texttt{data/steady\_convergence.csv}.}\label{tab:fx_steady}
 \small
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
@@ -107,23 +94,20 @@ Pressure drop (Pa) & 1.94 & 35.9961 & 0.008 & 1.97 & 36.0482 & 0.008 \\
 \bottomrule
 \end{tabular}
 \end{table}
+Orders of $u_x$ are $1.4$--$1.5$ and of weak $F_y$ $0.9$ (its viscous part, $p=0.69$, a small difference of large terms including the corner nodes; the pressure part has $1.97$); the $u_x$ order is probably limited by the floor--interface corner singularity (asserted, not tested). The GCI values are estimates with $p<2$, not bounds.
 
-Orders of $u_x$ are $1.4$--$1.5$ and of the weak $F_y$ $0.9$, not two; the low order of $F_y$ comes from its viscous part ($p=0.69$, a small difference of large terms including the corner nodes) while the pressure part converges at $1.97$, and the $u_x$ order is probably affected by the floor--interface corner singularity (asserted, not tested).
-The GCI values are estimates with $p<2$, to be quoted with the order, not bounds.
-
-\paragraph{Model-form difference (convention).}
-Percentages are of M1 \emph{relative to M2} (the original), $q^{M1}/q^{M2}-1$ (\texttt{data/modelform\_M1\_M2.csv}); relative to M1, $(q^{M2}-q^{M1})/q^{M1}$, they are $-7.0\%$ for $u_x$ and $+19\%$ for $|u_y|$ (M2 larger), the numbers used in the campaign notes.
-M1 gives $u_x$ larger by $7.5$--$7.7\%$ ($7.55\%$ in the limits) and $|u_y|$ smaller by $16.0$--$16.2\%$ ($16.0\%$ in the limits); the ratios vary by $0.16$ ($u_x$) and $0.25$ ($u_y$) percentage points over the four levels ($<0.15$ for $F\ge1$), so the displacement sensitivity is stable under refinement, while the fluid-reported $F_x$ differs by $0.36\%$ and the pressure drop by $0.15\%$.
-The base reaction is not stable: $R_x$ is $11.5\%$ ($F=0.5$) to $14.8\%$ (limit) larger for M1 and grows with refinement; $R_y$ differs by $2$--$2.3\%$.
-The difference lies in the force the solid receives, not in the fluid solution, and exceeds either sequence's GCI by more than an order of magnitude.
+\paragraph{Model-form difference.}
+Percentages are M1 \emph{relative to M2} (the original), $q^{M1}/q^{M2}-1$; relative to M1 they are $-7.0\%$ ($u_x$) and $+19\%$ ($|u_y|$, M2 larger).
+For the extrapolated limits ($F=1$, $2$, $4$ in both) $u_x^{M1}/u_x^{M2}=1.0755$ and $u_y^{M1}/u_y^{M2}=0.8402$ (per level $1.077$ to $1.076$ and $0.838$ to $0.840$), so M1 gives $u_x$ larger by $7.5\%$ and $|u_y|$ smaller by $16.0\%$, stable under refinement to $0.16$ and $0.25$ percentage points; the fluid-reported $F_x$ differs by $0.36\%$ and the pressure drop by $0.15\%$.
+The base reaction is $R_x^{M1}/R_x^{M2}=1.115$ ($F=0.5$) to $1.148$ (limit), growing with refinement; this is not an instability of the sensitivity but the slow convergence of the M1 base reaction ($p\approx1.08$): $|R_x|/F_x$ is constant at $0.873$ for M2 at every level, while for M1 it rises $0.970$, $0.984$, $0.991$, $0.995$ towards $1$ (\texttt{data/base\_reaction\_ratio.csv}). $R_y$ differs by $2$--$2.3\%$.
 
 \section{Cross-code steady comparison}\label{sec:fx_crosscode}
-The solids4foam series was regenerated (commit 1576edcc4, OpenFOAM v2512, \texttt{couplingReuse 5}; levels x0.5 to x4 analysed at $t=4$; x1 from the $t=10$ tutorial run; x4 with $\Delta t=0.005$); it differs from the numbers shipped with the tutorial by $2\times10^{-5}$ to $5\times10^{-4}$ in apex displacement, and its inlet flux is $0.54\%$ high at x1 ($0.03\%$ at x4).
-FEniCSx M2 and solids4foam M2 (the same model) compare as in Table~\ref{tab:fx_crosscode}.
+\textbf{All solids4foam values in this section (series x0.5 to x4, E-AREA, load bins) are \legacy.}
+The series was regenerated (commit 1576edcc4, OpenFOAM v2512, analysed at $t=4$, x4 with $\Delta t=0.005$; $2\times10^{-5}$ to $5\times10^{-4}$ from the tutorial's shipped numbers; inlet flux $0.54\%$ high at x1).
 
 \begin{table}[htbp]
 \centering
-\caption{FEniCSx M2 against solids4foam M2, steady: relative difference at equal cell counts and between the Richardson limits, with the GCI of each. Source: \texttt{data/steady\_crosscode.csv}.}\label{tab:fx_crosscode}
+\caption{FEniCSx M2 against solids4foam M2 (\legacy), steady: relative difference at equal cell counts and between Richardson limits, with GCI of each. \texttt{data/steady\_crosscode.csv}.}\label{tab:fx_crosscode}
 \small
 \begin{tabular}{@{}lrrrrr@{}}
 \toprule
@@ -137,116 +121,102 @@ Pressure drop & $+2.85$ & $+0.70$ & $+0.10$ & $-0.14$ & 0.31 / 0.01 \\
 \bottomrule
 \end{tabular}
 \end{table}
+$u_x$, force and pressure drop agree within $0.2\%$ between the two families, which a discretisation defect specific to one family would not give (a shared misreading would not be visible).
+Not every difference is within its uncertainty: the $F_x$ limits differ by $0.18\%$, $1.24$ times the combined GCI ($0.145\%$) \textcolor{red!70!black}{(legacy BC; to be rerun)}; $u_x$, $F_y$ and the pressure drop are within theirs; $u_y$ is $14$ times it.
 
-$u_x$, the interface force and the pressure drop agree within $0.2\%$ between two discretisation families, which a discretisation defect specific to one family would not give (a shared misreading of the model would not be visible, Section~\ref{sec:fx_scope}).
-Not every difference is within its uncertainty: the $F_x$ limits differ by $0.18\%$, $1.24$ times the combined GCI ($0.145\%$); $u_x$, $F_y$ and the pressure drop differ by less than their combined GCI; $u_y$ by $14$ times it.
-At the first level $u_x$ differs by $2.3\%$, mostly the coarse-mesh error of the tutorial mesh against its own limit ($-2.5\%$).
+\paragraph{Apex $u_y$ (\legacy).}
+It agrees to $0.7\%$ and is not resolved below about $1\%$; the gap may change after the rerun, since the wall treatment affects the viscous stress passed to the solid.
+In a solid-only calculation with only the load replaced, $u_y$ amplifies load differences about six times for the resultant ($0.70\%$ for $0.12\%$ in $F_x$) and about ten times per $15^\circ$ bin (at most $0.012\,\mathrm{N}$ per bin giving $0.62\%$); these are sensitivity estimates and the load difference is not bounded independently of the discrepancy.
+The preregistered same-shape test (resultants within $0.13\%$, every $15^\circ$ bin within $0.02\,\mathrm{N}$) returned DISAGREE against the coupled solids4foam load (resultant $F_x$ $-0.134\%$, marginal by $0.004\%$).
+A later, post hoc comparison with a static-wall solids4foam load ($F_x$ $-0.078\%$) passes; in the solid-only swap that load reproduces $92\%$ of the $u_y$ change produced by the coupled solids4foam load, both relative to the FEniCSx coupled load (static-wall against FEniCSx coupled $F_x$ $-0.062\%$), $8\%$ untested; the solids4foam coupled state is not its static-wall fixed point ($F_x$ $0.056\%$, cause untested).
+At $F=4$ the per-bin M2 loads agree to at most $0.014\,\mathrm{N}$ ($F_x$) and $0.008\,\mathrm{N}$ ($F_y$) (\legacy).
 
-\paragraph{Apex $u_y$.}
-It agrees to $0.7\%$ only and is \emph{not} resolved below about $1\%$.
-Replacing only the load in a solid-only calculation shows $u_y$ amplifies load differences by about six for the resultant ($0.70\%$ in $u_y$ for $0.12\%$ in $F_x$) and about ten per $15^\circ$ bin ($0.06\%$ in $F_x$, $0.036\%$ in $F_y$, at most $0.012\,\mathrm{N}$ per bin giving $0.62\%$); these are sensitivity estimates, and the load difference to be amplified is not bounded independently of the discrepancy it explains.
-The preregistered same-shape test (fluid load on the solids4foam deformed shape; agreement if resultants agree to $0.13\%$ and every $15^\circ$ bin to $0.02\,\mathrm{N}$) returned DISAGREE against the coupled solids4foam load (resultant $F_x$ $-0.134\%$, marginal by $0.004\%$; bins and $F_y$ pass).
-A later analysis, post hoc (a reference introduced after the DISAGREE was seen), against the static-wall solids4foam load on the same shape ($F_x$ $-0.078\%$) passes the rule; in a solid-only calculation with only the load swapped, the static-wall load reproduces $92\%$ of the $u_y$ change produced by the coupled solids4foam load, both relative to the FEniCSx coupled load (static-wall against FEniCSx coupled: $F_x$ $-0.062\%$); the remaining $8\%$ is untested, and the solids4foam coupled state is not its static-wall fixed point ($F_x$ $0.056\%$, cause untested).
-Both results stand side by side.
-We state only that $u_y$ agrees to $0.7\%$ and that an uncertainty of order $1$--$2\%$ is appropriate; not that it agrees within a propagated uncertainty.
-
-\paragraph{Four-way table and E-AREA.}
-\texttt{data/fourway\_M1\_M2.csv} lists solids4foam M2, FEniCSx M2, solids4foam E-AREA and FEniCSx M1 (finest level and limits; the E-AREA limit uses x0.5, x1, x2 and is not comparable cell by cell with the finest-triple M2 limit).
-Ratios of E-AREA to M2 must use the same triple on both: with the coarse-triple M2 limits ($u_x$ $0.120573$, $u_y$ $-0.014063$, $F_x$ $16.3305$, $F_y$ $-25.6014$) they are $1.0755$ ($u_x$), $0.8422$ ($u_y$), $1.0036$, $1.0071$; dividing by the finest-triple M2 limit instead gives $1.0775$, $0.8446$ (the coarse triple overshoots by $0.19\%$ and $0.29\%$), and $F_x$, $F_y$ cells must not be divided across the two columns (\texttt{data/earea\_ratio\_reconciliation.csv}).
-The like-for-like E-AREA ratios ($1.0755$, $0.8422$; same coarse triple x0.5, x1, x2 in numerator and denominator) are consistent with the FEniCSx $F=1$ M1/M2 ratios ($1.076$, $0.839$) within about $0.3\%$ in $u_y$ and $0.01$ in $u_x$; the FEniCSx values are single-level ($F=1$), not extrapolated.
-This is a consistency check of the interface measure as the cause on the solids4foam side, not a verification.
-The E-AREA $u_y$ limit ($-0.011844$) differs from the FEniCSx M1 limit by $1.2\%$ (E-AREA GCI $0.96\%$); no agreement is claimed.
-The M1 limit $u_x=0.12937$ is consistent with the value read off the preprint's coarse-mesh figure ($0.1297$); that is a digitised figure, the journal article was not accessed, and no agreement with the preprint and no statement of which model is correct is made.
+\paragraph{Model-form ratios (one table, each with its numerator, denominator and levels).}
+\begin{table}[htbp]
+\centering
+\caption{Ratios of the displacement limits. Only the first two rows are comparable. \texttt{data/modelform\_ratio\_table.csv}.}\label{tab:fx_ratios}
+\small
+\begin{tabular}{@{}p{6.0cm}p{3.6cm}rr@{}}
+\toprule
+Ratio & Levels & $u_x$ & $|u_y|$ \\
+\midrule
+FEniCSx M1/M2, limits & $F=1,2,4$ in both & 1.0755 & 0.8402 \\
+solids4foam E-AREA/M2, like-for-like (\legacy) & x0.5, x1, x2 in both & 1.0755 & 0.8422 \\
+solids4foam E-AREA/M2, mixed level (not to be used) & E-AREA x0.5--2 over M2 x1--4 & 1.0775 & 0.8446 \\
+\bottomrule
+\end{tabular}
+\end{table}
+The $0.8422$ is the solids4foam E-AREA over M2 ratio with the same coarse triple in both limits (the coarse triple overshoots the M2 finest-triple limit by $0.19\%$ and $0.29\%$, which the like-for-like ratio cancels); $0.8402$ is the FEniCSx M1 over M2 ratio of its own limits.
+The E-AREA and FEniCSx ratios agree to $1.076$ in $u_x$ and differ by $0.002$ ($0.24\%$) in $|u_y|$, inside the E-AREA GCIs ($0.8\%$ in $u_x$, $1.0\%$ in $u_y$); with three levels only, the digits beyond $1.08$ and $0.84$ carry no weight.
+This is a consistency check of the interface measure as the cause, not a verification.
+The E-AREA $u_y$ limit ($-0.011844$) is $1.2\%$ from the FEniCSx M1 limit (E-AREA GCI $0.96\%$); no agreement is claimed.
+The M1 limit $u_x=0.12937$ is consistent with a value read off the preprint's coarse-mesh figure ($0.1297$); that is a digitised figure and neither agreement with the preprint nor which model is correct is claimed.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=0.95\textwidth]{paper-data/fenicsx_blobintreacle/figures/fenicsx_blob_spatial}
-\caption{Steady apex displacement against $h=N_\mathrm{cells}^{-1/2}$: FEniCSx M2 and M1, solids4foam M2 (regenerated series) and the E-AREA diagnostic; open markers at $h=0$ are Richardson limits. Source: \texttt{data/steady\_levels.csv}.}\label{fig:fx_spatial}
+\includegraphics[width=0.8\textwidth]{paper-data/fenicsx_blobintreacle/figures/fenicsx_blob_spatial}
+\caption{Steady apex displacement against $h=N_\mathrm{cells}^{-1/2}$: FEniCSx M2, M1; solids4foam M2 and E-AREA (\legacy). Open markers: Richardson limits.}\label{fig:fx_spatial}
 \end{figure}
 
 \section{Temporal verification and its limits}\label{sec:fx_time}
 \paragraph{Study.}
-M2, $F=1$ (600 cells, not spatially converged), $t=1$ (within the inlet ramp), $\Delta t=0.04$ to $0.0025$, backward Euler, BDF2 and consistent Crank--Nicolson, against a BDF2 run of the same scheme at $\Delta t=0.0025$ and, for the second-order claim, a finer BDF2 run of the same scheme and code at $\Delta t=0.00125$ (not an independent scheme; it cannot reveal a scheme-level bias).
-$F_x(1)$, $F_y(1)$ are the weak-form fluid force on the solid including the corner nodes (not the M2 solid-applied force, not the facet integral).
-Orders and values: \texttt{data/time\_orders\_t1\_F1\_M2.csv}, \texttt{data/time\_values\_t1\_F1\_M2.csv}; Figure~\ref{fig:fx_temporal}.
+M2, $F=1$ (not spatially converged), $t=1$ (within the inlet ramp), $\Delta t=0.04$ to $0.0025$; backward Euler, BDF2, consistent Crank--Nicolson; second order is tested against a finer BDF2 run of the same scheme and code ($\Delta t=0.00125$), which cannot reveal a scheme-level bias (error plot: \texttt{figures/fenicsx\_blob\_temporal} in the data package).
+$F_x(1)$, $F_y(1)$ are the weak-form fluid force including corner nodes.
 \begin{itemize}
-\item Steady states do not depend on the time step or scheme (Section~\ref{sec:fx_steady}).
-\item Backward Euler is first order for apex $u_x$ ($p=1.04$) and $F_x$ ($0.93$); $F_y$ has $p=0.52$, at the lower acceptance bound. Pointwise $u_y(1)$ is not accepted for any scheme (BE $p=0.34$, BDF2 $0.30$, CN not monotone).
-\item BDF2 is second order for apex $u_x$, apex $u_y$ and $F_y$ at $\Delta t\le0.01$ (this mesh, this time, M2) under the preregistered pairwise rule of the A3 check against the finer same-scheme run: pairs $2.03$, $2.32$ ($u_x$), $1.89$, $2.27$ ($u_y$), $1.99$, $2.29$ ($F_y$), within $0.05$ of what a pure second-order error gives against a reference only $2$--$8$ times finer. For $u_y$ this rests on that rule alone (the pointwise criterion is not met, $p=0.30$, and the transient spatial $u_y$ is not accepted). $F_x$ fails the rule at one pair ($2.86>2.5$; all orders $\ge1.9$). The levels $\Delta t=0.04$, $0.02$ are pre-asymptotic.
-\item Consistent CN is first order ($u_x$ $p=1.01$; $F_x$, $F_y$ $0.99$--$1.00$). With a consistent weighting of the pressure geometry the displacement is second order while $F_x$, $F_y$ stay first order, so a preregistered prediction was only partly met; the fix is post hoc and CN is not recommended (two earlier CN instabilities were implementation defects of the verifying code, found and fixed afterwards).
-BDF2 and the CN extrapolation reach the same limit at $t=1$ ($F_x$ $7.60932$ four-level BDF2, $7.60935$ three-level self-convergence, $7.60926$ CN extrapolation whose GCI is $0.32\%$, so agreement to $10^{-5}$ is not resolved; $u_x$ $0.0575014$ and $0.0575011$).
-\item A separate preregistered test on a different problem (elastic wall in a channel) did \emph{not} confirm second order for the BDF2 interface velocity (finest-pair rates $1.56$ and $1.69$ outside $[1.7,2.5]$; displacement and fluid velocity confirmed; CN diverged at three levels); the ``noise floor'' reading is an interpretation. The error metric was changed to an RMS over sample times after a first attempt failed, not preregistered (\texttt{data/time\_rms\_history\_t0\_1\_F1\_M2.csv}).
-\item \textbf{No second-order temporal convergence is claimed for blobInTreacle.} The solids4foam series shows a small time error (apex $u_x(1)$ changes by at most $2.7\times10^{-4}$ between $\Delta t=0.04$ and $0.005$, $9.2\times10^{-5}$ between $0.01$ and $0.005$) but no identifiable order (non-monotone at the $10^{-5}$ level in three of four series, at the coupling tolerance); its order is neither confirmed nor refuted. M1 has no time study beyond backward Euler (orders $0.46$--$0.62$ at $t=1$, not asymptotic); M1 Crank--Nicolson failed or was killed at $F=2$ and at $F=1$ with $\Delta t=0.02$ and $0.005$, only $F=0.5$, $1$ with $\Delta t=0.01$ being valid (steady cross-check only); M1 BDF2 is a single-mesh pilot.
+\item Steady states are independent of time step and scheme.
+\item Backward Euler is first order for apex $u_x$ ($p=1.04$) and $F_x$ ($0.93$); $F_y$ has $p=0.52$, at the acceptance bound. Pointwise $u_y(1)$ is not accepted for any scheme (BE $0.34$, BDF2 $0.30$, CN non-monotone).
+\item \textbf{BDF2, pairwise orders against $\Delta t=0.00125$} (recomputed from the raw histories; \texttt{data/bdf2\_pairwise\_vs\_prediction.csv}). A pure second-order error, with the reference's own error, predicts $2.07$ and $2.32$ for the pairs $0.01/0.005$ and $0.005/0.0025$. Observed: $u_x$ $2.03$, $2.32$ (matches within $0.05$); $u_y$ $1.89$, $2.27$ (deviations $-0.18$, $-0.05$); $F_y$ $1.99$, $2.29$ ($-0.08$, $-0.03$); $F_x$ $2.06$, $2.86$ (second pair $+0.53$, outside the registered $[1.7,2.5]$). So the errors fall at roughly second order ($1.9$--$2.3$) for $u_x$, $u_y$ and $F_y$ at $\Delta t\le0.01$, only $u_x$ follows the pure second-order pattern, and no general second-order claim for the coupled scheme is made; the levels $0.04$, $0.02$ are pre-asymptotic, and the pointwise criterion for $u_y$ is not met.
+\item Consistent CN is first order ($u_x$ $1.01$, forces $0.99$--$1.00$). A consistent pressure-geometry weighting makes the displacement second order and leaves $F_x$, $F_y$ first order (preregistered prediction only partly met; the fix is post hoc; CN not recommended; two earlier instabilities were implementation defects of the verifying code). BDF2 and the CN extrapolation reach the same limit at $t=1$ ($F_x$ $7.60932$ four-level BDF2, $7.60935$ three-level, $7.60926$ CN with GCI $0.32\%$).
+\item A preregistered test on a different problem (elastic wall) did not confirm second order for the BDF2 interface velocity (finest rates $1.56$, $1.69$ against $[1.7,2.5]$); the RMS-in-time metric used elsewhere was introduced after a failed first attempt (not preregistered).
+\item \textbf{No second-order temporal convergence is claimed for blobInTreacle.} The solids4foam series (\legacy) has a small time error (apex $u_x(1)$ changes $\le2.7\times10^{-4}$ over $\Delta t=0.04\to0.005$) without an identifiable order; M1 has no time study beyond backward Euler ($0.46$--$0.62$, not asymptotic; M1 CN failed or was killed at $F=2$ and $F=1$ with $\Delta t=0.02$, $0.005$, valid only at $F=0.5$, $1$, $\Delta t=0.01$).
 \end{itemize}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.95\textwidth]{paper-data/fenicsx_blobintreacle/figures/fenicsx_blob_temporal}
-\caption{FEniCSx M2, $F=1$: error at $t=1$ against the finer same-scheme BDF2 run ($\Delta t=0.00125$). BDF2 is second order only for $\Delta t\le0.01$. Source: \texttt{data/time\_values\_t1\_F1\_M2.csv}.}\label{fig:fx_temporal}
-\end{figure}
-
 \paragraph{BDF2 transient spatial study at $t=1$.}
-Preregistered; original M2, coupled BDF2, $\Delta t=0.005$, $F=0.5$, $1$, $2$, $4$ (Table~\ref{tab:fx_transient}); both outcomes are reported.
-Apex $u_x(1)$ is accepted ($p=1.445$, limit $0.0576543$, GCI $0.045\%$), as are $F_y$ ($p=0.93$, limit $-15.677$, GCI $0.61\%$, first-order-like), the interface powers and the fluid volume; apex $u_y(1)$ and $F_x$ are \emph{not} accepted (non-monotone) and not extrapolated; the pressure drop was not recorded.
-$\Delta t=0.005$ is not shown to isolate the spatial error (BDF2 is asymptotic only for $\Delta t\le0.01$ at $F=1$; the time error was not quantified at the other levels).
+Preregistered; M2, $\Delta t=0.005$, $F=0.5$ to $4$. Apex $u_x(1)$ is accepted ($p=1.445$, limit $0.0576543$, GCI $0.045\%$), as is $F_y$ ($p=0.93$, GCI $0.61\%$); apex $u_y(1)$ and $F_x$ are not accepted (non-monotone) and not extrapolated; the pressure drop was not recorded. $\Delta t=0.005$ is not shown to isolate the spatial error.
 \begin{table}[htbp]
 \centering
-\caption{BDF2 transient spatial study, $t=1$, $\Delta t=0.005$, M2. $F_x$, $F_y$: weak-form fluid force including corner nodes. s4f: solids4foam apex $u_x$ at the same cell count ($\Delta t=0.01$ at x0.5). n.a.: not accepted, not extrapolated. Source: \texttt{data/bdf2\_transient\_spatial\_t1\_M2.csv}.}\label{tab:fx_transient}
+\caption{BDF2 at $t=1$, $\Delta t=0.005$, M2 (FEniCSx; weak-form forces) and solids4foam apex $u_x$ at equal cell count (\legacy; $\Delta t=0.01$ at x0.5). n.a.: not accepted. \texttt{data/bdf2\_transient\_spatial\_t1\_M2.csv}.}\label{tab:fx_transient}
 \small
-\begin{tabular}{@{}lrrrrrr@{}}
+\begin{tabular}{@{}lrrrrr@{}}
 \toprule
-Level & Cells & $u_x(1)$ & $u_y(1)$ & $F_x(1)$ & $F_y(1)$ & $u_x$ s4f (diff.) \\
+Level & $u_x(1)$ & $u_y(1)$ & $F_x(1)$ & $F_y(1)$ & $u_x$ s4f (diff.) \\
 \midrule
-$F=0.5$ & 150 & 0.0572502 & $-0.0090745$ & 7.57765 & $-16.2030$ & 0.0529242 ($+8.17\%$) \\
-$F=1$ & 600 & 0.0575007 & $-0.0090796$ & 7.60937 & $-15.9557$ & 0.0565487 ($+1.68\%$) \\
-$F=2$ & 2400 & 0.0575979 & $-0.0090759$ & 7.60954 & $-15.8237$ & 0.0574975 ($+0.17\%$) \\
-$F=4$ & 9600 & 0.0576336 & $-0.0090727$ & 7.60477 & $-15.7542$ & 0.0577051 ($-0.12\%$) \\
-$p$ / limit & & 1.445 / 0.0576543 & n.a. & n.a. & 0.925 / $-15.677$ & s4f 2.19 / 0.0577633 \\
+$F=0.5$ & 0.0572502 & $-0.0090745$ & 7.57765 & $-16.2030$ & 0.0529242 ($+8.17\%$) \\
+$F=1$ & 0.0575007 & $-0.0090796$ & 7.60937 & $-15.9557$ & 0.0565487 ($+1.68\%$) \\
+$F=2$ & 0.0575979 & $-0.0090759$ & 7.60954 & $-15.8237$ & 0.0574975 ($+0.17\%$) \\
+$F=4$ & 0.0576336 & $-0.0090727$ & 7.60477 & $-15.7542$ & 0.0577051 ($-0.12\%$) \\
+$p$ / limit & 1.445 / 0.0576543 & n.a. & n.a. & 0.925 / $-15.677$ & 2.19 / 0.0577633 \\
 \bottomrule
 \end{tabular}
 \end{table}
-The solids4foam forces-function-object $F_x$, $F_y$ differ from these by $+1.8$ and $+3.6\%$ (x1) and $-0.02$ and $+1.2\%$ (x2); the definitions differ, so this is not a like-for-like comparison.
-At equal cell counts the $u_x(1)$ differences ($+8.17$, $+1.68$, $+0.17$, $-0.12\%$) change sign and give no basis for agreement at any level.
-The equality of the $F=1$ value with the solids4foam x2 value ($0.006\%$) is a cell-count coincidence (\texttt{data/bdf2\_transient\_spatial\_t1\_crossF\_ux.csv}).
-The limits differ by $0.19\%$, $1.41$ times the combined GCI ($7.7\times10^{-5}$ absolute): not equal within the GCI, and no transient cross-code agreement is claimed.
-An interface-shape comparison with the preprint at $t=1$ and $t=10$ is not part of this work.
+The differences change sign and give no basis for agreement at any level; the equality of the $F=1$ value with solids4foam x2 ($0.006\%$) is a cell-count coincidence; the limits differ by $0.19\%$, $1.41$ times the combined GCI. The solids4foam function-object forces differ from the weak forces by $+1.8$ and $+3.6\%$ (x1), so forces are not compared. No transient cross-code agreement is claimed; no interface-shape comparison was made.
 
 \section{Interface force and conservation}\label{sec:fx_force}
-Source: \texttt{data/force\_conservation\_evidence.csv}, \texttt{data/interface\_force\_bins\_M2\_F4.csv}.
+Five quantities are kept distinct. (a) \emph{Fluid-reported force} $F_f=\int\bm\sigma_f\bm n_\mathrm{cur}\,\mathrm{d}s$ on the current interface (solids4foam \texttt{forces} function object, correct on the moving patch; FEniCSx exact interface integral). (b) \emph{Solid-applied force} $F_a=\int\bm t\,\mathrm{d}S_0$ on the reference areas (M2: the same traction on reference areas; solids4foam: written traction times $|S_\mathrm{ref}|$). (c) \emph{Support reaction} $R$. (d) \emph{Pointwise stress-reconstructed force} (post-processed $\bm\sigma_h\bm n$). (e) \emph{Discrete weak residual}.
 
-\paragraph{Transfer (definitions).}
-The \emph{fluid-reported force} is $\int\bm\sigma_f\bm n_\mathrm{cur}\,\mathrm{d}s$ on the current interface (the solids4foam forces function object; the exact interface integral in FEniCSx); the \emph{solid-applied force} under M2 is $\int\bm\sigma_f\bm n_\mathrm{cur}\,\mathrm{d}S_0$, the same traction on the reference areas.
-Their $x$ components differ by about $13$--$14\%$ at every level: base reaction over fluid-reported force is $0.873$ at every FEniCSx level and $0.845$ to $0.869$ (x0.5 to x4) in solids4foam, where the written traction times reference areas sums to $13.85$ against $15.83\,\mathrm{N/m}$ at x1 ($14.22$ against $16.27$ at x4), far above the $2$--$3\%$ accuracy of the estimators; in $y$ the difference is about $2\%$.
-This follows from the definition of M2 and is not a physical force loss: M2 does not enforce equal and opposite forces on corresponding patches, M1 does.
-The FEniCSx base reaction balances the M2 solid-applied force ($1.000$ to $1.002$); at $t=1$ M2 delivers $3.4$--$3.5\%$ less interface power than the fluid supplies on the current surface ($0.9653$ at x1, $0.9659$ at x2; $1$ for E-AREA).
-It was measured on solids4foam at two levels at $t=1$, without a claim on solids4foam correctness.
-At $F=4$ the per-bin M2 loads of coupled FEniCSx, FEniCSx on its own and on the solids4foam shape, and coupled solids4foam agree to at most $0.014\,\mathrm{N}$ ($F_x$) and $0.008\,\mathrm{N}$ ($F_y$) per $15^\circ$ bin.
+\paragraph{Gap between (a) and (b).}
+Deficit $=1-F_a/F_f$ (basis: the fluid-reported force). In $x$ it is $12.7$--$12.9\%$ for FEniCSx ($12.7\%$ for $F\ge1$; $F_a/F_f=0.8713$, $0.8728$, $0.8732$, $0.8734$ for $F=0.5$ to $4$; $|R|/F_f=0.873$, $|R|/F_a=1.000$ to $1.002$) and, for solids4foam (\legacy), $12.5\%$ (x1, $13.85/15.83=0.875$) and $12.6\%$ (x4, $14.217/16.271=0.874$); in $y$ about $1.9\%$ (\texttt{data/interface\_transfer\_ratios.csv}, recomputed from the raw output by \texttt{scripts/transfer\_ratios\_from\_raw.py}).
+The ``$13$--$14\%$'' quoted earlier is not on this basis: $F_f/F_a-1=14.5\%$ is relative to the applied force, and the solids4foam stress-estimator reactions give $1-|R|/F_f=13.1$ to $15.5\%$ over x4 to x0.5 (the estimator is $2$--$3\%$ accurate).
+The gap is real non-conservation under the audited transfer, as above: the fluid exerts $F_f$ on the current surface, while the traction is applied over the reference areas ($J_s=0.89$--$1.28$); the FEniCSx base reaction balances $F_a$, not $F_f$.
+Solids4foam PR \#666 (optional pressure transfer along the solid normals) is not expected to remove this by itself: with fixed ends only the mean-pressure part cancels; not tested here.
+At $t=1$ M2 delivers $3.4$--$3.5\%$ less interface power than the fluid supplies on the current surface (x1, x2; \legacy; E-AREA $1$).
 
 \paragraph{Closure.}
-Three quantities are kept distinct: (i) the assembled residual, (ii) the pointwise stress-recovered force, (iii) the interface load actually transferred.
-(i) For the M1 solution at $F=1$ the fluid load (corner-node load counted once) and the support reactions sum to $7.4\times10^{-8}$ ($x$) and $3.6\times10^{-6}$ ($y$) $\mathrm{N/m}$, relative $1.2\times10^{-7}$: the Newton floor (free-node residual $4.5\times10^{-7}$), not an exact closure, and partly an identity (elastic nodal forces over all solid degrees of freedom sum to zero), so it checks convergence and bookkeeping, not pointwise traction equilibrium.
-The corner load $(0.258,-0.605)\,\mathrm{N/m}$ ($1.6\%$, $2.3\%$ of the total) is exactly the difference between the fluid-reported force and the support reaction; for M2 the nodal figure is $0.03$--$0.09\%$.
-(ii) An independent assembly of the pointwise stress over interface and base closes only to $2.9\%$ ($F=1$) and $1.9\%$ ($F=2$) of $|\bm F_\mathrm{interface}|$ against a preregistered $10^{-6}$ that was not met (and was wrong: recovered stress of a finite element solution need not satisfy strong-form equilibrium).
-An exact Green-identity decomposition of the \emph{solid-only static} problem (analytic load on four meshes; stored nodal load of the coupled run at $F=1$, $2$) attributes the whole miss to the cellwise term $\int\mathrm{div}(\bm\sigma_h)\cdot\bm\psi$ (a facet-jump term is about ten times smaller in $x$), concentrated at the interface--base corner and falling as about $h^{0.6}$; the identity residual is $2\times10^{-13}$, excluding quadrature, signs and a missing term in that analogue.
-This is a property of the stress-recovered, post-processed integral of a $Q_2$ displacement solution, shown in the solid-only analogue; it is not a demonstrated solver defect and was not separately demonstrated inside the coupled run.
-Quote the residual-based reactions.
-(iii) The transferred load was compared in Section~\ref{sec:fx_crosscode}.
-Not decomposed: the weak fluid force against the facet integral of the pointwise fluid stress ($0.04\%$ in $x$, $1.6\%$ in $y$, M1, $F=1$), and the M2 correction-term share of the coupled base reaction ($0.6\%$).
-On the solids4foam side the stress-based base reaction of the E-AREA runs misses the exactly known force by $1.8$--$2.5\%$, so no $1\%$-level conservation check exists there.
-Mass is conserved: $Q_\mathrm{in}=-Q_\mathrm{out}=1.125000$ at every level at steady state; the residual of $\mathrm{d}V/\mathrm{d}t+Q$ is a mesh-independent first-order time error.
+(e) For M1 at $F=1$ the loads (corner-node load once) and support reactions sum to $7.4\times10^{-8}$ ($x$), $3.6\times10^{-6}$ ($y$) $\mathrm{N/m}$, relative $1.2\times10^{-7}$: the Newton floor, partly an identity (nodal elastic forces sum to zero), checking convergence and bookkeeping, not traction equilibrium; the corner load $(0.258,-0.605)\,\mathrm{N/m}$ ($1.6\%$, $2.3\%$) is the difference between (a) and (c); for M2 the nodal figure is $0.03$--$0.09\%$.
+(d) The independent pointwise stress integral closes only to $2.9\%$ ($F=1$) and $1.9\%$ ($F=2$) of $|F_\mathrm{interface}|$ (preregistered $10^{-6}$ not met, and wrongly expected). A Green-identity decomposition of the solid-only static problem (analytic load, four meshes; stored nodal load at $F=1$, $2$) attributes the whole miss to $\int\mathrm{div}(\bm\sigma_h)\cdot\bm\psi$ at the interface--base corner, falling as $h^{0.6}$ (identity residual $2\times10^{-13}$: no quadrature, sign or missing-term cause there). It is a property of the stress-recovered, post-processed integral of a $Q_2$ solution in that analogue, not a demonstrated solver defect and not separately shown inside the coupled run; quote residual-based reactions. Not decomposed: weak fluid force against the facet integral of the fluid stress ($0.04\%$ in $x$, $1.6\%$ in $y$, M1) and the M2 correction-term share of the base reaction ($0.6\%$).
+The solids4foam stress-based reactions miss the known force by $1.8$--$2.5\%$ (E-AREA), so no $1\%$-level check exists there. Mass: $Q_\mathrm{in}=-Q_\mathrm{out}=1.125000$ at every level at steady state.
 
-\section{Reproducibility}\label{sec:fx_repro}
-Runs are Slurm jobs on one shared node with 2 to 8 MPI ranks through a wrapper fixing the MPICH/PETSc environment; each has a manifest (code commit, input and mesh hashes, driver exit status). Preregistrations were hashed before the runs (26 hashes re-verified by the first internal review). Fresh archives of the frozen commits reproduce the original $F=1$ M2 and M1 runs to $4\times10^{-15}$ per step. The campaign cost $46.9$ CPU-hours (M1 mesh study $3.2$, M2 backward-Euler family $13.2$, including failed and cancelled jobs). Commits, mesh hashes, environment, commands, retained failed launches, data and scripts: \texttt{paper-data/fenicsx\_blobintreacle/} (README). Raw histories and the solver repository are not part of this pull request.
+\section{Which findings survive without post hoc tests}
+Preregistered or independently reproduced: the M2 and M1 steady sequences; steady time-step and scheme independence; the steady cross-code differences in $u_x$, $F_x$ and pressure drop including $F_x$ at $1.24$ GCI (\legacy); M1/M2 sensitivity with the E-AREA ratios; the transfer deficit; mass conservation; the BDF2 pairwise results as stated; the negative results (transient $u_y$, $F_x$; pointwise $u_y(1)$; interface-velocity test; E-AREA P1; same-shape DISAGREE).
+Post hoc or qualified: static-wall same-shape analysis and the $92\%$ attribution, the $u_y$ amplification estimate, the CN pressure-geometry fix, the RMS-in-time metric, the pairwise BDF2 rule, the E-AREA ratio reconciliation.
+Without them the $u_y$ gap is ``DISAGREE, marginal, unexplained''.
 
-\section{Which findings survive without post hoc tests}\label{sec:fx_survive}
-Preregistered or independently reproduced, and not dependent on the post hoc analyses: the M2 and M1 steady spatial sequences; steady time-step and scheme independence; the steady cross-code differences in $u_x$, $F_x$ and the pressure drop (including the $F_x$ limit difference of $1.24$ combined GCI); the M1/M2 sensitivity with the solids4foam E-AREA ratios (consistency check); mass conservation; the BDF2 pairwise result for $u_x$ and $F_y$; the negative results (transient $u_y$ and $F_x$ not accepted, $u_y(1)$ not accepted pointwise, BDF2 interface-velocity test not confirmed, E-AREA P1 not met, same-shape DISAGREE).
-Post hoc or qualified: the static-wall same-shape analysis and the $92\%$ attribution, the $u_y$ gap sensitivity estimate, the CN pressure-geometry fix, the RMS-in-time metric, and the pairwise A3 BDF2 rule (for $u_y$).
-Without the post hoc items the $u_y$ gap is ``DISAGREE, marginal, unexplained'' and no second order in time for $u_y$ is claimed.
+\section{Limitations and added value}
+\textbf{Limitations.} Second implementation, same group; all solids4foam columns await the \#671 rerun; no temporal verification of the benchmark beyond the limited BDF2 result, a transient study with only $u_x$, $F_y$ accepted, no interface-shape comparison, no M1 time study; two models, neither declared correct; $u_y$ unresolved below $\sim1\%$; pointwise closure $2$--$3\%$ explained only in the solid-only analogue; no x4 E-AREA; orders of $u_x$ ($1.4$--$1.5$) and $F_y$ ($0.9$) below two; chord geometry up to $0.15\%$ outside the GCI; mixed time steps in the sequences.
+\textbf{Added value.} (i) The solids4foam steady state of the original model is reproduced by a numerically different code to $0.05$--$0.2\%$ in $u_x$, force and pressure drop (\legacy; $F_x$ limit $1.24$ GCI, $u_y$ $14$ GCI). (ii) The tutorial's transfer is identified from source and its effect quantified: the solid-applied $x$-force is $12.5$--$12.9\%$ below the fluid-reported force ($12.6$--$12.7\%$ at the finest levels), and M1 relative to M2 is $+7.5\%$ in $u_x$ and $-16\%$ in $|u_y|$, stable under refinement for these two displacements. (iii) The benchmark is a family of two models. (iv) The limits of the temporal evidence are stated.
 
-\section{Limitations and added value}\label{sec:fx_limits}
-\textbf{Limitations.} A second implementation by the same group, not an independent verification. No temporal verification of the benchmark beyond the limited BDF2 result; a transient spatial study in which only $u_x$ and $F_y$ are accepted, the time error is not isolated and the limits differ by $1.4$ combined GCI; no interface-shape comparison; no M1 time study. The model is not unique and no statement is made on which is correct; the connection of M1 to the preprint rests on a digitised coarse-mesh value. Apex $u_y$ is not resolved below about $1\%$. The pointwise stress closure misses by $2$--$3\%$ at the coupled levels (explained in the solid-only analogue by the stress-recovery term at the interface--base corner, $\sim h^{0.6}$; two items undecomposed); x4 E-AREA and a base-reaction test with an estimator of known accuracy are missing. Orders of $u_x$ ($1.4$--$1.5$) and $F_y$ ($0.9$) are below two; the mesh Jacobian degrades with refinement; geometry (chords) contributes up to $0.15\%$ at $F=1$ outside the GCI; the differences from the tutorial listed in Section~\ref{sec:fx_solver} are not isolated; the solids4foam series is regenerated with mixed time steps and times (x1 at $t=10$, x4 at $\Delta t=0.005$) and a $0.5\%$ inlet-flux error at x1.
-
-\textbf{Added value.} (i) The solids4foam steady state of the original model, previously supported by a coarse preprint figure and its own mesh sequence, is reproduced by a numerically different code to $0.05$--$0.2\%$ in $u_x$, force and pressure drop, with limits and GCI; the $F_x$ limit difference ($0.18\%$) is $1.24$ times the combined GCI ($0.145\%$), $u_x$, $F_y$ and the pressure drop differ by less than theirs, $u_y$ by $14$ times. (ii) The interface measure of the tutorial is identified from source and its consequence quantified: the solid-applied $x$-force is $13$--$14\%$ below the fluid-reported force on the current surface, $3.4\%$ less interface power at $t=1$, and a model-form sensitivity (M1 relative to M2) of $+7.5\%$ in $u_x$ and $-16\%$ in $|u_y|$, stable under refinement for these two displacements (not for the base reaction). (iii) The benchmark is a family of two models, which bears on how the C-weak reference should be read. (iv) The limits of the temporal evidence are stated. It provides neither an independent code, nor an established temporal order, nor a decision between the two models.
+\section*{AI-use disclosure (placeholder for author review)}
+\hl{TBD by the authors:} AI coding and writing assistants (Anthropic Claude) were used to implement and run the FEniCSx code, post-process results and draft this text; the authors are to confirm, edit and take responsibility for the content, and to agree the wording against the journal's policy. No authorship is assigned to an AI system.
 
 \bibliography{bibliography}
 
