@@ -1,0 +1,26 @@
+30a31,49
+>     // High-order (cubic) least-squares reconstruction of the residual,
+>     // preconditioned with the assembled high-order Jacobian (as channelLeaflet)
+>     highOrderCoeffs
+>     {
+>         highOrderResidual true;
+>         highOrderJacobian true;
+>         displacement
+>         {
+>             polynomialOrder 3;
+>             faceStencilExtraCells 15;
+>             weightFunctionCoeffs
+>             {
+>                 type radiallySymmetricExponential;
+>                 k 6;
+>             }
+>             calcConditionNumber false;
+>         }
+>     }
+> 
+36,37c55,56
+<             type        diffStencilLaplacian;
+<             scaleFactor 0.5;
+---
+>             type        alpha;
+>             scaleFactor 0.1;

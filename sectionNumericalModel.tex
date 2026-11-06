@@ -43,7 +43,9 @@ Two kinematic formulations are used: a small-strain (linear geometry) formulatio
 The time derivative uses BDF2, and each solid solve is a Newton--Krylov iteration through the PETSc SNES interface~\citep{PETSc, Cardiff2026}.
 Two spatial variants are used.
 The \emph{standard} variant uses a linear least-squares reconstruction of the displacement and a compact-stencil momentum stabilisation, a Rhie--Chow-type difference between the compact and the reconstructed face normal gradient, scaled by a user factor~\citep{Cardiff2026}; it is formally second order, but the stabilisation is not negligible on coarse meshes and stiffens thin, bending-dominated structures (Section~\ref{sec:fsi1}).
-The \emph{high-order} variant evaluates the face fluxes of the residual from a cubic moving-least-squares reconstruction of the displacement~\citep{Batistic2026}.
+The \emph{high-order} variant reconstructs the displacement in each cell with a cubic (polynomial order 3, the highest available) moving-least-squares fit on an extended stencil, and evaluates the face fluxes of the residual by quadrature of the reconstructed stress at points on each face~\citep{Batistic2026}.
+This raises the order of the solid operator alone; the coupled scheme remains formally second order, because the fluid discretisation, the BDF2 time integration and the interface load (Section~\ref{sec:interface_transfer}) are.
+Its benefit is the much smaller error constant for thin, bending-dominated structures: on the Hron--Turek flap under a static load the cubic variant is within $0.17\%$ of the converged tip deflection with 6 cells through the thickness, where the standard variant is $21.6\%$ too stiff (\texttt{paper-data/fsi1\_high\_order/flap}).
 Which variant is used is stated per case, because for thin bending-dominated walls the choice can dominate the coupled error (Section~\ref{sec:collapsible}).
 
 %%--------------------------------------------------------------------------------------------------------------------%%
@@ -53,6 +55,9 @@ Which variant is used is stated per case, because for thin bending-dominated wal
 Displacements are transferred from the solid to the fluid interface at the interface points, and tractions from the fluid to the solid interface at the faces.
 Where the two interface meshes coincide (ringAddedMass, womersleyTube, collapsibleChannel, mokLidDrivenCavity), a direct one-to-one map is used.
 Where they do not (Hron--Turek, 3dTube, Hessenthaler), face tractions are interpolated with arbitrary-mesh-interface (AMI) weights, and point displacements by barycentric interpolation on a triangulation of the donor interface faces.
+The finite volume fluid delivers one area-averaged traction per face, and the solid receives one value per interface face.
+With the high-order solid this value is applied uniformly at all quadrature points of the face, so the interface load is piecewise constant: it preserves the transferred force on every face and is second-order accurate, consistent with the fluid, but it does not carry the higher order of the solid operator to the coupled problem.
+A higher-order load would require the fluid traction at the solid face quadrature points.
 The interface transfer is part of the discretisation: it is an operator that must converge with refinement like any other, and in 3dTube a defect in it changed with mesh level (Section~\ref{sec:3dtube}).
 
 %%--------------------------------------------------------------------------------------------------------------------%%
