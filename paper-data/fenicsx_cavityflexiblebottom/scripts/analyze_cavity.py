@@ -80,12 +80,12 @@ for v in vs:
     ux = [x["ux_top_m"] for x in rr]
     if all(u != "" for u in ux):
         ax = tri([float(u) for u in ux[1:]], h[1:], "ux"); fx_ux = tri([float(lv[i]["ux_A_m"]) for i in (1, 2, 3)], H[1:], "ux")[3]
-        dux = 100 * (fx_ux - ax[3]) / ax[3] if ax[3] != "" else ""; dux4 = 100 * (float(lv[3]["ux_A_m"]) - float(ux[3])) / float(ux[3])
-    else: dux = dux4 = ""
+        dux = 100 * (fx_ux - ax[3]) / ax[3] if ax[3] != "" else ""; gux = ax[4]; dux4 = 100 * (float(lv[3]["ux_A_m"]) - float(ux[3])) / float(ux[3])
+    else: dux = dux4 = gux = ""
     rows.append([v, crit[v], a[0], a[3], a[4], b[0] if b[3] != "" else "", b[3], b[4] if b[3] != "" else "", du, df,
-                 100 * (float(lv[3]["uy_A_m"]) - uy[3]) / uy[3], 100 * (float(lv[3]["Fy_N_per_m"]) - fy[3]) / fy[3], dux, dux4])
+                 100 * (float(lv[3]["uy_A_m"]) - uy[3]) / uy[3], 100 * (float(lv[3]["Fy_N_per_m"]) - fy[3]) / fy[3], dux, dux4, gux])
 wr("reference_comparison.csv", ["reference_variant", "dt_and_steady_criterion", "ref_uy_order_p", "ref_uy_limit", "ref_uy_GCI_percent", "ref_Fy_order_p", "ref_Fy_limit", "ref_Fy_GCI_percent",
-                                "FEniCSx_M1_limit_minus_ref_limit_uy_percent", "FEniCSx_M1_limit_minus_ref_limit_Fy_percent", "FEniCSx_L4_minus_ref_L4_uy_percent", "FEniCSx_L4_minus_ref_L4_Fy_percent", "FEniCSx_M1_limit_minus_ref_limit_ux_percent", "FEniCSx_L4_minus_ref_L4_ux_percent"], rows)
+                                "FEniCSx_M1_limit_minus_ref_limit_uy_percent", "FEniCSx_M1_limit_minus_ref_limit_Fy_percent", "FEniCSx_L4_minus_ref_L4_uy_percent", "FEniCSx_L4_minus_ref_L4_Fy_percent", "FEniCSx_M1_limit_minus_ref_limit_ux_percent", "FEniCSx_L4_minus_ref_L4_ux_percent", "ref_ux_GCI_percent"], rows)
 
 # 5. other references: context only, no pass/fail, not model-equivalent
 rows = []
