@@ -140,6 +140,7 @@ The drivers and reference files that produce these quantities are described in S
 Table~\ref{tab:provenance} records, for each result, the solids4foam commit, the OpenFOAM release, the compiler and the platform, and whether the build contains the fixes of solids4foam PR~\#546 (the two defects of Section~\ref{sec:3dtube}).
 Results computed before that PR are affected only where an interface is three-dimensional and transferred non-conformally, or where the aliasing defect can occur (\texttt{-O3} builds); this is checked case by case in Section~\ref{sec:benchmark_suite}.
 
+\todo{Hessenthaler row: chamfered-mesh campaign (withdrawn); the feature-edge campaign uses solids4foam \texttt{517a44921}, OpenFOAM-v2512. Also update the Hessenthaler example in the Richardson/GCI paragraph above.}
 \begin{table}[htbp]
 	\centering
 	\footnotesize
