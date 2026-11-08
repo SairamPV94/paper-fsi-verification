@@ -29,7 +29,7 @@ The observations are specific to this suite and to one code family, and are not 
 		\midrule
 		ringAddedMass & freq.\ converged on coarsest mesh; ratio 1.68--1.77; standard solid 1.66 & 1.90--2.14 & vs exact; Richardson \\
 		womersleyTube & 2.01--2.05 (amplitudes, profile, speed); 1.92 (flow phase); 1.40 (wall phase); attenuation at linear-theory level & 1.86--2.14 (1.29--1.84 before end-flux fix) & SD; errors vs exact \\
-		collapsibleChannel & 1.7, 2.4, then reference floor & 1.8, 2.0 & vs ref.\ (B); SD (time) \\
+		collapsibleChannel & 1.6, 2.1, 2.5 & 1.8, 2.0 & vs ref.\ (B); SD (time) \\
 		Hron--Turek FSI1 & $u_x$ 1.0--1.1; $u_y$, lift 1.6--1.9; drag 1.5 & pseudo-time step $\leq0.012\%$ & SD (four levels); vs ref.\ (B) \\
 		Hron--Turek FSI3 & tutorial set-up: displacements 0.9--1.1; corrected set-up: displacements not asymptotic (2x$'$/4x$'$ plateau, then $1$--$2\%$ change to 8x$'$), frequency 1.4 & time and coupling $\leq0.07$ of the 4x$'\to$8x$'$ displacement change & SD \\
 		3dTube & $u_{z,\min}$ 0.87, $t_\mathrm{arr}$ 0.72; $u_{r,\max}$ not defined (changes grow) & 0.1--0.2\% change at the fine-level $\Delta t$ & SD \\
@@ -46,7 +46,7 @@ Table~\ref{tab:orders} collects the observed orders, from which three observatio
 
 \emph{Observed orders can depart from the nominal order.}
 Among the category-A cases, ringAddedMass exhibits near-second-order temporal convergence, while the amplitude-type womersleyTube quantities exhibit near-second-order spatial convergence.
-Independently of reference quality, collapsibleChannel also shows near-second-order behaviour, in space against its category-B reference (orders 1.7 and 2.4 before the reference floor) and in time by self-convergence (1.8 and 2.0).
+Independently of reference quality, collapsibleChannel also shows near-second-order behaviour, in space against its category-B reference (orders 1.6, 2.1 and 2.5 against oomph-lib extrapolated to zero mesh size) and in time by self-convergence (1.8 and 2.0).
 womersleyTube first showed temporal orders of 1.3--1.8 that fell towards one as $\Delta t$ was refined, on every mesh.
 The orders are reference-free observations, but the diagnosis relied on the exact reference and on fluid-only and end-flux diagnostics: the deficit came from an $O(\Delta t)$ mass-flux inconsistency at the artificial tube ends, where the exact pressure and velocity gradient are imposed, not from the coupling (Section~\ref{sec:womersley}).
 With a flux-consistent end treatment every QoI converges at second order in time over the steps used (formally, an $O(\Delta t\,h)$ boundary term remains, as for standard fixed-pressure outlets), and the finest solutions lie within $0.12\%$ of the continuum solution ($0.2\%$ for the attenuation, at the linear-theory level).
