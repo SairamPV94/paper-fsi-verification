@@ -1,0 +1,20 @@
+# threads  run name                          make_case.py options
+# Long runs first: finest fluid mesh at the default and at the tight coupling tolerance
+4  n128_dt0.0125_sy2                 --n 128 --dt 0.0125
+4  n128_dt0.0125_sy2_tight1e-8       --n 128 --dt 0.0125 --nl-tol 1e-8 --tight
+# Side-by-side with solids4foam (combined refinement)
+1  n096_dt0.025_sy2                  --n 96 --dt 0.025
+# Time study on 64^2 (dt 0.0125 is also the 64^2 member of the mesh study)
+1  n064_dt0.0125_sy2                 --n 64 --dt 0.0125
+1  n064_dt0.025_sy2                  --n 64 --dt 0.025
+# Solid through-thickness study on 64^2, dt 0.025
+1  n064_dt0.025_sy4                  --n 64 --dt 0.025 --solid-y 4
+1  n064_dt0.025_sy8                  --n 64 --dt 0.025 --solid-y 8
+# Outlet sensitivity (u_y = 0 on the outlet)
+1  n064_dt0.025_sy2_outletuy0        --n 64 --dt 0.025 --outlet-uy0
+1  n064_dt0.05_sy2                   --n 64 --dt 0.05
+1  n032_dt0.0125_sy2                 --n 32 --dt 0.0125
+1  n064_dt0.1_sy2                    --n 64 --dt 0.1
+1  n016_dt0.0125_sy2                 --n 16 --dt 0.0125
+1  n032_dt0.1_sy2_outletuy0          --n 32 --dt 0.1 --outlet-uy0
+1  n016_dt0.2_sy2                    --n 16 --dt 0.2

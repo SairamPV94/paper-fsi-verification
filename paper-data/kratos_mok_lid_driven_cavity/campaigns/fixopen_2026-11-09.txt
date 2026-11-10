@@ -1,0 +1,18 @@
+# Same campaign as refinement_2026-11-09.txt with the openings fixed in space (--fix-openings), which is
+# the group-B definition. 32²/0.1 was run by hand first (runs/n032_dt0.1_sy2_fixopen).
+# threads  run name                                 make_case.py options
+4  n128_dt0.0125_sy2_fixopen                --n 128 --dt 0.0125 --fix-openings
+4  n128_dt0.0125_sy2_tight1e-8_fixopen      --n 128 --dt 0.0125 --nl-tol 1e-8 --tight --fix-openings
+# Shared sequence with solids4foam first
+2  n096_dt0.025_sy2_fixopen                 --n 96 --dt 0.025 --fix-openings
+1  n064_dt0.05_sy2_fixopen                  --n 64 --dt 0.05 --fix-openings
+1  n016_dt0.2_sy2_fixopen                   --n 16 --dt 0.2 --fix-openings
+1  n064_dt0.025_sy2_fixopen                 --n 64 --dt 0.025 --fix-openings
+1  n064_dt0.0125_sy2_fixopen                --n 64 --dt 0.0125 --fix-openings
+1  n064_dt0.1_sy2_fixopen                   --n 64 --dt 0.1 --fix-openings
+1  n032_dt0.0125_sy2_fixopen                --n 32 --dt 0.0125 --fix-openings
+1  n016_dt0.0125_sy2_fixopen                --n 16 --dt 0.0125 --fix-openings
+1  n064_dt0.025_sy4_fixopen                 --n 64 --dt 0.025 --solid-y 4 --fix-openings
+1  n064_dt0.025_sy8_fixopen                 --n 64 --dt 0.025 --solid-y 8 --fix-openings
+1  n064_dt0.025_sy2_outletuy0_fixopen       --n 64 --dt 0.025 --outlet-uy0 --fix-openings
+1  n032_dt0.1_sy2_outletuy0_fixopen         --n 32 --dt 0.1 --outlet-uy0 --fix-openings
