@@ -3,9 +3,14 @@
 published group-A and group-B curves and the solids4foam group-B solutions
 with the strict coupling test; (b) peak, mean and trough over t = 20-70 s
 against the fluid cells per side, legacy and strict coupling test, with the
-published group-B envelope.
+published group-B envelope, and the independent Kratos solution of the
+group-B definition (openings fixed; ../kratos_mok_lid_driven_cavity/).
 
-Usage: mok_figure.py REF_DIR RUN_DIR OUT.pdf
+The Kratos tutorial example (reference "Kratos") lets its openings move with
+the mesh (#36), so it is not a group-B solution: it is plotted but left out of
+the group-B envelope, whatever the reference file says.
+
+Usage: mok_figure.py REF_DIR RUN_DIR OUT.pdf [KRATOS_DIR]
   REF_DIR: the tutorial's verification/reference directory (published curves)
   RUN_DIR: {legacy,strict}-mesh{N}.csv, columns t, u_y (m); the legacy series
     is the paper's mesh study, the strict points the same levels with the
@@ -20,6 +25,9 @@ import matplotlib.pyplot as plt
 plt.rcParams.update({"font.size": 8, "mathtext.fontset": "cm",
                      "font.family": "serif", "pdf.fonttype": 42})
 ref_dir, run_dir, out = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
+kratos_dir = Path(sys.argv[4]) if len(sys.argv) > 4 else \
+    Path(__file__).resolve().parent.parent / "kratos_mok_lid_driven_cavity"
+MOVING_OPENINGS = {"Kratos"}  # the Kratos tutorial example (#36)
 cfg = json.loads((ref_dir / "mokLidDrivenCavity_verification_references.json").read_text())
 T0, T1 = cfg["comparison_window_s"]
 PERIOD = cfg["lid_period_s"]
@@ -64,7 +72,9 @@ def stats(c, start=T0, end=T1):
     return dict(peak=sum(peaks) / len(peaks), trough=sum(troughs) / len(troughs), mean=mean)
 
 
-refs = {k: v for k, v in cfg["references"].items()}
+refs = {k: dict(v) for k, v in cfg["references"].items()}
+for k in MOVING_OPENINGS:
+    refs[k]["group_b"] = False
 curves = {k: read(ref_dir / v["file"]) for k, v in refs.items() if "file" in v}
 group_b = {k: (stats(curves[k]) if k in curves else refs[k]["values"])
            for k, v in refs.items() if v["group_b"]}
@@ -78,6 +88,15 @@ for f in sorted(run_dir.glob("*-mesh*.csv")):
 w = csv.writer(sys.stdout)
 w.writerow(["variant", "nx", "peak", "trough", "mean"])
 table = {}
+# Independent Kratos solution, openings fixed: the same combined sequence
+kratos = {}
+for nx, dt in ((16, "0.2"), (32, "0.1"), (64, "0.05"), (96, "0.025")):
+    h = kratos_dir / "runs" / f"n{nx:03d}_dt{dt}_sy2_fixopen" / "history.csv"
+    rows = list(csv.DictReader(h.open()))
+    kratos[nx] = sorted((float(r["time"]), float(r["uy_mid"])) for r in rows)
+for nx, c in sorted(kratos.items()):
+    s = stats(c)
+    w.writerow(["kratos_fixed_openings", nx] + [f"{s[q]:.5f}" for q in ("peak", "trough", "mean")])
 for (variant, nx), c in sorted(runs.items()):
     s = stats(c); table[(variant, nx)] = s
     w.writerow([variant, nx] + [f"{s[q]:.5f}" for q in ("peak", "trough", "mean")])
@@ -93,25 +112,35 @@ for (k, lab), ls in zip(GA.items(), ("-", "--", ":")):
         ax.plot(*zip(*c), ls, color="#9a9a9a", lw=0.8, label=f"{lab} (A)")
 c = [p for p in curves["Kassiotis2011"] if t_show[0] <= p[0] <= t_show[1]]
 ax.plot(*zip(*c), "-.", color="#7f7f7f", lw=0.8, label="Kassiotis et al. (2011)")
-for k, lab, col in (("Valdes2007", "Vald\\'es (2007) (B)", "#1f77b4"), ("Kratos", "Kratos (B)", "#2ca02c")):
-    c = [p for p in curves[k] if t_show[0] <= p[0] <= t_show[1]]
-    ax.plot(*zip(*c), color=col, lw=1.0, label=lab.replace("\\'e", "é"))
+c = [p for p in curves["Kratos"] if t_show[0] <= p[0] <= t_show[1]]
+ax.plot(*zip(*c), "--", color="#2ca02c", lw=0.8, label="Kratos example (moving openings)")
+c = [p for p in curves["Valdes2007"] if t_show[0] <= p[0] <= t_show[1]]
+ax.plot(*zip(*c), color="#1f77b4", lw=1.0, label="Valdés (2007) (B)")
+c = [p for p in kratos[96] if t_show[0] <= p[0] <= t_show[1]]
+ax.plot(*zip(*c), color="#2ca02c", lw=1.2, label="Kratos $96^2$, openings fixed (B)")
 finest = max(nx for v, nx in runs if v == "legacy")
 c = [p for p in runs[("legacy", finest)] if t_show[0] <= p[0] <= t_show[1]]
 ax.plot(*zip(*c), color="black", lw=1.4, label=f"solids4foam ${finest}^2$ (B)")
 ax.set_xlim(*t_show); ax.set_xlabel("$t$ (s)"); ax.set_ylabel("midpoint $u_y$ (m)")
 ax.set_title("(a) membrane midpoint, last four lid periods", fontsize=8)
-ax.legend(fontsize=6, ncol=3, loc="upper center", frameon=False, bbox_to_anchor=(0.5, -0.17))
+ax.legend(fontsize=6, ncol=2, loc="upper center", frameon=False, bbox_to_anchor=(0.5, -0.17),
+          columnspacing=1.0, handlelength=2.2)
 
 for q, mk in (("peak", "o"), ("mean", "s"), ("trough", "v")):
     lo, hi = env[q]
-    bx.axhspan(lo, hi, color="#1f77b4", alpha=0.12, lw=0)
+    if hi - lo > 1e-4:
+        bx.axhspan(lo, hi, color="#1f77b4", alpha=0.12, lw=0)
+    else:  # a single group-B value (the trough: Valdes only)
+        bx.axhline(lo, color="#1f77b4", alpha=0.35, lw=1.5)
     for variant, style in (("legacy", dict(mfc="black", ls="-", color="black")),
                            ("strict", dict(mfc="#d62728", ls="none", color="#d62728"))):
         pts = sorted((nx, s[q]) for (v, nx), s in table.items() if v == variant)
         if pts:
             bx.plot([1 / nx for nx, _ in pts], [y for _, y in pts], marker=mk, ms=3.5, lw=0.8,
                     label=("legacy test" if variant == "legacy" else "strict test") if q == "peak" else None, **style)
+    pts = sorted((nx, stats(c)[q]) for nx, c in kratos.items())
+    bx.plot([1 / nx for nx, _ in pts], [y for _, y in pts], marker=mk, ms=3.5, lw=0.8, ls="--",
+            color="#2ca02c", mfc="white", label="Kratos, openings fixed" if q == "peak" else None)
 bx.set_xscale("log"); bx.set_xlabel("$1/n$ (fluid cells per side)")
 nxs = sorted({nx for _, nx in table})
 bx.set_xticks([1 / n for n in nxs]); bx.set_xticklabels([f"1/{n}" for n in nxs]); bx.minorticks_off()
