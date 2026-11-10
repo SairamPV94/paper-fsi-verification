@@ -39,4 +39,4 @@ Excluded: bytecode, other campaigns' runs, the archived-source copy and meshes o
 `python3 -B -I scripts/analyze_cavity.py && python3 -B -I scripts/make_figures.py && sha256sum -c SHA256SUMS`.
 
 ## Notes for the depositor
-Authors, licence, funding and the solids4foam #671 reruns are to be settled by the authors. The solver repository needs a public location and a tag at or after the commits above, and the untracked `runs/` directories committed (or the tarball deposited). This file only describes the content; nothing has been uploaded.
+Authors, licence and funding are to be settled by the authors; the solids4foam #671 rerun (merged as 206437983) is on the solids4foam side and pending. The solver repository needs a public location and a tag at or after the commits above, and the untracked `runs/` directories committed (or the tarball deposited). This file only describes the content; nothing has been uploaded.
