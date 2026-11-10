@@ -1,0 +1,17 @@
+{
+  "template": "inputs/L1",
+  "out": "inputs/gen/n032_dt0.1_sy2",
+  "n": 32,
+  "dt": 0.1,
+  "solid_x": 32,
+  "solid_y": 2,
+  "nl_tol": 1e-06,
+  "tight": false,
+  "outlet_uy0": false,
+  "vtk_every": 1.0,
+  "fluid_nodes": 1089,
+  "fluid_elements": 2048,
+  "solid_nodes": 99,
+  "solid_elements": 64,
+  "generator": "make_case.py"
+}

@@ -1,0 +1,29 @@
+2026-11-09T19:49:25Z start n128_dt0.0125_sy2_fixopen threads=4 opts=--n 128 --dt 0.0125 --fix-openings
+2026-11-09T19:49:25Z start n128_dt0.0125_sy2_tight1e-8_fixopen threads=4 opts=--n 128 --dt 0.0125 --nl-tol 1e-8 --tight --fix-openings
+2026-11-09T19:49:26Z start n096_dt0.025_sy2_fixopen threads=2 opts=--n 96 --dt 0.025 --fix-openings
+2026-11-09T19:49:26Z start n064_dt0.05_sy2_fixopen threads=1 opts=--n 64 --dt 0.05 --fix-openings
+2026-11-09T19:49:26Z start n016_dt0.2_sy2_fixopen threads=1 opts=--n 16 --dt 0.2 --fix-openings
+2026-11-09T19:49:56Z done  n016_dt0.2_sy2_fixopen exit=0
+2026-11-09T19:49:56Z start n064_dt0.025_sy2_fixopen threads=1 opts=--n 64 --dt 0.025 --fix-openings
+2026-11-09T20:04:06Z done  n064_dt0.05_sy2_fixopen exit=0
+2026-11-09T20:04:06Z start n064_dt0.0125_sy2_fixopen threads=1 opts=--n 64 --dt 0.0125 --fix-openings
+2026-11-09T20:17:46Z done  n064_dt0.025_sy2_fixopen exit=0
+2026-11-09T20:17:46Z start n064_dt0.1_sy2_fixopen threads=1 opts=--n 64 --dt 0.1 --fix-openings
+2026-11-09T20:27:56Z done  n064_dt0.1_sy2_fixopen exit=0
+2026-11-09T20:27:56Z start n032_dt0.0125_sy2_fixopen threads=1 opts=--n 32 --dt 0.0125 --fix-openings
+2026-11-09T20:34:56Z done  n096_dt0.025_sy2_fixopen exit=0
+2026-11-09T20:34:56Z start n016_dt0.0125_sy2_fixopen threads=1 opts=--n 16 --dt 0.0125 --fix-openings
+2026-11-09T20:34:56Z start n064_dt0.025_sy4_fixopen threads=1 opts=--n 64 --dt 0.025 --solid-y 4 --fix-openings
+2026-11-09T20:38:46Z done  n016_dt0.0125_sy2_fixopen exit=0
+2026-11-09T20:38:46Z start n064_dt0.025_sy8_fixopen threads=1 opts=--n 64 --dt 0.025 --solid-y 8 --fix-openings
+2026-11-09T20:41:56Z done  n032_dt0.0125_sy2_fixopen exit=0
+2026-11-09T20:41:56Z start n064_dt0.025_sy2_outletuy0_fixopen threads=1 opts=--n 64 --dt 0.025 --outlet-uy0 --fix-openings
+2026-11-09T20:58:46Z done  n064_dt0.0125_sy2_fixopen exit=0
+2026-11-09T20:58:46Z start n032_dt0.1_sy2_outletuy0_fixopen threads=1 opts=--n 32 --dt 0.1 --outlet-uy0 --fix-openings
+2026-11-09T21:00:56Z done  n032_dt0.1_sy2_outletuy0_fixopen exit=0
+2026-11-09T21:02:56Z done  n064_dt0.025_sy4_fixopen exit=0
+2026-11-09T21:07:46Z done  n064_dt0.025_sy2_outletuy0_fixopen exit=0
+2026-11-09T21:08:16Z done  n064_dt0.025_sy8_fixopen exit=0
+2026-11-09T21:32:26Z done  n128_dt0.0125_sy2_fixopen exit=0
+2026-11-09T21:46:56Z done  n128_dt0.0125_sy2_tight1e-8_fixopen exit=0
+2026-11-09T21:47:06Z queue empty

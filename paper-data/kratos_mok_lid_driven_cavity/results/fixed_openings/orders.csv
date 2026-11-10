@@ -1,0 +1,28 @@
+study,triple,qoi,kind,order,extrapolated_m,gci_fine,e21,e32
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.05, dt 0.025, dt 0.0125",peak,monotone,0.80270415741615,0.28413888575974916,0.0017358223445308905,0.0002941148431900298,0.00016860828606007905
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.05, dt 0.025, dt 0.0125",trough,oscillatory,nan,nan,nan,-3.786802458000116e-05,2.830810248002913e-05
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.05, dt 0.025, dt 0.0125",mean,monotone,0.4666474183996067,0.24440129358493323,0.0016097973393857567,0.00012035598527718183,8.709491951913728e-05
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.1, dt 0.05, dt 0.025",peak,monotone,0.09995934456752754,0.2824779589601641,0.010313948387168283,0.00016860828606007905,0.00015732152682990108
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.1, dt 0.05, dt 0.025",trough,monotone,3.2879183673693064,0.20629625470973162,1.9564585980431835e-05,2.830810248002913e-05,0.0002764857870699855
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.1, dt 0.05, dt 0.025",mean,monotone,0.6454073851854426,0.2446824305829585,0.0007881479352349586,8.709491951913728e-05,0.00013623221081920933
+"Time step, 64², dynamic_tau = 0 (stabilisation independent of dt)","dt 0.05, dt 0.025, dt 0.0125",peak,below noise,nan,nan,nan,3.742178800003604e-06,7.606311120011977e-06
+"Time step, 64², dynamic_tau = 0 (stabilisation independent of dt)","dt 0.05, dt 0.025, dt 0.0125",trough,monotone,2.016086667679442,0.20621492856836318,2.9176720665083548e-05,1.4656247570021819e-05,5.92823420998978e-05
+"Time step, 64², dynamic_tau = 0 (stabilisation independent of dt)","dt 0.05, dt 0.025, dt 0.0125",mean,monotone,2.2831748466287896,0.24495886704740708,6.775760709147052e-06,5.135367935199531e-06,2.4996297175144955e-05
+"Time step, 64², dynamic_tau = 0 (stabilisation independent of dt)","dt 0.1, dt 0.05, dt 0.025",peak,monotone,3.2626435879622395,0.2851596539170105,3.878176323846577e-06,7.606311120011977e-06,7.300080856997848e-05
+"Time step, 64², dynamic_tau = 0 (stabilisation independent of dt)","dt 0.1, dt 0.05, dt 0.025",trough,monotone,2.308070944535417,0.20621939845281415,9.091485157078434e-05,5.92823420998978e-05,0.00029357829211004716
+"Time step, 64², dynamic_tau = 0 (stabilisation independent of dt)","dt 0.1, dt 0.05, dt 0.025",mean,monotone,2.0534640770178703,0.24495739747185943,4.0479079252938796e-05,2.4996297175144955e-05,0.00010375999961215188
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","32², 64², 128²",peak,monotone,0.385034548262814,0.2800362653876502,0.015187082720685377,0.0010535478244099172,0.0013758186840500675
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","32², 64², 128²",trough,monotone,1.9145323503666976,0.20552770270222798,0.0013048216853846389,0.0005948831756799888,0.0022426595588499743
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","32², 64², 128²",mean,monotone,1.3478443207109334,0.24340757100748864,0.0026352200688167294,0.0007946475874543724,0.0020226285783657427
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","16², 32², 64²",peak,oscillatory,nan,nan,nan,0.0013758186840500675,-0.001332200123850047
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","16², 32², 64²",trough,monotone,1.4359707720892292,0.20502250363607263,0.007965402402995923,0.0022426595588499743,0.006067833103120063
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","16², 32², 64²",mean,monotone,0.9012600454003495,0.24238541641385314,0.011906802208834347,0.0020226285783657427,0.003777656339459201
+"Solid through the thickness, 64², dt 0.025 s","2 elements, 4 elements, 8 elements",peak,below noise,nan,nan,nan,-1.3700137008187951e-07,2.3219962003162564e-07
+"Solid through the thickness, 64², dt 0.025 s","2 elements, 4 elements, 8 elements",trough,below noise,nan,nan,nan,-2.2965341001102146e-07,-1.6956093001896377e-07
+"Solid through the thickness, 64², dt 0.025 s","2 elements, 4 elements, 8 elements",mean,below noise,nan,nan,nan,5.861901658521518e-09,-5.5262698833713486e-08
+"Combined refinement, same sequence as solids4foam","32²/0.1, 64²/0.05, 96²/0.025",peak,monotone,0.9998330849842284,0.28179690540168717,0.009392096194478063,0.0010664635814801038,0.003199083500749933
+"Combined refinement, same sequence as solids4foam","32²/0.1, 64²/0.05, 96²/0.025",trough,monotone,1.1622139382326837,0.20514866384714908,0.0044688020335712664,0.000443081486750041,0.0014597674726999632
+"Combined refinement, same sequence as solids4foam","32²/0.1, 64²/0.05, 96²/0.025",mean,monotone,1.167916558126003,0.24299732152314818,0.006141806104136046,0.0007267287372977604,0.002402192115864177
+"Combined refinement, same sequence as solids4foam","16²/0.2, 32²/0.1, 64²/0.05",peak,oscillatory,nan,nan,nan,0.003199083500749933,-0.0006735236962999713
+"Combined refinement, same sequence as solids4foam","16²/0.2, 32²/0.1, 64²/0.05",trough,oscillatory,nan,nan,nan,0.0014597674726999632,-0.002561156555559968
+"Combined refinement, same sequence as solids4foam","16²/0.2, 32²/0.1, 64²/0.05",mean,oscillatory,nan,nan,nan,0.002402192115864177,-0.0014947689408545684

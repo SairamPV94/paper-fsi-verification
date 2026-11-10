@@ -1,0 +1,22 @@
+study,triple,qoi,kind,order,extrapolated_m,gci_fine,e21,e32
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.05, dt 0.025, dt 0.0125",peak,monotone,0.5817180543266773,0.2557631147713392,0.006225231649323186,0.0006357480692800177,0.00042478626567998834
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.05, dt 0.025, dt 0.0125",trough,monotone,0.5995666292313481,0.2012941303195539,0.003014640473600292,0.0002507453175200347,0.00016547991602997025
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.05, dt 0.025, dt 0.0125",mean,monotone,0.5881627385113632,0.2275214510189591,0.004823068624774088,0.0004435764119352925,0.0002950623635837313
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.1, dt 0.05, dt 0.025",peak,monotone,0.10639159758623609,0.2521285671892346,0.02692506430613307,0.00042478626567998834,0.0003945875737099702
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.1, dt 0.05, dt 0.025",trough,monotone,0.10232869069839058,0.19978023351546131,0.013929010783178937,0.00016547991602997025,0.00015414920403000743
+"Time step, 64² fluid, 2 solid elements through the thickness","dt 0.1, dt 0.05, dt 0.025",mean,monotone,0.1190828314061132,0.22541711416575227,0.01873088385165309,0.0002950623635837313,0.0002716854075755504
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","32², 64², 128²",peak,oscillatory,nan,nan,nan,0.0003787213784099963,-0.00020933754366991852
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","32², 64², 128²",trough,oscillatory,nan,nan,nan,-0.0001293777374899996,6.9765503369984e-05
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","32², 64², 128²",mean,oscillatory,nan,nan,nan,0.00014871175676223203,-3.8039062156575154e-05
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","16², 32², 64²",peak,monotone,5.164228521718652,0.2570492431448064,2.920430094474744e-05,-0.00020933754366991852,-0.007506453755710102
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","16², 32², 64²",trough,oscillatory,nan,nan,nan,6.9765503369984e-05,-0.0025161488421199807
+"Fluid mesh, dt 0.0125 s, solid refined along the membrane with the fluid","16², 32², 64²",mean,monotone,6.782964994876774,0.2284030812525005,1.9077626928726036e-06,-3.8039062156575154e-05,-0.004188955279829737
+"Solid through the thickness, 64², dt 0.025 s","2 elements, 4 elements, 8 elements",peak,below noise,nan,nan,nan,3.469818400381186e-07,3.828929999727393e-07
+"Solid through the thickness, 64², dt 0.025 s","2 elements, 4 elements, 8 elements",trough,below noise,nan,nan,nan,1.0274689987710417e-08,1.643860300382105e-07
+"Solid through the thickness, 64², dt 0.025 s","2 elements, 4 elements, 8 elements",mean,below noise,nan,nan,nan,6.18254316631095e-08,2.7611681638339824e-07
+"Combined refinement, same sequence as solids4foam","32²/0.1, 64²/0.05, 96²/0.025",peak,monotone,1.281626444520034,0.25538625700619366,0.007860705446011092,0.0011013387171499578,0.0038891145961300055
+"Combined refinement, same sequence as solids4foam","32²/0.1, 64²/0.05, 96²/0.025",trough,monotone,1.2059555000207838,0.20144044313942033,0.0028723899794342645,0.0002925910443100088,0.0009887346969600086
+"Combined refinement, same sequence as solids4foam","32²/0.1, 64²/0.05, 96²/0.025",mean,monotone,1.192018465998003,0.2272857246538832,0.0062625015973596584,0.0007112113898197769,0.002383989759307814
+"Combined refinement, same sequence as solids4foam","16²/0.2, 32²/0.1, 64²/0.05",peak,oscillatory,nan,nan,nan,0.0038891145961300055,-0.0003967867275899706
+"Combined refinement, same sequence as solids4foam","16²/0.2, 32²/0.1, 64²/0.05",trough,oscillatory,nan,nan,nan,0.0009887346969600086,-0.006021695535690014
+"Combined refinement, same sequence as solids4foam","16²/0.2, 32²/0.1, 64²/0.05",mean,oscillatory,nan,nan,nan,0.002383989759307814,-0.0027436340400921744

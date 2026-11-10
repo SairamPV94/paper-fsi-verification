@@ -1,0 +1,8 @@
+# Time-step study at 64² with dynamic_tau = 0, so the VMS stabilisation does not change with dt and the
+# study measures the time error alone. Openings fixed (group B). Compare with the dynamic_tau = 1 time
+# study of fixopen_2026-11-09.txt.
+# threads  run name                              make_case.py options
+1  n064_dt0.0125_sy2_fixopen_dtau0       --n 64 --dt 0.0125 --fix-openings --dynamic-tau 0
+1  n064_dt0.025_sy2_fixopen_dtau0        --n 64 --dt 0.025 --fix-openings --dynamic-tau 0
+1  n064_dt0.05_sy2_fixopen_dtau0         --n 64 --dt 0.05 --fix-openings --dynamic-tau 0
+1  n064_dt0.1_sy2_fixopen_dtau0          --n 64 --dt 0.1 --fix-openings --dynamic-tau 0
