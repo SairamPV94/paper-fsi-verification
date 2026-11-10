@@ -1,0 +1,9 @@
+2026-11-09T22:30:04Z start n064_dt0.0125_sy2_fixopen_dtau0 threads=1 opts=--n 64 --dt 0.0125 --fix-openings --dynamic-tau 0
+2026-11-09T22:30:04Z start n064_dt0.025_sy2_fixopen_dtau0 threads=1 opts=--n 64 --dt 0.025 --fix-openings --dynamic-tau 0
+2026-11-09T22:30:04Z start n064_dt0.05_sy2_fixopen_dtau0 threads=1 opts=--n 64 --dt 0.05 --fix-openings --dynamic-tau 0
+2026-11-09T22:30:04Z start n064_dt0.1_sy2_fixopen_dtau0 threads=1 opts=--n 64 --dt 0.1 --fix-openings --dynamic-tau 0
+2026-11-09T22:39:04Z done  n064_dt0.1_sy2_fixopen_dtau0 exit=0
+2026-11-09T22:43:14Z done  n064_dt0.05_sy2_fixopen_dtau0 exit=0
+2026-11-09T22:53:04Z done  n064_dt0.025_sy2_fixopen_dtau0 exit=0
+2026-11-09T23:14:54Z done  n064_dt0.0125_sy2_fixopen_dtau0 exit=0
+2026-11-09T23:15:04Z queue empty

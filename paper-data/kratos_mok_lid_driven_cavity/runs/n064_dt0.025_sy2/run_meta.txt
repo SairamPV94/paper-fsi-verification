@@ -1,0 +1,8 @@
+input_set=/home/cloner0110/raid/kratos/cases/mokLidDrivenCavity/inputs/gen/n064_dt0.025_sy2
+threads=1
+start=2026-11-09T13:36:33Z
+load_before=9.56 9.80 9.57
+end=2026-11-09T14:02:56Z
+load_after=9.90 9.90 9.86
+exit=0
+max_iterations_warnings=0

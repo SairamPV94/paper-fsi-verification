@@ -27,10 +27,12 @@ Exact references for moving-boundary problems should therefore be used at amplit
 \paragraph{Model-form differences in code-to-code comparison.}
 An independent code tests the shared discretisation error that same-lineage comparisons cannot, but only if the two codes solve the same problem or the difference is quantified.
 In collapsibleChannel the oomph-lib beam and the continuum wall differ at $O(h/L)$, quantified as $0.05\%$, which is why that reference is category B (Section~\ref{sec:collapsible}); in the FEBio ring comparison weak compressibility, finite strain, finite amplitude and the mesh-motion regulariser were each quantified, at the $0.01$-percentage-point level (Section~\ref{sec:ring}).
+In mokLidDrivenCavity the published Kratos example turned out to solve a different problem, with openings that move with the mesh; with the openings fixed, the remaining difference from solids4foam is the outlet condition, quantified at $0.5$--$1.7\%$, which limits that comparison to about $1\%$ (Section~\ref{sec:mok}).
 In 3dTube, by contrast, the present Hookean solid and the St Venant--Kirchhoff solids of the published calculations differ at a peak hoop strain of $\approx3\%$, and the references use implicit Euler without time-step studies; there, the difference in time integration alone reproduces most of a 20--25\% discrepancy between published solutions (Section~\ref{sec:3dtube}).
 A code-to-code difference can be interpreted only where it exceeds the sum of both codes' numerical uncertainties and the quantified model-form contribution.
 
 \paragraph{Verification and validation.}
+\todo{The numbers in this paragraph come from the withdrawn chamfered-mesh campaign; update them from the feature-edge campaign (Section~\ref{sec:hessenthaler}) or remove the paragraph.}
 The Hessenthaler case shows why the two are kept apart.
 Refinement moves the computed tip away from the measurement (from $-0.21\,\mathrm{mm}$ on the coarsest meshes to $+0.40\,\mathrm{mm}$ on the finest), so the close agreement of a coarse mesh is partly a cancellation of discretisation error (Section~\ref{sec:hessenthaler}).
 A validation statement made on that mesh would have credited the model with an accuracy that belonged to the discretisation error.

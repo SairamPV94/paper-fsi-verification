@@ -31,10 +31,10 @@ All calculations use the cell-centred finite volume solvers of solids4foam~\cite
 		Hron--Turek FSI3 & 2-D & self-excited & large & C & 3; 4 (corrected) & scaled; 2 (2x) & IQN-ILS/RN; tolerance pair \\
 		Hron--Turek FSI2 & 2-D & self-excited & large & C & 2 & scaled & tolerance sweep \\
 		3dTube & 3-D & transient pulse & small & C-weak & 3 & 4 & IQN-ILS/RN \\
-		mokLidDrivenCavity & 2-D & periodic (forced) & large & C-weak & 4 & 3 & IQN-ILS/Aitken$^\dagger$ \\
+		mokLidDrivenCavity & 2-D & periodic (forced) & large & B & 4 & 3 & IQN-ILS/Aitken$^\dagger$ \\
 		cavityFlexibleBottom$^\ast$ & 2-D & steady & large & C-weak & 4 & 2 & strict/legacy test \\
 		beamInCrossFlow$^\ast$ & 3-D & steady & small & C & 4 & -- & tolerance sweep \\
-		Hessenthaler$^\ast$ & 3-D & steady (Phase I) & large & -- & 3 (fluid), 3 (solid) & 3 & tolerance pair \\
+		Hessenthaler$^\ast$ & 3-D & steady (Phase I) & large & C & \hl{3 (fluid; running)} & \hl{--} & \hl{--} \\
 		blobInTreacle$^\ast$ & 2-D & trans.\,$\to$\,steady & large & C-weak & 4 & 4 & none \\
 		\bottomrule
 		\multicolumn{8}{l}{$^\ast$ Provisional (Section~\ref{sec:provisional}); beamInCrossFlow: corrected inflow (Appendix~\ref{app:beam}). $^\dagger$ Iteration counts only; no quantitative difference recorded.}
@@ -264,7 +264,7 @@ The problem \emph{modifies} that of Jensen and Heil (no pre-stress, $h/a = 1/20$
 
 \paragraph{Reference and model-form difference.}
 The reference (category B) is computed with oomph-lib~\citep{Heil2006}, an independent monolithic Newton finite element code whose driver source is stored with the case.
-It is Richardson-extrapolated in time, with an uncertainty of $\approx0.3\%$ of the peak displacement dominated by its spatial error (levels 1 and 2 differ by $0.26\%$; Richardson correction $0.06\%$; two fluid element types differ by $<0.001\%$).
+The tutorial reference is computed at oomph-lib's tutorial resolution ($100\times16$ fluid and 40 beam elements) and Richardson-extrapolated in time (correction $0.06\%$ of the peak displacement; two fluid element types differ by $<0.001\%$). A spatial study with the oomph-lib meshes refined two, three and four times at $\Delta t = 0.00625\,\mathrm{s}$ shows that oomph-lib converges at first order in space on this problem (observed orders 1.24 and 1.07 in the wall-midpoint history), so the tutorial-resolution error is $0.53\%$ of the peak, twice the $0.26\%$ difference between its first two levels. The fluid-mesh study below is therefore compared with oomph-lib extrapolated to zero mesh size from its three- and four-fold refined meshes; extrapolations from the two- and three-fold and from the three- and four-fold meshes agree to $0.004\%$.
 oomph-lib represents the wall as a geometrically nonlinear Kirchhoff--Love \emph{beam}, whereas the code under test resolves it as a two-dimensional continuum.
 This model-form difference is explicitly identified, is of order $h/L$, and is quantified as $0.05\%$ for the static deflection; it is small relative to the numerical errors of interest, which is why the reference is treated as category B.
 A difference below the reference uncertainty plus this contribution cannot be attributed to either code.
@@ -276,15 +276,17 @@ The QoI is the wall-midpoint vertical displacement history, with the first troug
 	\centering
 	% Source: paper-data/figure_scripts/collapsible_mesh_figure.py on
 	% paper-data/collapsible_mesh_study/ (rerun on a421f063d/v2512, MeluXina,
-	% which reproduces the v2412 errors 4.65/1.43/0.53/0.50% to the digits given).
+	% which reproduces the v2412 errors 4.65/1.43/0.53/0.50% against the tutorial
+	% reference) with oomph_extrapolated_dt160.csv as REF_CSV, UNCERTAINTY 0.05,
+	% LABEL "model form" (see that directory's README).
 	\includegraphics[width=\textwidth]{figures/verification/collapsibleChannel_mesh_study}
-	\caption{collapsibleChannel fluid-mesh study (solid mesh $160\times8$, high-order solid, $\Delta t = 0.00625\,\mathrm{s}$, Robin--Neumann coupling): (a) wall-midpoint vertical displacement on fluid levels F1--F4 and the oomph-lib solution at the same time step; (b, c) the first trough and the second peak (shaded in (a)); (d) maximum error against oomph-lib, as a percentage of the reference peak, with the reference uncertainty ($\approx0.3\%$). The levels have 3\,200, 12\,800, 28\,800 and 51\,200 fluid cells (refinement ratios 2, 1.5 and 1.33).}
+	\caption{collapsibleChannel fluid-mesh study (solid mesh $160\times8$, high-order solid, $\Delta t = 0.00625\,\mathrm{s}$, Robin--Neumann coupling): (a) wall-midpoint vertical displacement on fluid levels F1--F4 and the oomph-lib solution at the same time step; (b, c) the first trough and the second peak (shaded in (a)); (d) maximum error against oomph-lib, as a percentage of the reference peak, with the static model-form difference ($0.05\%$) shaded. The oomph-lib solution is extrapolated to zero mesh size from its three- and four-fold refined meshes. The levels have 3\,200, 12\,800, 28\,800 and 51\,200 fluid cells (refinement ratios 2, 1.5 and 1.33).}
 	\label{fig:collapsible_mesh}
 \end{figure}
 
 \begin{itemize}
 	\item \emph{Solid.} In a static wall test the cubic high-order solid is within $0.25\%$ of oomph-lib on all solid meshes and converges to the $0.05\%$ model-form difference; the linear-reconstruction solid has errors from $-16.7\%$ to $-0.22\%$. In the coupled problem on the tutorial mesh the solid contributes $0.44\%$ (cubic) against $17.4\%$ (linear).
-	\item \emph{Fluid mesh.} Four levels (3\,200 to 51\,200 cells, fixed $\Delta t = 0.00625\,\mathrm{s}$, compared with oomph-lib at the same $\Delta t$): the error falls from $4.65\%$ to $1.43\%$, $0.53\%$ and $0.50\%$ of the peak (orders 1.7 and 2.4, then a floor; Fig.~\ref{fig:collapsible_mesh}). The floor is not yet explained: the reference uncertainty ($\approx0.3\%$) and the static model-form contribution ($\approx0.05\%$) account for part of it, the transient model-form contribution and the temporal error on the finer meshes are not measured, and equal time steps in the two codes need not cancel their temporal errors; the finest first trough is $-0.21610\,\mathrm{m}$ against $-0.2160\,\mathrm{m}$ for the converged reference.
+	\item \emph{Fluid mesh.} Four levels (3\,200 to 51\,200 cells, fixed $\Delta t = 0.00625\,\mathrm{s}$, compared with oomph-lib at the same $\Delta t$, extrapolated to zero mesh size): the error falls from $4.81\%$ to $1.59\%$, $0.68\%$ and $0.33\%$ of the peak, at orders 1.6, 2.1 and 2.5 (Fig.~\ref{fig:collapsible_mesh}); the finest first trough, $-0.21610\,\mathrm{m}$, is within $0.02\%$ of the peak of oomph-lib's, $-0.21615\,\mathrm{m}$. Against oomph-lib at its tutorial resolution the same errors stall at $0.53\%$ and $0.50\%$: that apparent floor is the reference's own spatial error ($0.53\%$), not a property of the code under test.
 	\item \emph{Time.} On the coarsest fluid mesh, successive differences of $4.56\%$, $1.33\%$ and $0.34\%$ give orders 1.8 and 2.0 (oomph-lib itself: 1.8 and 1.9).
 	\item \emph{Coupling.} IQN-ILS and Robin--Neumann agree to $0.08$--$0.23\%$ of the peak, but this gap does \emph{not} decrease with mesh refinement; with the strict coupling test IQN-ILS does not converge on fluid level 3, whereas the Robin--Neumann results change by only $0.002$ percentage points between tolerances of $10^{-4}$ and $10^{-5}$ (Section~\ref{sec:iterative_errors}). In a wall-density sweep ($\rho_S/\rho_F = 0$--3) IQN-ILS fails to complete for part of the range, whereas Robin--Neumann completes for all $\rho_S/\rho_F \geq 1$.
 \end{itemize}
@@ -444,7 +446,7 @@ This sequence uses the tutorial set-up (velocity-based Laplacian mesh motion, ze
 		\bottomrule
 	\end{tabular}
 \end{table}
-	\item \emph{FSI1 with the high-order solid.} With the cubic solid (Section~\ref{sec:solid_solver}) in place of the standard solid, and otherwise the same tutorial set-up, the $u_y$ error against Featflow falls from $-14.2\%$ to $-1.7\%$ on 1x and from $-4.6\%$ to $-0.8\%$ on 2x, and the lift error from $+5.2\%$ to $-0.5\%$ and from $+1.6\%$ to $-0.2\%$; the drag is unchanged to $0.01\%$ on both levels ($-0.8\%$, $-0.2\%$), and $u_x$ moves slightly away from Featflow ($-2.8\%\to-3.9\%$ and $-1.0\%\to-1.3\%$). The 2x high-order $u_y$ thus lies between the 4x and 8x standard-solid values of Table~\ref{tab:fsi1}, on a sixteenth of the 8x fluid cells. The standard-solid error in $u_y$ and lift was therefore mostly the solid's bending stiffness; with the cubic solid the remaining error is that of the fluid and of the piecewise-constant interface load, and $u_x$, which converges from below at first order with the fluid mesh, is the least converged QoI. These runs use the tutorial driver ($\Delta t = 0.025\,\mathrm{s}$), whose standard-solid 2x values agree with Table~\ref{tab:fsi1} to $0.01$ percentage points (\texttt{paper-data/fsi1\_high\_order/}). \hl{4x high-order level running.}
+	\item \emph{FSI1 with the high-order solid.} With the cubic solid (Section~\ref{sec:solid_solver}) in place of the standard solid, and otherwise the same tutorial set-up, the $u_y$ error against Featflow falls from $-14.2\%$ to $-1.7\%$ on 1x and from $-4.6\%$ to $-0.8\%$ on 2x, and the lift error from $+5.2\%$ to $-0.5\%$ and from $+1.6\%$ to $-0.2\%$; the drag is unchanged to $0.01\%$ on both levels ($-0.8\%$, $-0.2\%$), and $u_x$ moves slightly away from Featflow ($-2.8\%\to-3.9\%$ and $-1.0\%\to-1.3\%$). The 2x high-order $u_y$ thus lies between the 4x and 8x standard-solid values of Table~\ref{tab:fsi1}, on a sixteenth of the 8x fluid cells. The standard-solid error in $u_y$ and lift was therefore mostly the solid's bending stiffness; with the cubic solid the remaining error is that of the fluid and of the piecewise-constant interface load, and $u_x$, which converges from below at first order with the fluid mesh, is the least converged QoI. These runs use the tutorial driver ($\Delta t = 0.025\,\mathrm{s}$), whose standard-solid 2x values agree with Table~\ref{tab:fsi1} to $0.01$ percentage points (\texttt{paper-data/fsi1\_high\_order/}). On 4x (where the driver halves the step to $\Delta t = 0.0125\,\mathrm{s}$) the high-order errors fall further, to $-0.27\%$ in $u_x$, $-0.48\%$ in $u_y$, $-0.04\%$ in drag and $-0.10\%$ in lift, so all four QoIs converge monotonically from below with the cubic solid.
 	\item \emph{FSI2.} On the two levels available (Table~\ref{tab:hronturek_fsi2}) the errors against Featflow fall from $4.6$--$21.6\%$ (1x) to $0.5$--$3.1\%$ (2x), except the lift amplitude ($7.9\%$ and $7.8\%$); with two levels no observed order or asymptotic statement can be made.
 	\item \emph{FSI3 displacements.} The displacements converge monotonically at an observed order of $\approx0.9$--$1.1$, half the nominal order (Table~\ref{tab:hronturek}): the $u_x$ mean is $-2.232$, $-2.788$ and $-3.085\,\mathrm{mm}$ and the $u_y$ amplitude $29.85$, $34.18$ and $36.23\,\mathrm{mm}$. The 2x--4x changes ($6.0\%$ in $u_y$, $\approx10\%$ in $u_x$) are about ten times the late-time variability of the statistics, so they are resolved. The apparent agreement of the 2x mesh with Featflow ($2$--$3\%$) was a crossing: at 4x the displacements lie beyond the Featflow values ($u_y$ amplitude $+3.5\%$, $u_x$ mean $-7.1\%$) and are still moving away. The two-level apparent orders of 2.6--3.8 reported earlier for this case were artefacts of that crossing and are withdrawn. The $u_x$ mean is not an independent QoI: the time mean of $u_x$ is kinematically tied to the transverse motion and scales as $A^{1.88\text{--}1.93}$ with the $u_y$ amplitude $A$ across the levels ($A^2$ to within $1.6\%$ at 1x and $0.4\%$ at 4x), and the benchmark statistic $(\max+\min)/2$ reported here scales as $A^{1.64\text{--}1.70}$, so its sequence follows that of $u_y$. These are the tutorial-set-up values; the diagnosis below traces the first-order behaviour to the set-up, and the corrected sequence (Table~\ref{tab:hronturek_corrected}) no longer shows it.
 	\item \emph{FSI3 frequency and drag mean.} The frequency converges onto Featflow ($+0.25\%$ at 4x) and the drag mean lies within $0.3\%$ of it; both are within the reference uncertainty, and the time-step and coupling contributions to the frequency are as large as its 2x--4x change.
@@ -552,65 +554,76 @@ After correction, the axial displacement and arrival time converge at sub-nomina
 A lid-driven cavity with a flexible membrane bottom~\citep{Wall1999, Mok2001} is one of the oldest partitioned-coupling benchmarks~\citep{Gerbeau2003, kuttler2008fixed, Kassiotis2011}.
 The membrane is tension-dominated ($0.002\,\mathrm{m}$ thick, $E_S = 250\,\mathrm{Pa}$) and deflects by $\approx0.29\,\mathrm{m}$ in a $1\,\mathrm{m}$ cavity under a periodically forced lid; small openings make the problem well posed for an incompressible fluid.
 
-\paragraph{Reference: two inconsistent groups.}
+\paragraph{Reference: an independent solution of the group-B definition.}
 The published midpoint histories fall into two mutually inconsistent groups (Fig.~\ref{fig:mok_refs}).
 In group A (Mok, Wall, Gerbeau and Vidrascu) the openings are defined through the mesh and their size is not stated, so the problem itself is mesh dependent; peaks range from $0.177$ to $0.215\,\mathrm{m}$.
-Group B (Vald\'es~\citep{Valdes2007}, the Kratos example~\citep{KratosLDC}, Tiba et al.~\citep{Tiba2026}) specifies inflow over a fixed $0.125\,\mathrm{m}$ opening and $p = 0$ at the outlet; within it the peak varies by $5.7\%$ and the oscillation amplitude by $20\%$.
+Group B (Vald\'es~\citep{Valdes2007}, Tiba et al.~\citep{Tiba2026}) specifies inflow over a fixed $0.125\,\mathrm{m}$ opening and $p = 0$ at the outlet; the two peaks differ by $2.7\%$.
+The Kratos tutorial example~\citep{KratosLDC}, previously counted in group B, fixes only the horizontal mesh displacement of its side walls, so its inlet and outlet nodes slide up the walls with the mesh and both openings shrink by about $15\%$ at the peak; it therefore does not solve the group-B problem, and its peak lies $9$--$11\%$ below the group-B solutions at every level.
 \citet{Kassiotis2011} lies between the groups.
-None of the cited sources provides a convincing spatial and temporal convergence demonstration.
-Pilot runs show that the group-B definition reproduces group B, whereas traction-free openings reproduce neither group (not shown).
-The reference is C-weak, and no published value is treated as the correct one.
+None of the published sources provides a convincing spatial and temporal convergence demonstration, and pilot runs show that traction-free openings reproduce neither group (not shown).
+
+The reference is an independent solution of the group-B definition computed with Kratos Multiphysics~10.3~\citep{Dadvand2010} by a co-author, with the opening nodes fixed (\texttt{paper-data/kratos\_mok\_lid\_driven\_cavity/}).
+Kratos shares no code with solids4foam: P1/P1 VMS-stabilised fluid with Bossak time integration, Q1 total Lagrangian St Venant--Kirchhoff solid, and Dirichlet--Neumann coupling with MVQN at a tolerance of $10^{-6}\,\mathrm{m}$, met in every step of every run.
+Its own error sources were studied separately: the time error (order 2.0--2.3) and the coupling tolerance, the solid resolution through the thickness and the solver tolerances (each below $10^{-5}\,\mathrm{m}$) are negligible, and the fluid mesh dominates.
+On a fluid-mesh sequence $16^2$--$128^2$ at $\Delta t = 0.0125\,\mathrm{s}$ the trough converges at order 1.9 and the mean at 1.35, but the peak, monotone only from $32^2$, at order 0.4; the peak is therefore quoted as the $128^2$ value with a band down to the extrapolated values, $0.280$--$0.2835\,\mathrm{m}$, and the trough and mean as their extrapolations from the combined sequence ($0.2051$ and $0.2430\,\mathrm{m}$, GCI $0.45\%$ and $0.61\%$).
+The one model-form difference is the outlet: solids4foam imposes zero-gradient velocity with $p = 0$, Kratos the natural condition with $p = 0$; imposing $u_y = 0$ at the Kratos outlet changes the peak, trough and mean by $0.5\%$, $1.7\%$ and $1.0\%$, so the two codes can be compared to about $1\%$.
+The reference is category B, with that resolution.
 
 \begin{figure}[htbp]
 	\centering
 	% Source: paper-data/figure_scripts/mok_figure.py on the published curves
-	% (tutorial verification/reference) and paper-data/mok_coupling_test/.
+	% (tutorial verification/reference), paper-data/mok_coupling_test/ and
+	% paper-data/kratos_mok_lid_driven_cavity/.
 	\includegraphics[width=\textwidth]{figures/verification/mokLidDrivenCavity_study}
-	\caption{Modified lid-driven cavity. (a) Membrane-midpoint histories over the last four lid periods: published group-A curves (Mok, Gerbeau and Vidrascu; the published curve of Wall ends before this window), Kassiotis et al., the group-B curves of Vald\'es and Kratos, and the present solution of the group-B definition on the $96^2$ mesh. (b) Peak, mean and trough over $t = 20$--$70\,\mathrm{s}$ under combined mesh and time-step refinement ($n^2$ fluid cells; $\Delta t = 0.2$, $0.1$, $0.05$ and $0.025\,\mathrm{s}$ for $n = 16$, $32$, $64$ and $96$), with the legacy (black) and strict (red) coupling tests, and the range of the published group-B values (shaded). Five published curves are exact extractions of the PDF vector paths; the Kratos curve is raster-digitised (about $0.5\%$ of the peak).}
+	\caption{Modified lid-driven cavity. (a) Membrane-midpoint histories over the last four lid periods: published group-A curves (Mok, Gerbeau and Vidrascu; the published curve of Wall ends before this window), Kassiotis et al., the Kratos tutorial example (moving openings), the group-B curve of Vald\'es, and the group-B solutions of Kratos (openings fixed) and solids4foam on the $96^2$ mesh. (b) Peak, mean and trough over $t = 20$--$70\,\mathrm{s}$ under combined mesh and time-step refinement ($n^2$ fluid cells; $\Delta t = 0.2$, $0.1$, $0.05$ and $0.025\,\mathrm{s}$ for $n = 16$, $32$, $64$ and $96$): solids4foam with the legacy (black) and strict (red) coupling tests, Kratos with the openings fixed (green), and the range of the published group-B values (shaded; the trough is a single value, Vald\'es). Five published curves are exact extractions of the PDF vector paths; the Kratos example curve is raster-digitised (about $0.5\%$ of the peak).}
 	\label{fig:mok_refs}
 \end{figure}
 
 \paragraph{Evidence.}
-Midpoint statistics over $t = 20$--$70\,\mathrm{s}$ under combined mesh and time refinement are given in Table~\ref{tab:mok}; a $128^2$ run diverged (cause not isolated).
+Midpoint statistics over $t = 20$--$70\,\mathrm{s}$ under combined mesh and time refinement are given for both codes in Table~\ref{tab:mok}; a solids4foam $128^2$ run diverged (cause not isolated), whereas Kratos ran $128^2$ without difficulty.
 
 \begin{table}[htbp]
 	\centering
 	\small
 	\setlength{\tabcolsep}{5pt}
-	\caption{mokLidDrivenCavity: membrane-midpoint statistics (m) under combined mesh and time-step refinement, and the published group-B envelope. Group A peaks lie between 0.177 and 0.215\,m.}
+	\caption{mokLidDrivenCavity: membrane-midpoint statistics (m) under combined mesh and time-step refinement for solids4foam and for Kratos with the openings fixed, the Kratos reference values, and the published group-B values. Group A peaks lie between 0.177 and 0.215\,m.}
 	\label{tab:mok}
-	\begin{tabular}{lrrr}
+	\begin{tabular}{lrrrrrr}
 		\toprule
-		Mesh ($\Delta t$) & Peak & Trough & Mean \\
+		& \multicolumn{3}{c}{solids4foam} & \multicolumn{3}{c}{Kratos (openings fixed)} \\
+		\cmidrule(lr){2-4}\cmidrule(lr){5-7}
+		Mesh ($\Delta t$) & Peak & Trough & Mean & Peak & Trough & Mean \\
 		\midrule
-		$16^2$ (0.2\,s) & 0.2934 & 0.1942 & 0.2426 \\
-		$32^2$ (0.1\,s) & 0.2890 & 0.1986 & 0.2427 \\
-		$64^2$ (0.05\,s) & 0.2870 & 0.2022 & 0.2437 \\
-		$96^2$ (0.025\,s) & 0.2861 & 0.2044 & 0.2445 \\
+		$16^2$ (0.2\,s) & 0.2934 & 0.1942 & 0.2426 & 0.2875 & 0.2052 & 0.2458 \\
+		$32^2$ (0.1\,s) & 0.2890 & 0.1986 & 0.2427 & 0.2882 & 0.2078 & 0.2473 \\
+		$64^2$ (0.05\,s) & 0.2870 & 0.2022 & 0.2437 & 0.2850 & 0.2063 & 0.2449 \\
+		$96^2$ (0.025\,s) & 0.2861 & 0.2044 & 0.2445 & 0.2839 & 0.2059 & 0.2442 \\
 		\midrule
-		Group B envelope & 0.2619--0.2769 & 0.1967--0.2033 & 0.2316--0.2466 \\
+		Kratos reference & & & & 0.280--0.2835 & 0.2051 & 0.2430 \\
+		Published group B & & & & 0.2695--0.2769 & 0.1967 & 0.2321--0.2466 \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
 \begin{itemize}
-	\item \emph{Self-convergence.} Successive changes in the response (the larger of the peak and trough changes, relative to the finest peak) are $1.56\%$, $1.26\%$ and $0.78\%$, dominated from $32^2$ on by the trough; the peak alone changes by $1.53\%$, $0.66\%$ and $0.31\%$; the observed order of the peak is $\approx1.2$ (non-uniform final ratio) and that of the trough below 0.5, so neither sequence is shown to be asymptotic and no limit is extrapolated; the trough is uncertain by at least $\approx1$--$2\%$. A separate time-step study on $64^2$ changes the response by $0.17\%$ and $0.04\%$ of the peak, so the error is dominated by the mesh.
-	\item \emph{Comparison.} On $96^2$ the trough and mean lie within or just outside the group-B envelope, and the peak is $3.3\%$ above the largest group-B peak; since the group-B values are single-mesh results differing by $5.7\%$, this cannot be attributed to either side.
+	\item \emph{Self-convergence.} Successive changes in the solids4foam response (the larger of the peak and trough changes, relative to the finest peak) are $1.56\%$, $1.26\%$ and $0.78\%$, dominated from $32^2$ on by the trough; the peak alone changes by $1.53\%$, $0.66\%$ and $0.31\%$; the observed order of the peak is $\approx1.2$ (non-uniform final ratio) and that of the trough below 0.5, so neither sequence is shown to be asymptotic and no limit is extrapolated; the trough is uncertain by at least $\approx1$--$2\%$. A separate time-step study on $64^2$ changes the response by $0.17\%$ and $0.04\%$ of the peak, so the error is dominated by the mesh. The slow convergence of the peak is a property of the case: Kratos shows it too.
+	\item \emph{Comparison with the reference.} On the same sequence the peak differs by $-2.0\%$, $-0.25\%$, $-0.70\%$ and $-0.77\%$, the trough by $+5.7\%$, $+4.6\%$, $+2.0\%$ and $+0.71\%$ and the mean by $+1.3\%$, $+1.9\%$, $+0.48\%$ and $-0.13\%$ (Kratos relative to solids4foam), so the trough and mean differences shrink with refinement while the peak difference stays below $1\%$ from $32^2$ on; the largest difference between the $96^2$ histories is $2.4\,\mathrm{mm}$, $0.8\%$ of the peak. On $96^2$ the solids4foam trough and mean lie within $0.4\%$ and $0.6\%$ of the Kratos reference values, and its peak $0.9$--$2.2\%$ above the Kratos band. The level-by-level differences on $96^2$ are within the $\approx1\%$ resolution set by the outlet condition; the larger gap to the Kratos peak band reflects the remaining discretisation error of the solids4foam peak, which is still decreasing ($0.31\%$ in the last step) and is not extrapolated.
+	\item \emph{Comparison with the published values.} Both converged solutions lie above the published group-B peaks (Kratos by $1.1$--$2.4\%$) and troughs (by $4.3\%$); only the mean lies within the published range. The published group-B values are single-mesh results and appear to be under-resolved.
 	\item \emph{Solid and coupling.} The standard and high-order solids agree to $0.04\%$: for a tension-dominated membrane the high-order solid gives no benefit, unlike the bending-dominated collapsible channel. IQN-ILS and Aitken give the same response (difference not quantified).
 	\item \emph{Coupling test.} The study used the legacy coupling test, which accepted about $98\%$ of the steps with $r_1$ above the tolerance of $10^{-5}$ (median $3\times10^{-4}$; Section~\ref{sec:convergence_method}). Repeated with the strict test (solids4foam \texttt{a421f063d}, OpenFOAM-v2512, which reproduces Table~\ref{tab:mok} to the digits given), the peak, trough and mean change by at most $0.024\%$ on $32^2$ and $64^2$, two orders of magnitude below the changes between meshes, and reusing IQN-ILS modes from earlier steps changes them by at most $0.025\%$. The accepted iterative error is therefore negligible for these QoIs. At the same tolerance the strict test could not be met in every step on $16^2$, $96^2$ and $128^2$, or on $64^2$ at $\Delta t = 0.1\,\mathrm{s}$: IQN-ILS stalled at $r_1 \approx 10^{-3}$--$10^{-2}$ and stopped at the iteration limit, on the finer meshes after $t \approx 14\,\mathrm{s}$ (\texttt{paper-data/mok\_coupling\_test/}).
 \end{itemize}
 
 \paragraph{Lesson.}
-A long-established benchmark can be ill defined.
-The present results are a self-convergence sequence for the fully specified group-B definition (last change $0.31\%$ in the peak and $\approx0.78\%$ in the trough, both relative to the finest peak), not verification against an external reference.
-\todo{HIGH-VALUE: an independent converged solution (COMSOL or another code) of the group-B definition, with its own mesh and time study, would make this a category-B case. Also: diagnose the $128^2$ divergence and the strict-test stalls on the finer meshes from $t \approx 14\,\mathrm{s}$; quantify the IQN-ILS/Aitken difference. No Richardson estimate is justified by the present (sub-nominal, non-uniform) sequence.}
+A long-established benchmark can be ill defined, and a published reference implementation can solve a different problem from the one it is cited for: the Kratos tutorial example moves the openings that define group B.
+Once the openings are fixed, two independent codes agree to within about $1\%$ and converge towards each other, and both place the converged peak and trough above every published group-B value.
+\todo{Diagnose the solids4foam $128^2$ divergence and the strict-test stalls on the finer meshes from $t \approx 14\,\mathrm{s}$, so that the solids4foam sequence can be extended to $128^2$ alongside Kratos; quantify the IQN-ILS/Aitken difference. The tutorial driver's group-B envelope still includes the Kratos example until its reference file is updated.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Provisional and in-development benchmarks}\label{sec:provisional}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Each of the four cases below would add a feature not otherwise covered, but none yet supports a complete verification claim. beamInCrossFlow is reported in Appendix~\ref{app:beam}, with a correction of its published inflow, and the Hessenthaler campaign is complete except for the fluid convergence of its principal QoI; no statement below depends on simulations that have not been completed.
+Each of the four cases below would add a feature not otherwise covered, but none yet supports a complete verification claim. beamInCrossFlow is reported in Appendix~\ref{app:beam}, with a correction of its published inflow, and the Hessenthaler campaign is being repeated on feature-edge meshes, with its results pending; apart from that case, no statement below depends on simulations that have not been completed.
 
 %%-------------------------------------------------------------------
 \subsubsection{Flexible-bottom cavity [PROVISIONAL]}\label{sec:cavity}
@@ -656,55 +669,69 @@ Appendix~\ref{app:beam} gives the evidence for the correction and both four-leve
 \subsubsection{Hessenthaler three-dimensional benchmark (Phase I) [PROVISIONAL]}\label{sec:hessenthaler}
 %%-------------------------------------------------------------------
 
+\todo{PROVISIONAL. The case description below is for the feature-edge mesh campaign (solids4foam \texttt{517a44921}, OpenFOAM-v2512), which replaced the earlier campaign on meshes that chamfered the flap; the earlier results are withdrawn. The feF1--feF3 runs are in progress (UCD Sonic, from 2026-11-07); results, the steady window and the validation comparison are to be inserted when they finish.}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=\textwidth]{figures/hessenthaler-geometry}
+	\caption{Hessenthaler Phase I: (a) the flow domain on the mid-plane $x = 0$ (dimensions in mm; inlet centres at $y = \pm27.15\,\mathrm{mm}$), with the flap clamped where the two inlet pipes join the outlet pipe; gravity acts in $-y$. (b) The feF1 fluid mesh ($2.3\times10^{5}$ cells) on a plane $0.3\,\mathrm{mm}$ from the mid-plane, with the undeformed flap and the deformed centreline measured under the Phase I flow~\citep{Hessenthaler2017a}. The refinement box above the flap covers the region swept by the flap.}
+	\label{fig:hessenthaler_geom}
+\end{figure}
+
 \paragraph{Role.}
 The benchmark of Hessenthaler et al.~\citep{Hessenthaler2017a,Hessenthaler2017b} is a geometrically complex, three-dimensional, large-deformation problem (a silicone flap in a flow phantom) with phase-contrast MRI measurements.
-It is used here twice, and the two uses are kept apart: as a solution-verification case, in which one fixed mathematical model of the Phase-I steady state is solved on refined meshes and time steps without reference to the measurements, and, separately, as a validation case.
-No independent numerical solution exists, so the verification evidence is self-convergence only.
+It is used here twice, and the two uses are kept apart: as a solution-verification case, in which one fixed mathematical model of the Phase-I steady state is solved on refined meshes without reference to the measurements, and, separately, as a validation case.
+No independent numerical solution exists, so the verification evidence is self-convergence only (category C).
 
-\paragraph{Verification problem.}
-The model is fixed for every run: a neo-Hookean flap ($\nu_S = 0.45$, $\rho_S = 1058.3\,\mathrm{kg/m^3}$) with the shear modulus $\mu^* = 64.2\,\mathrm{kPa}$, an incompressible Newtonian fluid, the published inflow and the net buoyancy of the flap.
-$\mu^*$ comes from the continuum limit of a zero-flow calibration against the measured deflection on four nested solid meshes, which converges at second order to $63.95\,\mathrm{kPa}$ (GCI $0.42\,\mathrm{kPa}$, $0.7\%$; the value $64.2\,\mathrm{kPa}$ used throughout was chosen from S1--S3 before S4 was added, and lies within that uncertainty); it is not recalibrated per mesh, which would change the problem under refinement (the tutorial's $58.45\,\mathrm{kPa}$ is the calibration on its own mesh and compensates for that mesh's discretisation error).
-The solid meshes S1--S3 are nested (ratio 2); the fluid meshes F1--F3 ($0.23$, $0.61$ and $1.53\times10^{6}$ cells) refine every region by a nominal $\sqrt2$ per level but are not nested.
-All runs use the strict coupling test from $t = 0$ (Section~\ref{sec:iterative_errors}) and $\Delta t = 0.002\,\mathrm{s}$, and are run to a steady state (35--45\,s of simulated time; the tutorial's 10\,s leaves the tip $0.25\,\mathrm{mm}$ short of it); the QoI is the steady vertical tip deflection, averaged over the last 4\,s.
+\paragraph{Problem.}
+A silicone flap of $11 \times 2 \times 65\,\mathrm{mm}$ is clamped to the wall where two inlet pipes (diameter $21.9\,\mathrm{mm}$, centres at $y = \pm27.15\,\mathrm{mm}$) join an outlet pipe of diameter $76.2\,\mathrm{mm}$ (Fig.~\ref{fig:hessenthaler_geom}); the flow domain is the published surface~\citep{Hessenthaler2017a}, with the outlet pipe extended by $250\,\mathrm{mm}$.
+The fluid is an aqueous glycerol solution ($\rho_F = 1163.3\,\mathrm{kg/m^3}$, $\mu_F = 12.50\,\mathrm{mPa\,s}$), entering both inlets with parabolic profiles of peak $630$ (upper) and $615\,\mathrm{mm/s}$ (lower), $Re = 1283$.
+The flap ($\rho_S = 1058.3\,\mathrm{kg/m^3}$) is about $9\%$ lighter than the fluid; buoyancy alone lifts its tip by $29.50\,\mathrm{mm}$, and the steady flow pushes it back to a measured $16.41\,\mathrm{mm}$.
+As in~\citep{Hessenthaler2017b}, the fluid is solved without gravity, so that its pressure excludes the hydrostatic part, and buoyancy is applied to the solid as the net body force $(\rho_S - \rho_F)\,\mathbf{g}/\rho_S$. The inflow and the body force are ramped in together over the first $0.5\,\mathrm{s}$ with $3s^2 - 2s^3$, $s = t/0.5\,\mathrm{s}$.
+The outlet has a fixed pressure and the backflow-stabilised traction $\boldsymbol{\sigma}\mathbf{n} = \beta \rho_F \min(\mathbf{u}\cdot\mathbf{n}, 0)\,\mathbf{u}$ with $\beta = 0.2$, the value of the benchmark definition~\citep{Hessenthaler2017b,EsmailyMoghadam2011}; a zero-gradient outlet velocity is used only as a sensitivity check.
+The flap is neo-Hookean ($\nu_S = 0.45$) with the shear modulus $\mu^* = 64.2\,\mathrm{kPa}$, taken from the continuum limit of a zero-flow calibration against the measured buoyant deflection on four nested solid meshes (second-order convergence to $63.95\,\mathrm{kPa}$, GCI $0.42\,\mathrm{kPa}$, $0.7\%$; $64.2\,\mathrm{kPa}$ was chosen before the fourth level was added and lies within that uncertainty). $\mu^*$ is not recalibrated per mesh, which would change the problem under refinement.
+The quantity of interest is the steady vertical tip deflection $u_y$, averaged over a window in which the flow is statistically steady, \hl{[window to be fixed from the feF1--feF3 runs]}.
 
-\paragraph{Results.}
-Table~\ref{tab:hessenthaler} gives the steady tip deflections.
-Under solid refinement (F1) the tip converges monotonically at an observed order of 2.13 (GCI on S3 $0.039\,\mathrm{mm}$, $0.23\%$), with the S3 value corrected for the interface-transfer defect of solids4foam PR~\#546 as measured on F1S3 (2.21 without the correction).
-Under fluid refinement (S2) the differences decrease only slowly (ratio 0.81, observed order 0.62 against a formal 2), so asymptotic fluid convergence is not established; the provisional GCI indicator, $0.16\,\mathrm{mm}$, dominates the uncertainty.
-The upstream jets and the inlet pressures converge at about second order, and refining only the walls accounts for about $20\%$ of the F1$\to$F3 tip change, which points to the flap-sweep and merging regions.
-The solid and fluid effects are close to additive (F3S3 $16.813\,\mathrm{mm}$ against $16.820\,\mathrm{mm}$ predicted from F3S2 and the F1 solid increment).
-Halving or doubling the time step changes the steady tip by at most $0.004\,\mathrm{mm}$, and a coupling tolerance of $10^{-3}$ instead of $10^{-4}$, from $t = 0$, by $0.0004\,\mathrm{mm}$.
-The best-resolved tip is $16.813\,\mathrm{mm}$ on F3S3 ($16.819\,\mathrm{mm}$ after correcting the $+0.006\,\mathrm{mm}$ bias of the interface-transfer defect of solids4foam PR~\#546, measured on F1S3 and assumed to transfer to F3S3), with a conditional, provisional allowance of about $0.20\,\mathrm{mm}$ ($1.2\%$), which is neither a bound nor a confidence interval.
+\paragraph{Numerical model.}
+The solid uses the total Lagrangian formulation on $12 \times 8 \times 65$ hexahedra (S2; 6\,240 cells).
+The fluid is solved with the segregated PIMPLE algorithm (\texttt{pimpleFluid}), second-order backward time integration, $\Delta t = 0.002\,\mathrm{s}$ and up to 20 outer correctors per coupling iteration, stopped when the initial momentum and pressure residuals fall below $10^{-5}$; all gradients use unlimited least squares.
+The fluid mesh moves with a velocity Laplacian with quadratic inverse-distance diffusivity, and interface data are transferred with AMI weights (Section~\ref{sec:numerical_methods}).
+Coupling uses IQN-ILS with the modes of the two previous steps, solid and fluid predictors, and the strict test (both residual measures below $10^{-4}$, Section~\ref{sec:iterative_errors}) from $t = 0$ to $t = 45\,\mathrm{s}$.
+
+\paragraph{Convection scheme.}
+Convection uses the unlimited \texttt{LUST} scheme ($75\%$ linear and $25\%$ linear-upwind interpolation, with the least-squares gradient).
+With the linear-upwind scheme every partitioned run on the coarsest mesh became unstable at $t \approx 5\,\mathrm{s}$: a spanwise oscillation of the tip grew until the flow solution diverged in the cells at the flap-tip corners. Tighter coupling and fluid tolerances, a halved time step, a different solid formulation and removing the viscous traction from the coupling did not change this, whereas first-order upwind convection was stable but lowered the tip deflection by $17\%$. With \texttt{LUST} the same set-up runs from $t = 0$ to $45\,\mathrm{s}$ with bounded spanwise tip motion ($< 0.3\,\mathrm{mm}$) at about three coupling iterations per step.
+The linear-upwind extrapolation with an unlimited gradient is anti-diffusive where the gradient is poorly resolved, as at sharp corners, whereas the linear part of \texttt{LUST} neither adds nor removes kinetic energy; we take this as the likely reason, without having proved it.
+
+\paragraph{Fluid meshes.}
+The fluid meshes are octree meshes generated with \texttt{cartesianMesh} from the published surface, with the flap edges captured as feature edges (Table~\ref{tab:hessenthaler_meshes}).
+An earlier mesh family without feature-edge capture chamfered the flap (surface area $2.8\%$ short, surface up to $0.24\,\mathrm{mm}$ off), which changed the load transferred to the solid by $5$--$150\%$ locally (solids4foam issue \#665); its results are not used.
+Each level scales all target sizes by a nominal $\sqrt{2}$ (by $2$ from feFm1 to feF1). The meshes are not nested.
+The only jumps in cell size between neighbouring cells are the $2{:}1$ transitions of the octree, on $8.2$, $5.1$, $3.8$ and $3.1\%$ of the internal faces from feFm1 to feF3 (fewer than 40 faces per mesh exceed $2.5{:}1$).
+feF1, feF2 and feF3 form the refinement sequence, with nearly constant effective ratios of $1.37$ and $1.36$; feFm1 is used for development and the scheme study above.
 
 \begin{table}[htbp]
 	\centering
 	\small
-	\caption{Hessenthaler Phase I, steady tip deflection $u_y$ (mm), strict coupling test from $t = 0$, $\mu^* = 64.2\,\mathrm{kPa}$, $\Delta t = 0.002\,\mathrm{s}$. F3S3 at coupling tolerance $10^{-3}$. Source: \texttt{paper-data/hessenthaler\_phaseI\_verification.md}.}
-	\label{tab:hessenthaler}
-	\begin{tabular}{lrrr}
+	\caption{Hessenthaler fluid meshes: \texttt{cartesianMesh} target sizes (mm) at the flap surface, in the region swept by the flap, at the walls and jets, and in the far field; cells; effective linear refinement ratio $(N_k/N_{k-1})^{1/3}$; maximum non-orthogonality.}
+	\label{tab:hessenthaler_meshes}
+	\begin{tabular}{lrrrrrrr}
 		\toprule
-		& S1 & S2 & S3 \\
+		Mesh & Flap & Sweep & Walls & Far & Cells & Ratio & Non-orth. \\
 		\midrule
-		F1 & 16.2006 & 16.6550 & 16.7530 \\
-		F2 & & 16.6920 & \\
-		F3 & & 16.7219 & 16.8133 \\
+		feFm1 & 1.01 & 2.02 & 4.04 & 8.00 & 39\,946 & -- & $60.7^\circ$ \\
+		feF1 & 0.505 & 1.01 & 2.02 & 4.00 & 233\,956 & 1.80 & $61.6^\circ$ \\
+		feF2 & 0.357 & 0.714 & 1.43 & 2.83 & 605\,605 & 1.37 & $51.1^\circ$ \\
+		feF3 & 0.253 & 0.505 & 1.01 & 2.00 & 1\,528\,072 & 1.36 & $61.3^\circ$ \\
 		\bottomrule
 	\end{tabular}
 \end{table}
 
-\paragraph{Validation, kept separate.}
-The measured tip deflection is $16.41\,\mathrm{mm}$.
-F3S3 lies $0.40\,\mathrm{mm}$ ($2.5\%$) above it, and every refinement moves the computed tip further from the measurement (from $-0.21\,\mathrm{mm}$ on F1S1), so the close agreement of coarse meshes is partly a cancellation of discretisation error and is not evidence of accuracy; the voxel-averaged velocities hardly change with refinement.
-Without an experimental uncertainty, which is not available, the remaining discrepancy cannot be judged.
+\paragraph{Results.}
+\hl{To be inserted: steady tip $u_y$ on feF1, feF2 and feF3, observed order and GCI if the sequence is monotone; the zero-gradient outlet sensitivity; and the solid, time-step and coupling-tolerance checks repeated on the feature-edge meshes.}
 
-\paragraph{Status.}
-The case is retained as provisional: the solid, temporal and iterative errors are controlled, but the fluid convergence of the tip is open, and there is no independent numerical reference.
-The fluid increments are resolved, not noise: the standard error of the averaged tip is at most $0.0006\,\mathrm{mm}$, the drift over the last tenth of each run at most $0.0005\,\mathrm{mm}$, and two independent F1S2 runs agree to $0.0002\,\mathrm{mm}$ (\texttt{paper-data/hessenthaler\_noise\_audit.csv}), against increments of $0.037$ and $0.030\,\mathrm{mm}$.
-What is not established is the asymptotic range: three levels determine a three-parameter power law exactly, and on non-nested meshes they cannot show that its order holds beyond them, so the observed order 0.62 is not used to extrapolate.
-For orientation only, assuming the formal order 2 or an order of 1 for the F2$\to$F3 increment gives a remaining fluid error of about $0.04$ or $0.09\,\mathrm{mm}$ (with the safety factor 1.25); these are estimates under assumed orders, not bounds.
-Two cheaper routes were examined and rejected: the flow domain is not exactly symmetric about the flap mid-plane (the mirrored wall surface departs from the original by at most $0.5\,\mathrm{mm}$ over $99\%$ of its area, and by up to $8.5\,\mathrm{mm}$ locally), so a half model would change the problem; and on these octree meshes the flap-sweep and merging regions hold most of the cells, so refining them alone costs about as much as a uniform level.
-A fourth uniform fluid level (4.2 million cells, about $10^{5}$ core-hours with the strict test from $t = 0$) is the remaining route to an asymptotic statement.
-The campaign's main contribution to this paper is methodological: with the legacy coupling test, an accumulated iterative error mimicked a slow physical creep (Section~\ref{sec:iterative_errors}).
+\paragraph{Validation, kept separate.}
+The measured steady tip deflection is $16.41\,\mathrm{mm}$, and the deformed centreline and the velocities on the planes $z = 10$ and $30\,\mathrm{mm}$ were also measured~\citep{Hessenthaler2017a}. \hl{Comparison to be inserted from the feF1--feF3 runs.} Without an experimental uncertainty, which is not available, a remaining discrepancy cannot be judged, and agreement on a coarse mesh is not evidence of accuracy.
 
 %%-------------------------------------------------------------------
 \subsubsection{Blob in treacle [PROVISIONAL]}\label{sec:blob}
