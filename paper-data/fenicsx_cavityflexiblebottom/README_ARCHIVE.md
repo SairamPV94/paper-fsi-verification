@@ -39,4 +39,4 @@ Excluded: bytecode, other campaigns' runs, the archived-source copy and meshes o
 `python3 -B -I scripts/analyze_cavity.py && python3 -B -I scripts/make_figures.py && sha256sum -c SHA256SUMS`.
 
 ## Notes for the depositor
-Authors, licence and funding are to be settled by the authors; the solids4foam #671 rerun (merged as 206437983) is on the solids4foam side and pending. The solver repository needs a public location and a tag at or after the commits above, and the untracked `runs/` directories committed (or the tarball deposited). This file only describes the content; nothing has been uploaded.
+Authors, licence and funding are to be settled by the authors; solids4foam #671 is merged as 206437983 and the solids4foam side's rerun of the strict four-level sequence on it changes level 4 by 0.002 % (https://github.com/philipcardiff/paper-fsi-verification/pull/70#issuecomment-6781363687). The solver repository needs a public location and a tag at or after the commits above, and the untracked `runs/` directories committed (or the tarball deposited). This file only describes the content; nothing has been uploaded.
