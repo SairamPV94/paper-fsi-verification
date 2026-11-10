@@ -2,7 +2,7 @@
 Usage: python3 -B scripts/extract_w671.py SOLVER_REPO data/s4f_w671_levels.csv
 Reads SOLVER_REPO/s4f_side/w671/WALL671_TABLES.md (generated there by analyze_w671.py from the run logs).
 LEGACY = continuityNormalGradient no (old behaviour) and CORRECTED = #671 default, same executable
-(proposed solids4foam #671 branch, head da1044a4f, UNMERGED, not an official release).
+(solids4foam PR #671, merged into development as commit 206437983; identical to the head da1044a4f that was run).
 Writes steady (t_a = 4) and transient (t = 1, dt = 0.005) values per model, arm and level, and the
 applied/fluid-reported force ratios of the mesh-quality table."""
 import csv, re, sys, os

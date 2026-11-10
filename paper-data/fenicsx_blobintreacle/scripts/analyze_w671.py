@@ -1,4 +1,4 @@
-"""Analysis of the solids4foam #671 A/B data (proposed branch head da1044a4f, unmerged; NOT an official release).
+"""Analysis of the solids4foam #671 A/B data (solids4foam PR #671, merged as commit 206437983; identical to the head da1044a4f that was run).
 Usage: python3 -B scripts/analyze_w671.py     (standard library; needs data/s4f_w671_levels.csv, data/steady_convergence.csv)
 Writes data/s4f_w671_convergence.csv, s4f_w671_effect.csv, s4f_w671_crosscode.csv, s4f_w671_ratios.csv
 Conventions: effect = (CORRECTED - LEGACY)/|LEGACY| per level, 'mag' = (|C|-|L|)/|L| for negative quantities;

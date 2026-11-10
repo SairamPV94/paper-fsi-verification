@@ -18,4 +18,4 @@ Solver repository `fenicsx-fsi-verification` at commit 0fe2a15 (working-copy sha
 
 | `s4f_w671_*.csv` (#671 arm) | RAW tables `s4f_side/w671/WALL671_TABLES.md` (solver commit 5b004a2) via `scripts/extract_w671.py`; summary `s4f_side/WALL671_RESULTS.md`; `w671/WALL671_DIST.md`; `w671/BUILD_INFO_head.txt`; `w671/data/provenance.csv` | 9febb574275f4744ec81f14a839c4eeca41497a7f32adac70e3089a4941671b0; b526713645d0a132655154062170cf93380a70a19c1958700bf9ec7970b0ad43; 028610fb0e39b25c19515546f73616517c388785490f75fbf91b15e34f1b6fdb; df94b93c9ba67dc4423e0a67cd702c82d98db23745b7478818db1c8db4feedd3; 5b5e22fcc6d1ab67f7879065c88cf48fa8e91cea4439a4b6d1f15200c4601ccf |
 
-Historical solids4foam columns: legacy wall BC (build 1576edcc4). `s4f_w671_*`: proposed solids4foam PR #671 branch (head da1044a4f, unmerged, not an official release); LEGACY arm = same executable with `continuityNormalGradient no;`.
+Historical solids4foam columns: legacy wall BC (build 1576edcc4). `s4f_w671_*`: solids4foam PR #671, merged into development as commit 206437983 (identical to the head da1044a4f that was run); LEGACY arm = same executable with `continuityNormalGradient no;`.

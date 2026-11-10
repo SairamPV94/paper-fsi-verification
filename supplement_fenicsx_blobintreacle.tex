@@ -43,7 +43,7 @@
 
 \maketitle
 
-\todo{DRAFT (issue \#50, review of PR \#69). Author list, CRediT and the AI-use paragraph are placeholders for the authors to agree. All numbers come from the run records and CSV files in \texttt{paper-data/fenicsx\_blobintreacle/}; job identifiers, hashes, commits and the review lineage are in its README. \textbf{Historical solids4foam values use the legacy wall BC; a rerun with the proposed, unmerged solids4foam PR \#671 branch (head da1044a4f, not an official release) is reported next to them (Section~\ref{sec:fx_crosscode}).}}
+\todo{DRAFT (issue \#50, review of PR \#69). Author list, CRediT and the AI-use paragraph are placeholders for the authors to agree. All numbers come from the run records and CSV files in \texttt{paper-data/fenicsx\_blobintreacle/}; job identifiers, hashes, commits and the review lineage are in its README. \textbf{Historical solids4foam values use the legacy wall BC; a rerun with the corrected wall condition of solids4foam PR \#671 (merged into \texttt{development} as commit 206437983; identical to the head da1044a4f that was run) is reported next to them (Section~\ref{sec:fx_crosscode}).}}
 
 \section{Scope and disclosure}\label{sec:fx_scope}
 The only reference for blobInTreacle in the suite is C-weak: figure-extracted interface shapes from a preprint~\citep{Liu2013} of~\citet{Liu2014}, coarse mesh, first-order time integration.
@@ -103,7 +103,7 @@ The base reaction is $R_x^{M1}/R_x^{M2}=1.115$ ($F=0.5$) to $1.148$ (limit), gro
 
 \section{Cross-code steady comparison}\label{sec:fx_crosscode}
 Historical solids4foam values use the legacy wall BC (\texttt{newMovingWallVelocity} with zero normal gradient of the wall-normal velocity; series regenerated with commit 1576edcc4, OpenFOAM v2512, $t=4$, x4 with $\Delta t=0.005$; inlet flux $0.54\%$ high at x1).
-The same runs were repeated with the proposed solids4foam PR~\#671 branch (continuity-based wall-normal gradient; head da1044a4f, \textbf{unmerged, not an official release}); the two arms use one executable and differ only by the key \texttt{continuityNormalGradient no;}.
+The same runs were repeated with solids4foam PR~\#671 (continuity-based wall-normal gradient), merged into \texttt{development} as commit 206437983 and identical to the head da1044a4f that was run (no rerun was needed after the merge); the two arms use one executable and differ only by the key \texttt{continuityNormalGradient no;} (legacy = before \#671, corrected = the default after the merge).
 Gate runs (four) show the legacy arm reproduces the accepted legacy results bitwise, so the 33 upstream commits between the builds do not change this case.
 Both arms are reported; the legacy results remain valid for the legacy BC (the legacy-arm $x1$ rerun differs from the accepted $x1$ run by $3\times10^{-5}$ in $u_x$, the known decomposition noise).
 
@@ -115,7 +115,7 @@ The same pattern holds at $t=1$ ($\Delta u_x(1)=-0.45$, $-0.74$, $-0.41$, $-0.27
 
 \begin{table}[htbp]
 \centering
-\caption{FEniCSx M2 against solids4foam M2, steady: relative difference FEniCSx$/$solids4foam$-1$ at equal cell counts and between Richardson limits, with the combined GCI and the ratio of the limit difference to it. L: legacy wall BC; \#671: proposed branch (unmerged). \texttt{data/steady\_crosscode.csv} (L, accepted series), \texttt{data/s4f\_w671\_crosscode.csv} (both arms, sign opposite).}\label{tab:fx_crosscode}
+\caption{FEniCSx M2 against solids4foam M2, steady: relative difference FEniCSx$/$solids4foam$-1$ at equal cell counts and between Richardson limits, with the combined GCI and the ratio of the limit difference to it. L: legacy wall BC; \#671: merged default (206437983). \texttt{data/steady\_crosscode.csv} (L, accepted series), \texttt{data/s4f\_w671\_crosscode.csv} (both arms, sign opposite).}\label{tab:fx_crosscode}
 \small
 \begin{tabular}{@{}llrrrrrr@{}}
 \toprule
@@ -219,10 +219,10 @@ The solids4foam stress-based reactions miss the known force by $1.8$--$2.5\%$ (E
 \section{Which findings survive without post hoc tests}
 Preregistered or independently reproduced: the M2 and M1 steady sequences; steady time-step and scheme independence; the steady cross-code differences in $u_x$, $F_x$ and pressure drop including $F_x$ at $1.24$ GCI in the legacy arm ($0.49$ with \#671); M1/M2 sensitivity with the E-AREA ratios; the transfer deficit; mass conservation; the BDF2 pairwise results as stated; the negative results (transient $u_y$, $F_x$; pointwise $u_y(1)$; interface-velocity test; E-AREA P1; same-shape DISAGREE).
 Post hoc or qualified: static-wall same-shape analysis and the $92\%$ attribution, the $u_y$ amplification estimate, the CN pressure-geometry fix, the RMS-in-time metric, the pairwise BDF2 rule, the E-AREA ratio reconciliation.
-The \#671 arm adds a labelled rerun (unmerged branch, not an official release), not a replacement. Without the post hoc items the $u_y$ gap is ``DISAGREE, marginal, unexplained'' ($0.7\%$ legacy, $0.5\%$ with \#671).
+The \#671 arm (merged code, 206437983) adds a labelled rerun, not a replacement. Without the post hoc items the $u_y$ gap is ``DISAGREE, marginal, unexplained'' ($0.7\%$ legacy, $0.5\%$ with \#671).
 
 \section{Limitations and added value}
-\textbf{Limitations.} Second implementation, same group; the \#671 arm is a proposed, unmerged branch, E-AREA x4 was not run, and the remaining $0.5\%$ $u_y$ gap is unexplained; no temporal verification of the benchmark beyond the limited BDF2 result, a transient study with only $u_x$, $F_y$ accepted, no interface-shape comparison, no M1 time study; two models, neither declared correct; $u_y$ unresolved below $\sim1\%$; pointwise closure $2$--$3\%$ explained only in the solid-only analogue; orders of $u_x$ ($1.4$--$1.5$) and $F_y$ ($0.9$) below two; chord geometry up to $0.15\%$ outside the GCI; mixed time steps in the sequences.
+\textbf{Limitations.} Second implementation, same group; E-AREA x4 was not run (not required), and the remaining $0.5\%$ $u_y$ gap is unexplained; no temporal verification of the benchmark beyond the limited BDF2 result, a transient study with only $u_x$, $F_y$ accepted, no interface-shape comparison, no M1 time study; two models, neither declared correct; $u_y$ unresolved below $\sim1\%$; pointwise closure $2$--$3\%$ explained only in the solid-only analogue; orders of $u_x$ ($1.4$--$1.5$) and $F_y$ ($0.9$) below two; chord geometry up to $0.15\%$ outside the GCI; mixed time steps in the sequences.
 \textbf{Added value.} (i) The solids4foam steady state of the original model is reproduced by a numerically different code to $0.05$--$0.2\%$ in $u_x$, force and pressure drop (legacy arm: $F_x$ limit $1.24$ GCI, $u_y$ $14$ GCI; \#671 arm: $0.49$ and $5.1$). (ii) The tutorial's transfer is identified from source and its effect quantified: the solid-applied $x$-force is $12.5$--$12.9\%$ below the fluid-reported force ($12.6$--$12.7\%$ at the finest levels), and M1 relative to M2 is $+7.5\%$ in $u_x$ and $-16\%$ in $|u_y|$, stable under refinement for these two displacements. (iii) The benchmark is a family of two models. (iv) The limits of the temporal evidence are stated.
 
 \section*{AI-use disclosure (placeholder for author review)}
