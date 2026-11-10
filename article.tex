@@ -120,6 +120,7 @@ textheight=24cm, % llncs has 19.3cm
 % ORCID 0000-0002-2409-7332 (https://orcid.org/0000-0002-2409-7332): not typeset because sn-jnl.cls \orcid needs Orcidlogo.eps, which is not in the repository.
 \author[1]{\fnm{Sairam} \sur{Pamulaparthi Venkata}}
 \author[1]{\fnm{Seevani} \sur{Bali}}
+\author[1]{\fnm{Amirhossein} \sur{Taran}}
 % Ivan Batisti\'{c} stays the final (senior) author: add any further authors above this line.
 \author[1,2]{\fnm{Ivan} \sur{Batisti\'{c}}}
 
@@ -189,7 +190,7 @@ The suite, its drivers and its machine-readable references are released so that 
 An open, executable verification suite for continuum FSI has been assembled, with each reference classified by its quality and the spatial, temporal and iterative errors studied separately for a partitioned finite volume code.
 The main conclusions are:
 \begin{itemize}
-	\item \textbf{Where the reference is exact or independent, the code converges as designed.} In ringAddedMass and womersleyTube most quantities converge at observed orders close to two; the ringAddedMass frequency error at a practical resolution ($-0.13\%$) is the BDF2 phase error, and the finest womersleyTube amplitudes and profile lie within $0.12\%$ of the exact solution ($0.2\%$ for the attenuation; wall-displacement phase within $1.2\times10^{-3}\,\mathrm{rad}$); in collapsibleChannel the error against the oomph-lib reference falls to $0.5\%$ of the peak, where it reaches the reference uncertainty and the quantified model-form difference.
+	\item \textbf{Where the reference is exact or independent, the code converges as designed.} In ringAddedMass and womersleyTube most quantities converge at observed orders close to two; the ringAddedMass frequency error at a practical resolution ($-0.13\%$) is the BDF2 phase error, and the finest womersleyTube amplitudes and profile lie within $0.12\%$ of the exact solution ($0.2\%$ for the attenuation; wall-displacement phase within $1.2\times10^{-3}\,\mathrm{rad}$); in collapsibleChannel the error against oomph-lib extrapolated to zero mesh size falls at orders 1.6--2.5 to $0.33\%$ of the peak; the $0.5\%$ floor seen against oomph-lib at its tutorial resolution is that reference's own first-order spatial error.
 	\item \textbf{The quality of the reference, not the popularity of the problem, sets what can be verified.} Among the literature problems, only two references are both independent and converged at the resolution used; the two published sets of FSI3 values differ by $18\%$ in one QoI.
 	\item \textbf{Two levels are not enough.} Third and fourth levels reversed conclusions drawn from two: with the tutorial set-up the FSI3 displacements converge at an observed order of about one, and with a corrected set-up they still change by 1--2\% at $7.5\times10^5$ fluid cells, so a difference from the reference of that size cannot yet be attributed to either code.
 	\item \textbf{Verification exposed defects that agreement with a reference did not.} An $O(\Delta t)$ end-flux inconsistency, a compiler-dependent aliasing error, a mesh-dependent interpolation degeneracy and a coupling test that accepts unconverged steps were all found by convergence, cross-platform or residual checks, none by comparison with a published value.
@@ -198,7 +199,7 @@ The main conclusions are:
 
 Several directions remain:
 \begin{enumerate}
-	\item \textbf{Independent references where none exists}, above all for 3dTube, Hessenthaler and mokLidDrivenCavity, computed with their own mesh and time studies.
+	\item \textbf{Independent references where none exists}, above all for 3dTube and Hessenthaler, computed with their own mesh and time studies, as Kratos now provides for mokLidDrivenCavity.
 	\item \textbf{Further levels where the evidence stops at two or three}: Hron--Turek FSI2, and a fourth fluid level for Hessenthaler.
 	\item \textbf{Completion of the provisional cases}: beamInCrossFlow (a fifth mesh, level 4), cavityFlexibleBottom and blobInTreacle.
 	\item \textbf{Wider coverage}: compressible and non-Newtonian fluids, contact and free surfaces; the companion paper~\citep{CardiffBatistic2026QM} applies the same suite to a quasi-monolithic coupling.
@@ -237,6 +238,7 @@ The authors wish to acknowledge the Irish Centre for High-End Computing (ICHEC) 
 \textbf{Emad Tandis:} Investigation, Validation (independent ANSYS and COMSOL solutions of the flexible-bottom cavity), Writing -- review \& editing \hl{TBD: confirm}.
 \textbf{Sairam Pamulaparthi Venkata:} Investigation, Software (FEBio models), Validation (independent FEBio solutions of the ring added-mass problem), Formal analysis, Writing -- review \& editing.
 \textbf{Seevani Bali:} Investigation, Validation (third-platform replication of the 3dTube mesh study), Writing -- review \& editing \hl{TBD: confirm}.
+\textbf{Amirhossein Taran:} Investigation, Software (Kratos models), Validation (independent Kratos solution of the lid-driven cavity), Writing -- review \& editing \hl{TBD: confirm}.
 \textbf{Ivan Batisti\'{c}:} Software (high-order solid discretisation), Writing -- review \& editing \hl{TBD: confirm}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

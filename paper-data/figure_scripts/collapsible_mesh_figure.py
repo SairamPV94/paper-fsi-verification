@@ -5,12 +5,15 @@ zooms at the first trough and the second peak; (d) maximum error against the
 reference, as a percentage of the reference peak, against the number of
 fluid cells, with the reference uncertainty marked.
 
-Usage: collapsible_mesh_figure.py HIST_DIR REF_CSV REF_CONVERGED_CSV OUT.pdf
+Usage: collapsible_mesh_figure.py HIST_DIR REF_CSV REF_CONVERGED_CSV OUT.pdf [UNCERTAINTY [LABEL]]
   HIST_DIR: F1.dat ... F4.dat (solidPointDisplacement_wallMid.dat of each level)
     and mesh_study.csv of the tutorial driver (fluid cell counts)
   REF_CSV: oomph-lib solution at the same time step (collapsibleChannel_oomph_dt160.csv)
   REF_CONVERGED_CSV: converged reference (collapsibleChannel_oomph_reference.csv),
     whose peak normalises the error, as in the tutorial driver
+  UNCERTAINTY: uncertainty of REF_CSV in % of the peak (default 0.3, the
+    tutorial reference at --refine 1)
+  LABEL: label of the shaded band in (d) (default "reference uncertainty")
 Prints the per-level maximum error."""
 import bisect, csv, sys
 from pathlib import Path
@@ -25,7 +28,8 @@ hist_dir, ref_csv, conv_csv, out = Path(sys.argv[1]), Path(sys.argv[2]), Path(sy
 # uniform ratio-2 family: 3200, 12800, 28800, 51200)
 CELLS = {int(row["fluidLevel"]): int(row["fluidCells"])
          for row in csv.DictReader(open(hist_dir / "mesh_study.csv"))}
-REF_UNCERTAINTY = 0.3   # % of the peak, stated in the paper (reference section)
+REF_UNCERTAINTY = float(sys.argv[5]) if len(sys.argv) > 5 else 0.3   # % of the peak
+BAND_LABEL = sys.argv[6] if len(sys.argv) > 6 else "reference uncertainty"
 
 
 def ref(path):
@@ -89,9 +93,9 @@ for k, (t0, title) in enumerate(((trough_t, "(b) first trough"), (peak_t, "(c) s
 bx = fig.add_subplot(gs[1, 2])
 n = [CELLS[l] for l in sorted(CELLS)]
 e = [err[l] for l in sorted(CELLS)]
-bx.axhspan(0.1, REF_UNCERTAINTY, color="#d62728", alpha=0.08, lw=0)
+bx.axhspan(0.01, REF_UNCERTAINTY, color="#d62728", alpha=0.08, lw=0)
 bx.axhline(REF_UNCERTAINTY, color="#d62728", lw=0.6, ls="--")
-bx.text(n[-1], REF_UNCERTAINTY * 0.9, "reference\nuncertainty", color="#d62728", fontsize=6,
+bx.text(n[-1], REF_UNCERTAINTY * 0.9, BAND_LABEL.replace(" ", "\n", 1), color="#d62728", fontsize=6,
         ha="right", va="top")
 bx.loglog(n, e, "o-", color="black", ms=3.5, lw=0.9, label="max error")
 bx.loglog([n[0], n[2]], [e[0], e[0] * n[0] / n[2]], ":", color="0.4", lw=0.8, label="order 2")
@@ -100,8 +104,9 @@ for l, x, y in zip(sorted(CELLS), n, e):
 bx.set_xticks(n); bx.set_xticklabels([f"{v // 1000}k" if v % 1000 == 0 else str(v) for v in n],
                                      fontsize=6); bx.minorticks_off()
 bx.set_xlabel("fluid cells"); bx.set_ylabel("max error (% of peak)")
-bx.set_ylim(0.15, 8)
-bx.set_yticks([0.2, 0.5, 1, 2, 5]); bx.set_yticklabels(["0.2", "0.5", "1", "2", "5"])
+bx.set_ylim(0.02, 8)
+bx.set_yticks([0.05, 0.1, 0.2, 0.5, 1, 2, 5])
+bx.set_yticklabels(["0.05", "0.1", "0.2", "0.5", "1", "2", "5"])
 bx.set_title("(d) error against oomph-lib", fontsize=8)
 bx.legend(fontsize=6, frameon=False, loc="upper right")
 fig.savefig(out)
