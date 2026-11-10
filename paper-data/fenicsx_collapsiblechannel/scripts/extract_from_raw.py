@@ -186,6 +186,7 @@ wr("error_series_correlation.csv", ["fe_cell", "window_t_max_s", "corr_FEminusOo
 
 # comparison against the spatially extrapolated oomph-lib solution (Delta t = 0.00625 only; PR #74), bottom face and midplane, plus s4f F4 and the oomph refinement levels
 ex = oomph_file("oomph_extrapolated_dt160.csv"); rows = []
+OM_V1 = [V123(ex[i], 1.5)[0][1] / P * 100 for i in range(3)]
 for n in ("S1_dt0.00625_r2", "S2_dt0.00625", "S3_dt0.00625"):
     c = cells[n]
     for face, sp in (("bottom", c.bot), ("midplane", c.mid)):
@@ -211,6 +212,26 @@ for n in ("S2_dt0.00625", "S3_dt0.00625"):
         tt = np.linspace(0.0, w, 6001); fe = np.array([float(c.bot[1](q)) for q in tt]); e1 = (fe - ex[1](tt)) / P * 100; e2 = (sp4(tt) - ex[1](tt)) / P * 100
         rows.append([n, w, fl(float(np.corrcoef(e1, e2)[0, 1]), 5), fl(float(np.abs(e1).max()), 5), fl(float(np.abs(e2).max()), 5), fl(float(np.abs((fe - sp4(tt)) / P * 100).max()), 5)])
 wr("error_series_correlation_extrapolated_oomph.csv", ["fe_cell", "window_t_max_s", "corr_FEminusExtrap_vs_s4fF4minusExtrap", "Linf_FE_minus_extrap_pctP", "Linf_s4fF4_minus_extrap_pctP", "Linf_FE_minus_s4fF4_pctP"], rows)
+
+# D1: order sensitivity of the extrapolation (refine 3 and 4, h ~ 1/N, ratio 4/3) relative to the first-order file; D5: correlation against other references
+r3, r4 = oomph_file("oomph_refine3_dt160.csv"), oomph_file("oomph_refine4_dt160.csv"); rows = []
+tt = np.linspace(0.0, 1.5, 6001)
+for pe in (0.8, 1.0, 1.1, 1.25, 1.5):
+    f = 1.0 / ((4.0 / 3.0) ** pe - 1.0)
+    for i, x in enumerate(X):
+        sp = lambda t: r4[i](t) + (r4[i](t) - r3[i](t)) * f
+        v = V123(CubicSpline(tt, sp(tt)), 1.5)[0][1] / P * 100
+        rows.append([pe, x, fl(v - OM_V1[i], 6), fl(float(np.abs((sp(tt) - ex[i](tt)) / P * 100).max()), 6)])
+wr("extrapolation_order_sensitivity.csv", ["assumed_order_p", "x_m", "first_trough_change_vs_first_order_file_pctP", "history_Linf_change_vs_first_order_file_pctP"], rows)
+rows = []
+refs = [("refine1", oomph_file("oomph_refine1_dt160.csv")), ("refine2", oomph_file("oomph_refine2_dt160.csv")), ("refine3", r3), ("refine4", r4), ("extrapolated", ex)]
+for n in ("S2_dt0.00625", "S3_dt0.00625"):
+    c = cells[n]
+    for rn, rs in refs:
+        for w0, w1 in ((0.0, 1.25), (0.0, 1.5), (0.5, 1.25), (0.8, 1.25)):
+            tt2 = np.linspace(w0, w1, 6001); fe = np.array([float(c.bot[1](q)) for q in tt2]); e1 = (fe - rs[1](tt2)) / P * 100; e2 = (sp4(tt2) - rs[1](tt2)) / P * 100
+            rows.append([n, rn, w0, w1, fl(float(np.corrcoef(e1, e2)[0, 1]), 4)])
+wr("error_series_correlation_by_reference.csv", ["fe_cell", "reference", "window_start_s", "window_end_s", "corr_FEminusRef_vs_s4fF4minusRef_x10"], rows)
 
 # history-level cross term and space effects (bottom face).  cross term X(t) = [S3-S2](dt a) - [S3-S2](dt b) over t <= 1.25 (S3 at the finest dt ends at 1.25 s)
 def series(name, i, w):

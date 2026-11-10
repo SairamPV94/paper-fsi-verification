@@ -176,6 +176,16 @@ for x in XS:
         rows.append([x, S, b, m, -mfg[x], "same sign" if (m * (-mfg[x]) > 0) else "opposite sign"])
 wr("mf1_vs_extrapolated_offset.csv", ["x_m", "FE_mesh_dt_0.00625", "FE_bottom_minus_extrapolated_oomph", "FE_midplane_minus_extrapolated_oomph", "open_loop_continuum_minus_beam_(MF1)", "sign_midplane_offset_vs_MF1"], rows)
 
+# 10c. range of the successive-difference mismatch FE minus oomph (refine-1 same-dt) over positions and mesh pairs
+rows = []
+for r in rd("successive_trough_differences.csv"):
+    pass
+for S in SS:
+    vals = [(abs(float(r["FE_minus_oomph_pctP"])), r["x_m"]) for r in rd("successive_trough_differences.csv") if r["mesh"] == S]
+    v10 = [v for v, x in vals if x == "10"]
+    rows.append([S, max(v for v, x in vals), max(v10), min(v10)])
+wr("successive_difference_mismatch_range.csv", ["mesh", "max_abs_mismatch_all_x_pctP", "max_abs_mismatch_x10_pctP", "min_abs_mismatch_x10_pctP"], rows)
+
 # 11. cost
 cost = rd("cost_cpuh.csv"); cells = rd("cells.csv"); cs = {}
 for r in cost: cs.setdefault(r["campaign"], [0.0, 0, 0]); cs[r["campaign"]][0] += int(r["cpu_s_sacct"]) / 3600.0; cs[r["campaign"]][1] += 1; cs[r["campaign"]][2] += (r["state"] != "COMPLETED")
