@@ -2,7 +2,7 @@
 usage (from this package directory):  python3 -B -I scripts/analyze_collapsible.py
 Inputs : troughs_fe.csv, troughs_reference.csv, history_space_effects.csv, wall_static_p2.csv, cost_cpuh.csv, cells.csv
 Outputs: factorial_V1.csv, cross_term_V1.csv, convergence_analyse.csv, time_limit_p_sensitivity.csv, H2_deficits.csv, successive_trough_differences.csv,
-         same_dt_offset_to_oomph.csv, three_way_x10.csv, wall_static_p2_orders.csv, H1_prediction_bands.csv, cost_summary.csv
+         same_dt_offset_to_oomph.csv, three_way_x10.csv, wall_static_p2_orders.csv, H1_prediction_bands.csv, cost_summary.csv, offset_to_extrapolated_oomph.csv, mf1_vs_extrapolated_offset.csv
 Acceptance rule: scripts/convergence.py (>= 3 levels, monotone with decreasing differences, 0.5 <= p <= 3, Fs = 1.25); a series that fails is reported as NOT ACCEPTED with no limit.
 All values are % of P (P = 0.216 m) unless a column says otherwise."""
 import csv, os, sys, math
@@ -154,6 +154,27 @@ for x in XS:
     rows.append([x, s12, s23, float(h["Linf_S2_minus_S1_pctP"]), float(h["Linf_S3_minus_S2_pctP"]), "0.5-3 / 0.1-0.5",
                  "ratio of history L-inf changes %.1f" % (float(h["Linf_S2_minus_S1_pctP"]) / float(h["Linf_S3_minus_S2_pctP"]))])
 wr("H1_prediction_bands.csv", ["x_m", "V1_change_S1_to_S2", "V1_change_S2_to_S3", "history_Linf_S1_to_S2", "history_Linf_S2_to_S3", "registered_ranges_pctP_(S1-S2 / S2-S3)", "note"], rows)
+
+# 10b. comparison against the spatially extrapolated oomph-lib solution (PR #74; dt = 0.00625 only)
+rows = []; ex = {x: OM[("extrap_dt160", x)][0] for x in XS}
+mid = {}
+for r in tr:
+    if r["variant"] == "baseline" and r["face"] == "midplane": mid[(r["mesh"], r["dt_s"], g(float(r["x_m"])))] = float(r["V1_pctP"])
+for S in SS:
+    for x in XS:
+        b = V[(S, "0.00625", x)][0]; m = mid[(S, "0.00625", x)]
+        rows.append([S, x, b, b - ex[x], m, m - ex[x], b - OM[("dt160", x)][0], OM[("refine1_dt160", x)][0] - ex[x]])
+for F in ("F1", "F2", "F3", "F4"): rows.append([F, "10", OM[("s4f_" + F, "10")][0], OM[("s4f_" + F, "10")][0] - ex["10"], "", "", "", ""])
+for k in (1, 2, 3, 4):
+    for x in XS: rows.append(["oomph_refine%d" % k, x, OM[("refine%d_dt160" % k, x)][0], OM[("refine%d_dt160" % k, x)][0] - ex[x], "", "", "", ""])
+wr("offset_to_extrapolated_oomph.csv", ["series", "x_m", "V1_bottom_pctP", "minus_extrapolated_oomph_pctP", "V1_midplane_pctP", "midplane_minus_extrapolated_pctP", "FE_bottom_minus_old_reference_oomph_dt160_pctP", "oomph_refine1_minus_extrapolated_pctP"], rows)
+rows = []
+mfg = {g(float(r["x_m"])): float(r["dV1_beam_minus_continuum_pctP"]) for r in rd("mf1_gap.csv") if r["beam_variant"] == "ne160_d2dt2"}
+for x in XS:
+    for S in ("S2", "S3"):
+        b = V[(S, "0.00625", x)][0] - ex[x]; m = mid[(S, "0.00625", x)] - ex[x]
+        rows.append([x, S, b, m, -mfg[x], "same sign" if (m * (-mfg[x]) > 0) else "opposite sign"])
+wr("mf1_vs_extrapolated_offset.csv", ["x_m", "FE_mesh_dt_0.00625", "FE_bottom_minus_extrapolated_oomph", "FE_midplane_minus_extrapolated_oomph", "open_loop_continuum_minus_beam_(MF1)", "sign_midplane_offset_vs_MF1"], rows)
 
 # 11. cost
 cost = rd("cost_cpuh.csv"); cells = rd("cells.csv"); cs = {}

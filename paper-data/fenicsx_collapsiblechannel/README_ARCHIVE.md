@@ -26,6 +26,7 @@ Description (for the record): *Same-lineage cross-code check (FEniCSx, DOLFINx 0
 | spatial section (acceptance, cross term, history space effects, H1) | `convergence_analyse.csv`, `cross_term_V1.csv`, `history_space_effects.csv`, `history_cross_term_S2_S3.csv`, `H1_prediction_bands.csv` | same | same |
 | Table S3, S4 (successive differences, H2), time-limit band, offset | `successive_trough_differences.csv`, `H2_deficits.csv`, `time_limit_p_sensitivity.csv`, `same_dt_offset_to_oomph.csv`, `finest_cell_minus_oomph_reference.csv`, `fixed_time_vs_oomph_reference.csv` | same | same |
 | MF1 (Table S5, Fig. S2) | `mf1_controls.csv`, `mf1_gap.csv`, `mf1_resolution.csv` | `extract_from_raw.py` | evidence tarball |
+| comparison with the extrapolated oomph-lib solution (PR #74) | `history_norms_vs_extrapolated_oomph.csv`, `error_series_correlation_extrapolated_oomph.csv`, `offset_to_extrapolated_oomph.csv`, `mf1_vs_extrapolated_offset.csv` | `extract_from_raw.py` (reads `paper-data/collapsible_mesh_study/oomph_*_dt160.csv`), `analyze_collapsible.py` | evidence tarball and the repository |
 | solids4foam comparison | `history_norms.csv`, `error_series_correlation.csv`, `three_way_x10.csv` | `extract_from_raw.py`, `analyze_collapsible.py` | evidence tarball |
 | formulation controls and gates | `stage3_variants_vs_S2.csv`, `gates_H8.csv` | `extract_from_raw.py` | evidence tarball |
 | preflight (Table S1) | `preflight_reported.csv` (transcribed), `wall_static_p2.csv`, `wall_static_p2_orders.csv` | by hand (reports); `extract_from_raw.py`, `analyze_collapsible.py` | reports in the tarball |
@@ -36,3 +37,5 @@ Description (for the record): *Same-lineage cross-code check (FEniCSx, DOLFINx 0
 
 ## Notes for the depositor
 Authors, licence, funding and the solids4foam #671 reruns for the Robin dt 0.00625 production baseline are to be settled by the authors. The solver repository needs a public location and a tag at or after the commits above, and the untracked `runs/` directories committed (or the tarball deposited). The oomph-lib reference files are redistributed from the solids4foam tutorial; their licence is to be confirmed. This file only describes the content; nothing has been uploaded.
+
+Timing: the snapshot is needed before submission, not before merging into the private repository.

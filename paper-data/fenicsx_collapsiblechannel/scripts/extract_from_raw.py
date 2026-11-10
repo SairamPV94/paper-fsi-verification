@@ -14,6 +14,7 @@ OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(os.path.dirname(os.path
 DATA = f"{EV}/P/benchmarks/collapsibleChannel/colP_data"
 REF = f"{EV}/EXT/oomph_reference"
 S4F = f"{EV}/EXT/s4f_mesh_study"
+MS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "collapsible_mesh_study")   # oomph refinement files of PR #74 (in the repository)
 P = 0.216
 X = (7.5, 10.0, 12.5)
 FIXED_T = (0.25, 0.46875, 0.79, 1.11875, 1.5)
@@ -65,6 +66,11 @@ def V123(f, tmax=1.5):
 def oomph(tag):
     f = {"ref": "oomph_reference", "dt40": "oomph_dt40", "dt80": "oomph_dt80", "dt160": "oomph_dt160", "dt320": "oomph_dt320"}[tag]
     A = np.genfromtxt(f"{REF}/collapsibleChannel_{f}.csv", delimiter=",", comments="#"); A = A[np.isfinite(A[:, 0])]
+    return [CubicSpline(A[:, 0], A[:, 1 + i]) for i in range(3)]
+
+
+def oomph_file(name):
+    A = np.genfromtxt(os.path.join(MS, name), delimiter=",", comments="#", skip_header=0); A = A[np.isfinite(A[:, 0])]
     return [CubicSpline(A[:, 0], A[:, 1 + i]) for i in range(3)]
 
 
@@ -129,6 +135,10 @@ for tag in ("ref", "dt40", "dt80", "dt160", "dt320"):
     sp = oomph(tag)
     for i, x in enumerate(X):
         v = V123(sp[i], 1.5); rows.append(["oomph_" + tag, x, fl(v[0][1] / P * 100, 8), fl(v[0][0], 8), fl(v[1][1] / P * 100, 8), fl(v[2][1] / P * 100, 8)])
+for tag, fn in (("extrap_dt160", "oomph_extrapolated_dt160.csv"), ("refine1_dt160", "oomph_refine1_dt160.csv"), ("refine2_dt160", "oomph_refine2_dt160.csv"), ("refine3_dt160", "oomph_refine3_dt160.csv"), ("refine4_dt160", "oomph_refine4_dt160.csv")):
+    sp = oomph_file(fn)
+    for i, x in enumerate(X):
+        v = V123(sp[i], 1.5); rows.append(["oomph_" + tag, x, fl(v[0][1] / P * 100, 8), fl(v[0][0], 8), fl(v[1][1] / P * 100, 8), fl(v[2][1] / P * 100, 8)])
 for F in ("F1", "F2", "F3", "F4"):
     v = V123(s4f(F), 1.5); rows.append(["s4f_" + F, 10.0, fl(v[0][1] / P * 100, 8), fl(v[0][0], 8), fl(v[1][1] / P * 100, 8), fl(v[2][1] / P * 100, 8)])
 wr("troughs_reference.csv", ["series", "x_m", "V1_pctP", "t_V1_s", "V2_pctP", "V3_pctP"], rows)
@@ -173,6 +183,34 @@ for n in ("S2_dt0.00625", "S3_dt0.00625"):
         e1 = (fe - o) / P * 100; e2 = (s - o) / P * 100
         rows.append([n, w, fl(float(np.corrcoef(e1, e2)[0, 1]), 5), fl(float(np.abs(e1).max()), 5), fl(float(np.abs(e2).max()), 5), fl(float(np.abs((fe - s) / P * 100).max()), 5)])
 wr("error_series_correlation.csv", ["fe_cell", "window_t_max_s", "corr_FEminusOomph_vs_s4fminusOomph", "Linf_FE_minus_oomph_dt160_pctP", "Linf_s4fF4_minus_oomph_dt160_pctP", "Linf_FE_minus_s4fF4_pctP"], rows)
+
+# comparison against the spatially extrapolated oomph-lib solution (Delta t = 0.00625 only; PR #74), bottom face and midplane, plus s4f F4 and the oomph refinement levels
+ex = oomph_file("oomph_extrapolated_dt160.csv"); rows = []
+for n in ("S1_dt0.00625_r2", "S2_dt0.00625", "S3_dt0.00625"):
+    c = cells[n]
+    for face, sp in (("bottom", c.bot), ("midplane", c.mid)):
+        for w in (1.25, 1.5):
+            tt = np.linspace(0.0, w, 6001)
+            for i, x in enumerate(X):
+                e = (np.array([float(sp[i](q)) for q in tt]) - ex[i](tt)) / P * 100
+                rows.append([n, face, w, x, fl(float(np.sqrt(np.mean(e ** 2))), 6), fl(float(np.abs(e).max()), 6)])
+sp4 = s4f("F4")
+for w in (1.25, 1.5):
+    tt = np.linspace(0.0, w, 6001); e = (sp4(tt) - ex[1](tt)) / P * 100
+    rows.append(["s4f_F4", "wallMid", w, 10.0, fl(float(np.sqrt(np.mean(e ** 2))), 6), fl(float(np.abs(e).max()), 6)])
+for k in (1, 2, 3, 4):
+    rs = oomph_file("oomph_refine%d_dt160.csv" % k)
+    for i, x in enumerate(X):
+        tt = np.linspace(0.0, 1.5, 6001); e = (rs[i](tt) - ex[i](tt)) / P * 100
+        rows.append(["oomph_refine%d" % k, "beam", 1.5, x, fl(float(np.sqrt(np.mean(e ** 2))), 6), fl(float(np.abs(e).max()), 6)])
+wr("history_norms_vs_extrapolated_oomph.csv", ["series", "face", "window_t_max_s", "x_m", "L2_pctP", "Linf_pctP"], rows)
+rows = []
+for n in ("S2_dt0.00625", "S3_dt0.00625"):
+    c = cells[n]
+    for w in (1.25, 1.5):
+        tt = np.linspace(0.0, w, 6001); fe = np.array([float(c.bot[1](q)) for q in tt]); e1 = (fe - ex[1](tt)) / P * 100; e2 = (sp4(tt) - ex[1](tt)) / P * 100
+        rows.append([n, w, fl(float(np.corrcoef(e1, e2)[0, 1]), 5), fl(float(np.abs(e1).max()), 5), fl(float(np.abs(e2).max()), 5), fl(float(np.abs((fe - sp4(tt)) / P * 100).max()), 5)])
+wr("error_series_correlation_extrapolated_oomph.csv", ["fe_cell", "window_t_max_s", "corr_FEminusExtrap_vs_s4fF4minusExtrap", "Linf_FE_minus_extrap_pctP", "Linf_s4fF4_minus_extrap_pctP", "Linf_FE_minus_s4fF4_pctP"], rows)
 
 # history-level cross term and space effects (bottom face).  cross term X(t) = [S3-S2](dt a) - [S3-S2](dt b) over t <= 1.25 (S3 at the finest dt ends at 1.25 s)
 def series(name, i, w):
