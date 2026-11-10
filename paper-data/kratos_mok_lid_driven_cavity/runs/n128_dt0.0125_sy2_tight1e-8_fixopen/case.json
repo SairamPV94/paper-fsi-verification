@@ -1,0 +1,18 @@
+{
+  "template": "inputs/L1",
+  "out": "inputs/gen/n128_dt0.0125_sy2_tight1e-8_fixopen",
+  "n": 128,
+  "dt": 0.0125,
+  "solid_x": 128,
+  "solid_y": 2,
+  "nl_tol": 1e-08,
+  "tight": true,
+  "outlet_uy0": false,
+  "vtk_every": 1.0,
+  "fix_openings": true,
+  "fluid_nodes": 16641,
+  "fluid_elements": 32768,
+  "solid_nodes": 387,
+  "solid_elements": 256,
+  "generator": "make_case.py"
+}

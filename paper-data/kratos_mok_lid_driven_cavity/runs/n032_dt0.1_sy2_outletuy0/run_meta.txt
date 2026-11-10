@@ -1,0 +1,8 @@
+input_set=/home/cloner0110/raid/kratos/cases/mokLidDrivenCavity/inputs/gen/n032_dt0.1_sy2_outletuy0
+threads=1
+start=2026-11-09T14:22:13Z
+load_before=10.13 10.03 9.93
+end=2026-11-09T14:24:11Z
+load_after=10.05 10.03 9.94
+exit=0
+max_iterations_warnings=0
