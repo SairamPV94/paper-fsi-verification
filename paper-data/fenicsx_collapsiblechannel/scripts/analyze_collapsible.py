@@ -127,7 +127,7 @@ for S in SS:
 wr("same_dt_offset_to_oomph.csv", ["mesh", "x_m", "dt_s", "FE_minus_oomph_same_dt_V1_pctP"], rows)
 
 # 8. three-way table at x = 10 (no composite limit)
-rows = [["oomph reference (Richardson in time)", OM[("ref", "10")][0], "U_ref 0.30 % P; spatial bias 0.26 % P unremoved"],
+rows = [["oomph refine-1 reference (Richardson in time)", OM[("ref", "10")][0], "refine-1 reference: spatial error 0.53 % of the peak (history L-inf), +0.19 % P at the first trough (PR #74)"],
         ["oomph dt160", OM[("dt160", "10")][0], "same-dt"], ["oomph dt320", OM[("dt320", "10")][0], "same-dt"]]
 for S, dt in (("S2", "0.00625"), ("S3", "0.00625"), ("S3", "0.003125")): rows.append(["FE %s dt %s" % (S, dt), V[(S, dt, "10")][0], "finest S3 at dt 0.003125 covers t <= 1.25 s" if S == "S3" else ""])
 for F in ("F1", "F2", "F3", "F4"): rows.append(["s4f %s (Robin, dt 0.00625; pre-#671 legacy run)" % F, OM[("s4f_" + F, "10")][0], "wallMid; solids4foam a421f063d, 2 Nov 2026"])

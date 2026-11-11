@@ -16,7 +16,7 @@ for S in ("S1", "S2", "S3"):
     a.plot([float(q["dt_s"]) for q in r], [float(q["FE_V1_pctP"]) for q in r], mk[S] + "-", color=col[S], ms=4, lw=1, label="FE " + S)
 r = [q for q in fac if q["x_m"] == "10" and q["mesh"] == "S2"]
 a.plot([float(q["dt_s"]) for q in r], [float(q["oomph_same_dt_V1_pctP"]) for q in r], "x--", color="k", ms=5, lw=0.8, label="oomph, same dt")
-a.axhline(float(r[0]["oomph_reference_V1_pctP"]), color="k", lw=0.8, ls=":", label="oomph tutorial reference (refine 1)")
+a.axhline(float(r[0]["oomph_reference_V1_pctP"]), color="k", lw=0.8, ls=":", label="oomph refine-1 reference (time-extrapolated)")
 ex10 = [q for q in xo if q["series"] == "oomph_refine4" and q["x_m"] == "10"]
 ev = float([q for q in xo if q["series"] == "oomph_refine4" and q["x_m"] == "10"][0]["V1_bottom_pctP"]) - float(ex10[0]["minus_extrapolated_oomph_pctP"])
 a.plot([0.00625], [ev], "D", color="#4d7d2f", ms=5, label="oomph extrapolated in space (dt 0.00625)")
