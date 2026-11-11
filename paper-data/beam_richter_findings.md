@@ -115,6 +115,17 @@ is strongly suggested but not established; clarification is being sought
 from the author. If a 0.2 m/s peak is confirmed, the definitive sequence
 (L0-L3 with dt and coupling checks) is rerun at 0.2 m/s.
 
+## Author confirmation (2026-11-11)
+
+Philip contacted Thomas Richter. On 2026-11-11 he confirmed that the
+reference computations used the published bi-parabolic inlet profile with
+a 0.2 m/s peak. That is the profile solved here: solids4foam's
+`paraboloidInletVelocity` with `maxVelocity 0.2`, `yWidth 0.2` and
+`zWidth 0.4`. The printed 0.3 m/s is therefore an error. The 0.2 m/s
+sequence below is the primary one, and the 0.3 m/s sequence is kept only
+to show the size of the error (1.8x). Cite this as "T. Richter, private
+communication, November 2026". Do not quote the email.
+
 ## 0.2 m/s sequence to L3 (anticipating author confirmation)
 
 Richter geometry, production set-up, inlet peak 0.2 m/s; L3 from the
