@@ -4,7 +4,7 @@ import numpy as np
 from mpi4py import MPI
 from dolfinx.io import gmsh as dgmsh
 from dolfinx import mesh as dmesh
-sys.path.insert(0, "/home/sairam/work/fenicsx-hessenthaler-phaseI")
+sys.path.insert(0, __import__("os").environ.get("HESS_ROOT", "."))
 from src.hessenthaler import mesh_io
 m = mesh_io.load(sys.argv[1], MPI.COMM_SELF, 0)
 msh, ct, ft = m.mesh, m.cell_tags, m.facet_tags

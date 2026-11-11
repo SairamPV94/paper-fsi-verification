@@ -2,7 +2,7 @@
 Index sets by physical region: u/p/d x {fluid-only, interface, solid-only}. Prints nnz and Frobenius norm of every block, ordering info, symmetry measure and diagonal info."""
 import sys, os, json
 import numpy as np
-sys.path.insert(0, "/home/sairam/work/fenicsx-hessenthaler-phaseI")
+sys.path.insert(0, __import__("os").environ.get("HESS_ROOT", "."))
 def _h(t, v, tb):
     import traceback; traceback.print_exception(t, v, tb); sys.stderr.flush()
     from mpi4py import MPI as M; M.COMM_WORLD.Abort(1)
@@ -14,7 +14,7 @@ from dolfinx.fem import petsc as fpetsc
 from src.hessenthaler import mesh_io
 from src.hessenthaler.fsi3d import HessenthalerFSI
 comm = MPI.COMM_WORLD; out = sys.argv[1]
-m = mesh_io.load("/home/sairam/work/fenicsx-hessenthaler-phaseI/geometry/meshes/Gc/hess_Gc_clean.npz", comm)
+m = mesh_io.load(__import__("os").environ.get("HESS_ROOT", ".") + "/geometry/meshes/Gc/hess_Gc_clean.npz", comm)
 fsi = HessenthalerFSI(m.mesh, m.cell_tags, m.facet_tags, mode="coupled", prefix="bs_", snes_options={}, mmotion="incr")
 z = np.load(os.path.join(out, f"ckpt_rank{comm.rank}_of{comm.size}.npz"))
 fsi.w.x.array[:] = z["w"]; fsi.w0.x.array[:] = z["w0"]; fsi.wm.x.array[:] = z["wm"]; fsi.t = float(z["t"]); fsi.nsteps = int(z["nsteps"]); fsi.dt_prev = 0.02

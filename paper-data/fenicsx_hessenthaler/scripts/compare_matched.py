@@ -2,7 +2,7 @@
 Only identical physical times are compared. Forces: s4f 'solid interface' = force received by the solid; FE F_dir = facet traction integral on the solid (history.csv Fy_fluid/Fz_fluid); FE nodal forces exist only at the force-decomposition states."""
 import csv, sys, json
 import numpy as np
-R = "/home/sairam/work/fenicsx-hessenthaler-phaseI/"
+R = __import__("os").environ.get("HESS_ROOT", ".") + "/"
 def rd(p): return list(csv.DictReader(open(R + p)))
 def series(paths):
     d = {}

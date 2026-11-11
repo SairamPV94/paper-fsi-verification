@@ -6,13 +6,13 @@
 #SBATCH --mem=24G
 #SBATCH -t 01:00:00
 #SBATCH --export=NONE
-#SBATCH -o /home/sairam/work/s4f-hess-ref/mesh-%j.out
+#SBATCH -o mesh-%j.out
 set -eo pipefail
 export USER="${USER:-$(id -un)}"; export HOME="${HOME:-$(getent passwd "$USER" | cut -d: -f6)}"
-R=/home/sairam/work/s4f-hess-ref/build
+R=${S4F_ROOT:?set S4F_ROOT}/build
 set +eu; . $R/env.sh; set -e
 export OMP_NUM_THREADS=8
-cd /home/sairam/work/s4f-hess-ref/runs/feF1_strict
+cd ${S4F_ROOT:?set S4F_ROOT}/runs/feF1_strict
 ln -sfn meshDict.coarse system/meshDict
 (time surfaceFeatureEdges -angle 45 constant/triSurface/fluidDomain.stl.gz constant/triSurface/fluidDomain.fms) > log.surfaceFeatureEdges 2>&1
 (time cartesianMesh) > log.cartesianMesh 2>&1

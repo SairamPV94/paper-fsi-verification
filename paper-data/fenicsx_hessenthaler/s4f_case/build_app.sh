@@ -6,10 +6,10 @@
 #SBATCH --mem=8G
 #SBATCH -t 00:30:00
 #SBATCH --export=NONE
-#SBATCH -o /home/sairam/work/s4f-hess-ref/buildapp-%j.out
+#SBATCH -o buildapp-%j.out
 set -eo pipefail
 export USER="${USER:-$(id -un)}"; export HOME="${HOME:-$(getent passwd "$USER" | cut -d: -f6)}"
-R=/home/sairam/work/s4f-hess-ref/build
+R=${S4F_ROOT:?set S4F_ROOT}/build
 set +eu; . $R/env.sh; set -e
 export WM_NCOMPPROCS=4; export FOAM_MODULE_APPBIN=$FOAM_USER_APPBIN FOAM_MODULE_LIBBIN=$FOAM_USER_LIBBIN
 cd $R/src-tree/applications/solvers/solids4Foam && wmake > $R/logs/app.log 2>&1

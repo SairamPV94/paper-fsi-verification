@@ -3,7 +3,7 @@ Same discrete equations: GMRES on the identical (equilibrated) matrix, true unpr
 State: Gc, mmotion=incr, t = 0.69 -> step 0.71, predictor guess; 16 ranks. usage: mpiexec -n 16 python precond_poc.py CKPTDIR VARIANTS(comma: ref,V1,V2)"""
 import sys, os, time, json, resource
 import numpy as np
-sys.path.insert(0, "/home/sairam/work/fenicsx-hessenthaler-phaseI")
+sys.path.insert(0, __import__("os").environ.get("HESS_ROOT", "."))
 def _h(t, v, tb):
     import traceback; traceback.print_exception(t, v, tb); sys.stderr.flush()
     from mpi4py import MPI as M; M.COMM_WORLD.Abort(1)
@@ -15,7 +15,7 @@ from dolfinx.fem import petsc as fpetsc
 from src.hessenthaler import mesh_io
 from src.hessenthaler.fsi3d import HessenthalerFSI
 comm = MPI.COMM_WORLD; out = sys.argv[1]; variants = sys.argv[2].split(",")
-MESH = os.environ.get("MESH", "Gc"); m = mesh_io.load(f"/home/sairam/work/fenicsx-hessenthaler-phaseI/geometry/meshes/{MESH}/hess_{MESH}_clean.npz", comm)
+MESH = os.environ.get("MESH", "Gc"); m = mesh_io.load(f"{__import__('os').environ.get('HESS_ROOT', '.')}/geometry/meshes/{MESH}/hess_{MESH}_clean.npz", comm)
 fsi = HessenthalerFSI(m.mesh, m.cell_tags, m.facet_tags, mode="coupled", prefix="poc0_", snes_options={}, mmotion=os.environ.get("MM", "incr"))
 z = np.load(os.path.join(out, f"ckpt_rank{comm.rank}_of{comm.size}.npz"))
 fsi.w.x.array[:] = z["w"]; fsi.w0.x.array[:] = z["w0"]; fsi.wm.x.array[:] = z["wm"]; fsi.t = float(z["t"]); fsi.nsteps = int(z["nsteps"]); fsi.dt_prev = 0.02

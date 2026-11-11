@@ -6,13 +6,13 @@
 #SBATCH --mem=24G
 #SBATCH -t 03:00:00
 #SBATCH --export=NONE
-#SBATCH -o /home/sairam/work/s4f-hess-ref/build-%j.out
+#SBATCH -o build-%j.out
 set -eo pipefail
 export USER="${USER:-$(id -un)}"; export HOME="${HOME:-$(getent passwd "$USER" | cut -d: -f6)}"
 SHA=517a44921bc9b43ec532e4b30089ef09364e64f6
-R=/home/sairam/work/s4f-hess-ref/build
+R=${S4F_ROOT:?set S4F_ROOT}/build
 mkdir -p $R/logs $R/src-tree
-git -C /home/sairam/work/s4f-hess-ref/src.git archive $SHA | tar -x -C $R/src-tree
+git -C ${S4F_ROOT:?set S4F_ROOT}/src.git archive $SHA | tar -x -C $R/src-tree
 cat > $R/env.sh <<EOT
 export PETSC_DIR=/opt/petsc/3.24
 export PETSC_ARCH=

@@ -11,7 +11,7 @@ def _abort_hook(t, v, tb):
     _M.COMM_WORLD.Abort(1)
 sys.excepthook = _abort_hook   # a failing rank must not leave the other ranks hanging in a collective
 
-sys.path.insert(0, "/home/sairam/work/fenicsx-hessenthaler-phaseI")
+sys.path.insert(0, __import__("os").environ.get("HESS_ROOT", "."))
 from mpi4py import MPI
 from petsc4py import PETSc
 from src.hessenthaler import mesh_io

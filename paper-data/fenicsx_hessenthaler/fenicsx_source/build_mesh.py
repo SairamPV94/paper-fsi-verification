@@ -8,7 +8,7 @@ import sys, gzip, re, os, json, hashlib
 import numpy as np
 import gmsh
 
-STL = "/home/sairam/work/fenicsx-hessenthaler-phaseI/docs/s4f_ref_sources/tut/constant/triSurface/fluidDomain.stl.gz"
+STL = __import__("os").environ.get("HESS_ROOT", ".") + "/docs/s4f_ref_sources/tut/constant/triSurface/fluidDomain.stl.gz"
 LEVELS = {"Gc": 1.5, "Gm": 1.22, "G0": 1.0, "G1": 1.0 / 1.5, "G2": 1.0 / 2.25}
 BASE = dict(flap=1.0e-3, sweep=2.0e-3, wall=4.0e-3, far=10.0e-3, inlet=1.5e-3, solid=1.0e-3)
 

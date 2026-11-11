@@ -5,7 +5,7 @@ the one-sided Hausdorff deviation of the decimated wall from the original (geome
 import sys, os, gzip, re, json
 import numpy as np, vtk
 from vtk.util import numpy_support as ns
-STL = "/home/sairam/work/fenicsx-hessenthaler-phaseI/docs/s4f_ref_sources/tut/constant/triSurface/fluidDomain.stl.gz"
+STL = __import__("os").environ.get("HESS_ROOT", ".") + "/docs/s4f_ref_sources/tut/constant/triSurface/fluidDomain.stl.gz"
 def read():
     P = {}
     for s in re.split(r"\nendsolid[^\n]*\n?", gzip.open(STL, "rt").read()):

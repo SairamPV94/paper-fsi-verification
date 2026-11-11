@@ -2,7 +2,7 @@
 repeated triangular solves, and peak RSS for the given number of ranks. usage: mpiexec -n N python scaling_test.py OUT.json [mesh]"""
 import sys, os, time, json, resource
 import numpy as np
-sys.path.insert(0, "/home/sairam/work/fenicsx-hessenthaler-phaseI")
+sys.path.insert(0, __import__("os").environ.get("HESS_ROOT", "."))
 def _h(t, v, tb):
     import traceback; traceback.print_exception(t, v, tb); sys.stderr.flush()
     from mpi4py import MPI as M; M.COMM_WORLD.Abort(1)
@@ -14,7 +14,7 @@ from src.hessenthaler import mesh_io
 from src.hessenthaler.fsi3d import HessenthalerFSI
 comm = MPI.COMM_WORLD
 mesh = sys.argv[2] if len(sys.argv) > 2 else "Gc"
-m = mesh_io.load(f"/home/sairam/work/fenicsx-hessenthaler-phaseI/geometry/meshes/{mesh}/hess_{mesh}_clean.npz", comm)
+m = mesh_io.load(f"{__import__('os').environ.get('HESS_ROOT', '.')}/geometry/meshes/{mesh}/hess_{mesh}_clean.npz", comm)
 t0 = time.time(); fsi = HessenthalerFSI(m.mesh, m.cell_tags, m.facet_tags, mode="coupled", prefix="sc_", snes_options={}, mmotion="incr"); tsetup = time.time() - t0
 fsi.dt.value = 0.02; fsi.set_time(0.02)
 for k, v in zip(fsi.bdf, (1.0, -1.0, 0.0)): k.value = v

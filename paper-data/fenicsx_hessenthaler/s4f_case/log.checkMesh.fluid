@@ -13,7 +13,7 @@ Time   : 20:16:03
 Host   : xenosim
 PID    : 3232145
 I/O    : uncollated
-Case   : /home/sairam/work/s4f-hess-ref/runs/feF1_strict
+Case   : <S4F_ROOT>/runs/feF1_strict
 nProcs : 1
 trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
 memory pool : not available

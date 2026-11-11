@@ -1,6 +1,6 @@
 """Create the isolated 'ours-s4f' feF1 case (Addendum A6/A6b deltas only) from the pinned tutorial extraction. usage: make_case.py OUTDIR"""
 import sys, re, shutil, pathlib
-src = pathlib.Path("/home/sairam/work/s4f-hess-ref/tut/tutorials/fluidSolidInteraction/hessenthalerFsi"); out = pathlib.Path(sys.argv[1])
+src = pathlib.Path(__import__("os").environ["S4F_ROOT"]) / "tut/tutorials/fluidSolidInteraction/hessenthalerFsi"; out = pathlib.Path(sys.argv[1])
 if out.exists(): sys.exit("exists")
 shutil.copytree(src, out)
 def sub(path, pat, rep, count=1, flags=re.M):

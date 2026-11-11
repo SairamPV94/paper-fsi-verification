@@ -45,7 +45,7 @@ The aim is a cross-code consistency check of the three-dimensional Phase~I model
 \section{Model and equivalence}\label{sec:model}
 Fixed model, identical in both codes by construction or by source reading: published fluid surface with $250\,\mathrm{mm}$ outlet extension; flap $11\times2\times65\,\mathrm{mm}$ clamped at $z=0$, flow along $+z$; $\rho_F=1163.3$, $\nu_F=1.0745\times10^{-5}$, $\rho_S=1058.3$; compressible neo-Hookean solid $W=\tfrac{\mu}{2}(\bar I_1-3)+\tfrac{K}{4}(J^2-1-2\ln J)$ with $\mu=64.2\,\mathrm{kPa}$, $\nu=0.45$ ($K=620.6\,\mathrm{kPa}$), shown equal to the solids4foam law (\texttt{517a44921}, source lines 213--222: $\bm\sigma=\mu J^{-1}\mathrm{dev}(\bar{\bm b})+\tfrac K2 (J^2-1)J^{-1}\bm I$); net buoyancy $(\rho_S-\rho_F)\bm g/\rho_S=0.973306\,\mathrm{m/s^2}$ along $+y$, ramped with the inflow by $3s^2-2s^3$ over $0.5\,\mathrm{s}$; parabolic inlets $630$ and $615\,\mathrm{mm/s}$; fixed outlet pressure with the backflow-stabilised traction $\bm\sigma\bm n=\beta\rho_F\min(\bm u\cdot\bm n,0)\bm u$, $\beta=0.2$. $\mu$ was not changed to improve any agreement.
 \begin{table}[htbp]\centering\caption{Differences between the two computations (they limit what the comparison can show).}\label{tab:diff}\small
-\begin{tabular}{p{3.2cm}p{5.4cm}p{5.6cm}}\toprule
+\begin{tabular}{@{}p{2.9cm}p{5.2cm}p{5.5cm}@{}}\toprule
  & FEniCSx (this work) & solids4foam (reconstruction, ours)\\\midrule
 discretisation & monolithic ALE, P2/P1/P2 tetrahedra, one conforming mesh & partitioned IQN-ILS, cell-centred FV fluid ($236\,114$ cells), cell-centred solid S2 ($6\,240$ hexahedra, stabilisation 0.01), AMI transfer\\
 convection & Galerkin & LUST, unlimited least-squares gradients\\

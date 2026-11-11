@@ -6,12 +6,12 @@
 #SBATCH --mem=60G
 #SBATCH -t 02:30:00
 #SBATCH --export=NONE
-#SBATCH -o /home/sairam/work/s4f-hess-ref/run-%j.out
+#SBATCH -o run-%j.out
 set -eo pipefail
 export USER="${USER:-$(id -un)}"; export HOME="${HOME:-$(getent passwd "$USER" | cut -d: -f6)}"
-R=/home/sairam/work/s4f-hess-ref/build
+R=${S4F_ROOT:?set S4F_ROOT}/build
 set +eu; . $R/env.sh; set -e
-cd /home/sairam/work/s4f-hess-ref/runs/feF1_strict
+cd ${S4F_ROOT:?set S4F_ROOT}/runs/feF1_strict
 if [ ! -d processor0 ]; then
   decomposePar -region fluid > log.decomposePar.fluid 2>&1
   decomposePar -region solid > log.decomposePar.solid 2>&1

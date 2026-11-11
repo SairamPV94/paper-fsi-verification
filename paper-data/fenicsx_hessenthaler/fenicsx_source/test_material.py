@@ -1,7 +1,7 @@
 """GATE B1 material-law verification (serial). Writes JSON + prints PASS/FAIL against the preregistered thresholds."""
 import sys, json
 import numpy as np
-sys.path.insert(0, "/home/sairam/work/fenicsx-hessenthaler-phaseI")
+sys.path.insert(0, __import__("os").environ.get("HESS_ROOT", "."))
 import ufl, basix.ufl
 from dolfinx import mesh, fem
 from mpi4py import MPI
