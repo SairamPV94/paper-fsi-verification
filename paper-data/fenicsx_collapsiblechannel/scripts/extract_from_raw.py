@@ -331,7 +331,11 @@ for i, x in enumerate(X):
         prev = (b1[1] / P * 100, -dv, gmax, Y)
 wr("mf1_beam_refinement.csv", ["x_m", "beam_elements", "beam_V1_pctP", "t_V1_beam_s", "continuum_midplane_V1_pctP", "t_V1_continuum_s", "dV1_beam_minus_continuum_pctP", "continuum_minus_beam_pctP", "gap_max_abs_over_t_pctP",
                                "change_of_beam_V1_vs_previous_level", "change_of_continuum_minus_beam_vs_previous_level", "change_of_gap_vs_previous_level", "beam_vs_previous_beam_max_abs_pctP"], rows)
-wr("mf1_resolution.csv", ["x_m", "beam_ne160_vs_ne80_max_abs_pctP", "beam_d2dt2_vs_newmark_ne160_max_abs_pctP", "continuum_midplane_vs_bottom_max_abs_pctP"], rows)
+rows = []
+for i, x in enumerate(X):
+    rows.append([x, fl(float(abs(res["ne160_d2dt2"][:, i] - res["ne80_d2dt2"][:, i]).max() / P * 100), 5), fl(float(abs(res["ne160_d2dt2"][:, i] - res["ne160_newmark"][:, i]).max() / P * 100), 5),
+                 fl(float(abs(cm[:, i] - cb[:, i]).max() / P * 100), 5), fl(float(abs(res["ne320_d2dt2"][:, i] - res["ne160_d2dt2"][:, i]).max() / P * 100), 5)])
+wr("mf1_resolution.csv", ["x_m", "beam_ne160_vs_ne80_max_abs_pctP", "beam_d2dt2_vs_newmark_ne160_max_abs_pctP", "continuum_midplane_vs_bottom_max_abs_pctP", "beam_ne320_vs_ne160_max_abs_pctP"], rows)
 
 # ------------------------------------------------------------------ P2-triangle wall alone (COL-3 S1 static gate), recomputed from the raw JSON
 d = json.load(open(f"{EV}/C3/benchmarks/collapsibleChannel/data_S1_static.json")); rows = []
