@@ -170,11 +170,12 @@ for k in (1, 2, 3, 4):
 wr("offset_to_extrapolated_oomph.csv", ["series", "x_m", "V1_bottom_pctP", "minus_extrapolated_oomph_pctP", "V1_midplane_pctP", "midplane_minus_extrapolated_pctP", "FE_bottom_minus_old_reference_oomph_dt160_pctP", "oomph_refine1_minus_extrapolated_pctP"], rows)
 rows = []
 mfg = {g(float(r["x_m"])): float(r["dV1_beam_minus_continuum_pctP"]) for r in rd("mf1_gap.csv") if r["beam_variant"] == "ne160_d2dt2"}
+mfg3 = {g(float(r["x_m"])): float(r["dV1_beam_minus_continuum_pctP"]) for r in rd("mf1_gap.csv") if r["beam_variant"] == "ne320_d2dt2"}
 for x in XS:
     for S in ("S2", "S3"):
         b = V[(S, "0.00625", x)][0] - ex[x]; m = mid[(S, "0.00625", x)] - ex[x]
-        rows.append([x, S, b, m, -mfg[x], "same sign" if (m * (-mfg[x]) > 0) else "opposite sign"])
-wr("mf1_vs_extrapolated_offset.csv", ["x_m", "FE_mesh_dt_0.00625", "FE_bottom_minus_extrapolated_oomph", "FE_midplane_minus_extrapolated_oomph", "open_loop_continuum_minus_beam_(MF1)", "sign_midplane_offset_vs_MF1"], rows)
+        rows.append([x, S, b, m, -mfg[x], -mfg3[x], "same sign" if (m * (-mfg3[x]) > 0) else "opposite sign", m / (-mfg3[x])])
+wr("mf1_vs_extrapolated_offset.csv", ["x_m", "FE_mesh_dt_0.00625", "FE_bottom_minus_extrapolated_oomph", "FE_midplane_minus_extrapolated_oomph", "open_loop_continuum_minus_beam_ne160", "open_loop_continuum_minus_beam_ne320", "sign_midplane_offset_vs_ne320_gap", "midplane_offset_over_ne320_gap"], rows)
 
 # 10c. range of the successive-difference mismatch FE minus oomph (refine-1 same-dt) over positions and mesh pairs
 rows = []

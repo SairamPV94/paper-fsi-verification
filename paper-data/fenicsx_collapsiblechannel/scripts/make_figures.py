@@ -36,12 +36,13 @@ b.legend(fontsize=7, frameon=False, loc="upper left")
 fig.tight_layout(); fig.savefig(os.path.join(F, "fenicsx_collapsible_trough_time.pdf"), metadata=META); fig.savefig(os.path.join(F, "fenicsx_collapsible_trough_time.png"), dpi=150)
 # Figure 2: open-loop continuum-minus-beam gap (MF1) against the FE-midplane-minus-extrapolated-oomph difference (dt 0.00625)
 mfx = rd("mf1_vs_extrapolated_offset.csv")
-fig, ax = plt.subplots(figsize=(4.4, 2.8))
-xs = ["7.5", "10", "12.5"]; w = 0.26
+fig, ax = plt.subplots(figsize=(4.8, 3.0))
+xs = ["7.5", "10", "12.5"]; w = 0.2
 g_ = lambda S, k: [float([q for q in mfx if q["x_m"] == x and q["FE_mesh_dt_0.00625"] == S][0][k]) for x in xs]
-ax.bar([i - w for i in range(3)], g_("S2", "FE_midplane_minus_extrapolated_oomph"), w, color=col["S2"], label="FE S2 midplane minus extrapolated oomph")
-ax.bar([i for i in range(3)], g_("S3", "FE_midplane_minus_extrapolated_oomph"), w, color=col["S3"], label="FE S3 midplane minus extrapolated oomph")
-ax.bar([i + w for i in range(3)], g_("S2", "open_loop_continuum_minus_beam_(MF1)"), w, color="#4d7d2f", label="open loop: continuum minus beam (MF1)")
+ax.bar([i - 1.5 * w for i in range(3)], g_("S2", "FE_midplane_minus_extrapolated_oomph"), w, color=col["S2"], label="FE S2 midplane minus extrapolated oomph")
+ax.bar([i - 0.5 * w for i in range(3)], g_("S3", "FE_midplane_minus_extrapolated_oomph"), w, color=col["S3"], label="FE S3 midplane minus extrapolated oomph")
+ax.bar([i + 0.5 * w for i in range(3)], g_("S2", "open_loop_continuum_minus_beam_ne160"), w, color="#8fbf6a", label="open loop: continuum minus beam, 160 elements")
+ax.bar([i + 1.5 * w for i in range(3)], g_("S2", "open_loop_continuum_minus_beam_ne320"), w, color="#4d7d2f", label="open loop: continuum minus beam, 320 elements")
 ax.axhline(0, color="k", lw=0.5); ax.set_xticks(range(3)); ax.set_xticklabels(["x = 7.5", "x = 10", "x = 12.5"]); ax.set_ylabel(r"first trough difference (% of $P$)")
 h_, l_ = ax.get_legend_handles_labels(); fig.legend(h_, l_, fontsize=6.5, frameon=False, loc="lower center"); fig.tight_layout(rect=(0, 0.17, 1, 1))
 fig.savefig(os.path.join(F, "fenicsx_collapsible_model_form.pdf"), metadata=META); fig.savefig(os.path.join(F, "fenicsx_collapsible_model_form.png"), dpi=150)

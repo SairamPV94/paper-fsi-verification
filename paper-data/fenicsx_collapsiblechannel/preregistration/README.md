@@ -13,3 +13,10 @@ No local filesystem path occurs in any of these files, so the shipped copies are
 | `PREREG_COL3_S1.md` (P2-triangle wall gates, with A1 and A2 appended) | 09c0822 (S1 prereg, 21:12:25), A1 4c70255 (before the S2 runs), A2 50b56db | frozen S1 text `519dc03e7d93edafd4a1bc4599ac0b76cdebc1e4d9ba3abea7e235df76706cce`; after A1 `6676fe8c92c40e296cf95a8fc7c278400f9dbe85fd529d15facadf614c3dca83`; after A2 `dccc5b111e3c1d6375d4dc5cdbf73cb1efc24002998f66c78b43196071c450b8` | `dccc5b111e3c1d6375d4dc5cdbf73cb1efc24002998f66c78b43196071c450b8` (after A2) |
 
 Caveats (also in the supplement): the timestamps are self-asserted (git author time and Slurm submit time, no external timestamping); the production runs report `git_dirty` true (untracked run output); AMEND1 was written with knowledge of the stage-1 S1 and S2 results, so its choices (dropping FM-W, WL3 and the first MF1) were not blind.
+
+## Added 2026-11-11 (review request of PR #71): MF1 beam refinement to 320 elements
+| file | commit | sha256 (identical to the shipped copy; no paths in the files) |
+|---|---|---|
+| `PREREG_MF1_BEAM320.md` (written before the run; solver repository c7350ea, this branch cc392c1) | before job 18902 (19:59 UTC) | `c871c6e5d1b65db17fc62c96c3ae460368ebf40790926f7fbed58e18ccea549c` |
+| `PREREG_MF1_BEAM320_AMEND1.md` (after the first 320-element run failed its convergence flag, before the rerun; solver repository 9023fe7, this branch ef5652a) | before jobs 18911 and 18912 (20:13 UTC) | `aa7623c6ea843d3a4e761342eb85221eec917ddc57a4ecfc03dbf884ca7b68cd` |
+Timestamps self-asserted. The amendment changes only the Newton stopping criterion (residual < 1e-4 and update < 1e-10 m), chosen from the measured residual floor.

@@ -284,6 +284,10 @@ wr("gates_H8.csv", ["cell", "diagnostic_steps", "max_pressure_parity_over_max_p"
 
 # ------------------------------------------------------------------ MF1: open-loop beam against continuum replay
 c = json.load(open(f"{DATA}/data_MF1_S2_dt0.00625.json")); s = load("S2_dt0.00625"); r = json.load(open(f"{DATA}/replay_MF1.json"))
+b320 = json.load(open(f"{DATA}/replay_MF1_beam320.json"))      # 320 beam elements (PREREG_MF1_BEAM320.md); same driver code, separate job
+rp160 = json.load(open(f"{DATA}/replay_MF1_beam_repro.json")); rp80 = json.load(open(f"{DATA}/replay_MF1_beam_repro80.json"))    # reproduction jobs of ne160 and ne80
+r["beam"]["ne320_d2dt2"] = b320["beam"]["ne320_d2dt2"]
+ctl160 = json.load(open(f"{DATA}/replay_MF1_beam160_amend1.json")); fail320 = json.load(open(f"{DATA}/replay_MF1_beam320_FAILED_tol1e-5_run18904.json")); diag320 = json.load(open(f"{DATA}/replay_MF1_diag320.json"))
 dc = np.array([x["wall_d"] for x in c["steps"]]); mc = np.array([x["midplane_d"] for x in c["steps"]]); ds_ = np.array([x["wall_d"] for x in s["steps"]])
 t = np.array([0.0] + [x["t"] for x in c["steps"]])
 cb = np.array([r["continuum"]["d"][f"{x}_bot"] for x in X]).T; cm = np.array([r["continuum"]["d"][f"{x}_mid"] for x in X]).T
@@ -292,6 +296,13 @@ rows = [["C1_rerun_vs_stored_S2_max_abs_diff_over_max_abs_d", "%.3e" % (abs(dc -
         ["C2_replayed_continuum_vs_coupled_midplane_max_abs_diff_over_max_abs_d", "%.3e" % (abs(cm[1:] - mc).max() / abs(mc).max()), "tolerance 1e-6"],
         ["C2_abs_max_diff_bottom_m", "%.3e" % abs(cb[1:] - dc).max(), ""],
         ["rerun_status", c["status"] + " all_converged=" + str(c["all_converged"]), "%d steps, max Newton %d, min Jacobian %.3f, max |q-sum| %.2e" % (len(c["steps"]), max(x["newton"] for x in c["steps"]), min(x["jmin"] for x in c["steps"]), max(abs(x["mass_cons"]) for x in c["steps"]))],
+        ["beam_reproduction_ne160_max_abs_diff_m", "%.3e" % abs(np.array(rp160["beam"]["ne160_d2dt2"]["Y"]) - np.array(r["beam"]["ne160_d2dt2"]["Y"])).max(), "rerun from the saved load file, job 18902"],
+        ["beam_reproduction_ne80_max_abs_diff_m", "%.3e" % abs(np.array(rp80["beam"]["ne80_d2dt2"]["Y"]) - np.array(r["beam"]["ne80_d2dt2"]["Y"])).max(), "job 18903"],
+        ["beam320_run", b320["status"], "ok=%s reached_end=%s steps=%d of %d max Newton %d wall %.1f s (job 18904)" % (b320["beam"]["ne320_d2dt2"]["ok"], b320["beam"]["ne320_d2dt2"]["reached_end"], b320["beam"]["ne320_d2dt2"]["steps_done"], b320["nsteps"], b320["beam"]["ne320_d2dt2"]["newton_max"], b320["beam"]["ne320_d2dt2"]["wall_s"])],
+        ["amend1_control_ne160_max_abs_diff_m", "%.3e" % abs(np.array(ctl160["beam"]["ne160_d2dt2"]["Y"]) - np.array(r["beam"]["ne160_d2dt2"]["Y"])).max(), "ne160 rerun with the amended criterion (residual < 1e-4 and update < 1e-10 m), job 18911; AMEND1 asked <= 1e-9: exceeded by 25 %, see README"],
+        ["amend1_ne320_vs_floor_run_max_abs_diff_m", "%.3e" % abs(np.array(b320["beam"]["ne320_d2dt2"]["Y"]) - np.array(diag320["beam"]["ne320_d2dt2"]["Y"])).max(), "amended ne320 (job 18912) against the 30-iteration state of diagnostic job 18908 (residual at its roundoff floor, update 4e-14 m)"],
+        ["first_ne320_run_tol1e-5", fail320["status"], "job 18904: all 240 steps reached the 30-iteration cap (residual floor 1.0-1.6e-5 > 1e-5); result retained, not used"],
+        ["amend1_ne320_final_residual_and_update_max", "%.2e / %.2e" % (max(q[-1] for q in b320["beam"]["ne320_diag"]["res"]), max(q[-1] for q in b320["beam"]["ne320_diag"]["upd"])), "residual 2-norm (floor 1.0-1.6e-5) / max-norm of the last Newton update in m, over all 240 steps"],
         ["replay_continuum_max_newton", str(max(r["continuum"]["newton"])), "ok=" + str(r["continuum"]["ok"])]]
 wr("mf1_controls.csv", ["item", "value", "note"], rows)
 spl = lambda y: CubicSpline(t, y)
@@ -307,6 +318,19 @@ wr("mf1_gap.csv", ["beam_variant", "beam_converged", "beam_max_newton", "x_m", "
 rows = []
 for i, x in enumerate(X):
     rows.append([x, fl(float(abs(res["ne160_d2dt2"][:, i] - res["ne80_d2dt2"][:, i]).max() / P * 100), 5), fl(float(abs(res["ne160_d2dt2"][:, i] - res["ne160_newmark"][:, i]).max() / P * 100), 5), fl(float(abs(cm[:, i] - cb[:, i]).max() / P * 100), 5)])
+# refinement table 80 / 160 / 320: first troughs, signed difference, gap, changes, time alignment
+rows = []; vt = lambda y: V123(spl(y), 1.5)[0]
+for i, x in enumerate(X):
+    c1 = vt(cm[:, i]); prev = None
+    for ne in (80, 160, 320):
+        Y = res["ne%d_d2dt2" % ne][:, i]; b1 = vt(Y); gmax = float(abs((Y - cm[:, i]) / P * 100).max())
+        dv = (b1[1] - c1[1]) / P * 100
+        rows.append([x, ne, fl(b1[1] / P * 100, 6), fl(b1[0], 5), fl(c1[1] / P * 100, 6), fl(c1[0], 5), fl(dv, 5), fl(-dv, 5), fl(gmax, 5),
+                     "" if prev is None else fl(b1[1] / P * 100 - prev[0], 5), "" if prev is None else fl(-dv + prev[1], 5), "" if prev is None else fl(gmax - prev[2], 5),
+                     "" if prev is None else fl(float(abs(Y - prev[3]).max() / P * 100), 5)])
+        prev = (b1[1] / P * 100, -dv, gmax, Y)
+wr("mf1_beam_refinement.csv", ["x_m", "beam_elements", "beam_V1_pctP", "t_V1_beam_s", "continuum_midplane_V1_pctP", "t_V1_continuum_s", "dV1_beam_minus_continuum_pctP", "continuum_minus_beam_pctP", "gap_max_abs_over_t_pctP",
+                               "change_of_beam_V1_vs_previous_level", "change_of_continuum_minus_beam_vs_previous_level", "change_of_gap_vs_previous_level", "beam_vs_previous_beam_max_abs_pctP"], rows)
 wr("mf1_resolution.csv", ["x_m", "beam_ne160_vs_ne80_max_abs_pctP", "beam_d2dt2_vs_newmark_ne160_max_abs_pctP", "continuum_midplane_vs_bottom_max_abs_pctP"], rows)
 
 # ------------------------------------------------------------------ P2-triangle wall alone (COL-3 S1 static gate), recomputed from the raw JSON
