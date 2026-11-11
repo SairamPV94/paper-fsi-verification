@@ -65,8 +65,10 @@ Two small differences from the earlier internal reports, both from recomputing f
 
 ## Known limitations of the evidence (also in the supplement)
 - Same group, same AI lineage, internal review only; timestamps self-asserted; Addendum 2's ordering relative to its runs cannot be shown to sub-second resolution.
-- The solids4foam statement that fluid and solid interface forces balance to 1e-6 is not reconstructed (no solid-side force output in the tutorial; the 1e-6 may refer to the outer-iteration tolerance, an inference). The FEniCSx closure (3e-10 N/m) is an algebraic identity of the weak form.
+- The solids4foam interface balance of about 1e-6 comes from the solids4foam authors' own runs and is not reconstructed here. The FEniCSx closure (3e-10 N/m) is an algebraic identity of the weak form.
 - The location of the minimum fluid J at x4 was not logged and no field was saved. The sampled minimum (`data/fe_ale_x4_samples.csv`) had changed by less than 2e-4 relative from t = 4 to t = 6; an earlier internal note said it was still decreasing, which is true only in the eighth digit.
 - The first-order convergence of the FEniCSx apex u_x and the irregular time convergence below dt = 0.0156 are unexplained. Excluded for the latter: SNES tolerance (Addendum 1) and the backward-Euler start-up (Addendum 2).
 - Limits depend on the assumed order at the 0.1-0.5 % level (`data/limit_sensitivity_to_order.csv`); no further spatial level was run.
 - The preregistration text is hash-bound and shipped verbatim: it contains local absolute paths (section 0, the code location), and its deliverables list (section 8) names an internal reply text as not posted and a possible placement in the PR #69 supplement, both superseded by the decision to publish the neo-Hookean results as this separate supplement; none of this can be changed without changing the hash. The raw run records in the archive also contain local paths (run configuration, SUBMIT_CMD).
+
+- Pressure drop: inlet minus outlet pressure; FEniCSx uses the boundary mean of the inlet trace, solids4foam the inlet face value (equal to the adjacent-cell value for its zero-gradient inlet condition). It is compared at the extrapolated limits only; the coarse-level dp values stay in the data files (`steady_matched_differences.csv`) without a like-for-like claim.

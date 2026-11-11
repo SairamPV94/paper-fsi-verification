@@ -29,7 +29,7 @@ ax[0].set_title("(a) open symbols: estimated limits", fontsize=8)
 mk = {"ux": ("o", "-"), "uy": ("s", "--"), "Fx": ("^", "-."), "Fy": ("v", ":"), "dp": ("D", "-")}
 col = {"ux": "#0072B2", "uy": "#D55E00", "Fx": "#009E73", "Fy": "#CC79A7", "dp": "#555555"}
 lab = {"ux": "$u_x$", "uy": "$|u_y|$", "Fx": "$F_x$", "Fy": "$|F_y|$", "dp": "$\\Delta p$"}
-for k in ["ux", "uy", "Fx", "Fy", "dp"]:
+for k in ["ux", "uy", "Fx", "Fy"]:
     y = [abs(float([r for r in diff if r["level"] == l and r["obs"] == k][0]["diff_FE_t6_vs_s4f_pct"])) for l in LV]
     ax[1].loglog([N[l] for l in LV], y, color=col[k], marker=mk[k][0], ls=mk[k][1], lw=1, ms=4, label=lab[k])
 ax[1].set_xlabel("cells $N$ (x0.5, x1, x2, x4)"); ax[1].set_ylabel("|difference| (%)"); ax[1].grid(alpha=0.25, lw=0.4, which="both"); ax[1].legend(frameon=False, fontsize=6.5, ncol=2, loc="lower left")

@@ -12,9 +12,9 @@ Source: independent numerical audit of the neo-Hookean blobInTreacle campaign (a
 ## Other qualifications recorded by the audit and where they are handled
 - The solids4foam u_x order of 2.00 holds for its finest triple only (coarse triple 1.62), and the FEniCSx finest-triple F_x and Delta p orders (2.66, 2.47) exceed 2, so their GCIs are optimistic: stated in Section S4 and Table S2.
 - Apex point evaluation or node mapping is not a plausible cause of the u_x order difference (the apex is a mesh vertex in both codes); the solid-only gate points toward the solid discretisation: Section S3.
-- The Delta p definitions differ (boundary trace against adjacent cell value; O(h) offset): Section S4.
+- The Delta p definitions (boundary trace against inlet face value) are stated in one sentence and Delta p is compared at the extrapolated limits only: Section S4.
 - V5 failed and stays failed; Addenda 1 and 2 excluded two candidate causes and the negative outcomes are reported: Section S5.
 - Limit differences depend on the assumed order (added after the audit as an existing-data reassessment, no new run): Section S4, `data/limit_sensitivity_to_order.csv`.
-- The solids4foam 1e-6 interface-balance statement is not reconstructed: Section S6.
+- The solids4foam interface balance of about 1e-6 is attributed to the solids4foam authors' own runs and not reconstructed: Section S6.
 
 Same-group, same-AI-lineage internal audit; it does not replace external review.

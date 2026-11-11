@@ -91,7 +91,6 @@ $u_x$ & $+10.71$ & $+2.74$ & $+0.53$ & $+0.083$ \\
 $u_y$ & $+7.02$ & $+2.33$ & $+0.90$ & $+0.36$ \\
 $F_x$ & $+11.43$ & $+2.94$ & $+0.56$ & $+0.037$ \\
 $F_y$ & $+9.56$ & $+2.41$ & $+0.50$ & $+0.030$ \\
-$\Delta p$ & $+10.68$ & $+2.81$ & $+0.68$ & $+0.070$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -123,7 +122,7 @@ $\Delta p$ & $2.47\ (2.04)$ & $35.9868$ & $0.003$ & $1.76\ (1.76)$ & $36.0537$ &
 \end{table}
 
 \paragraph{What the limits do and do not show.}
-With the preregistered rule (order from the data) the five limits differ by $0.05$--$0.19\,\%$ ($0.07$--$0.62$ of the combined GCI), and the \FE{} $u_x$ limit is $0.045\,\%$ from that of the PR-text sequence ($0.140239$). The result depends on the assumed order: for any fixed $p$ from $1$ to $2$ the difference is at most about $0.5\,\%$ ($u_y$ changes sign), and the matched $\times4$ values differ by $0.03$--$0.36\,\%$. The robust statement is agreement at the $\sim0.5\,\%$ level; the $\sim0.05\,\%$ reading holds only for the data-driven order. These are \emph{differences between estimated numerical limits, not absolute errors}: no analytical reference exists, the combined GCI is an estimate, not a bound, and the polygonal half circle common to both codes is unquantified. $\Delta p$ is not defined alike (\FE{}: boundary mean of the inlet pressure trace; solids4foam: adjacent-cell value at a zero-gradient inlet minus the outlet value, an $O(h)$ offset), so coarse-level $\Delta p$ differences are not like-for-like.
+With the preregistered rule (order from the data) the five limits differ by $0.05$--$0.19\,\%$ ($0.07$--$0.62$ of the combined GCI), and the \FE{} $u_x$ limit is $0.045\,\%$ from that of the PR-text sequence ($0.140239$). The result depends on the assumed order: for any fixed $p$ from $1$ to $2$ the difference is at most about $0.5\,\%$ ($u_y$ changes sign), and the matched $\times4$ values differ by $0.03$--$0.36\,\%$. The robust statement is agreement at the $\sim0.5\,\%$ level; the $\sim0.05\,\%$ reading holds only for the data-driven order. These are \emph{differences between estimated numerical limits, not absolute errors}: no analytical reference exists, the combined GCI is an estimate, not a bound, and the polygonal half circle common to both codes is unquantified. $\Delta p$ is the inlet minus outlet pressure (\FE{}: boundary mean of the inlet trace; solids4foam: inlet face value, equal to the adjacent-cell value for its zero-gradient inlet condition) and is compared at the extrapolated limits.
 
 \begin{figure}[!tb]
 \centering
@@ -157,7 +156,7 @@ A tighter SNES tolerance (Addendum~1) changes all five observables by at most $6
 
 
 \section{Force closure and ALE quality}\label{sec:nh_force}
-In \FE{} the fluid weak force on the solid equals the solid residual at the interface rows to $\le3\times10^{-10}$~N/m at every step of every run, the global solid momentum closure is $\le4.21\times10^{-10}$~N/m and the steady interface power $4.1\times10^{-7}$ at $\times1$. This is an algebraic identity of the weak form, not a check of the physics. The fluid-side integral and the weak force without the two corner dofs differ by $3.75$, $2.10$, $1.16$, $0.645\,\%$ in $F_x$ ($\times0.5$ to $\times4$), the corner-node share. The solids4foam statement that fluid and solid interface forces balance to $10^{-6}$ is \textbf{not reconstructed}: the tutorial has no solid-side force output, only fluid-side forces and outer-iteration residuals.
+In \FE{} the fluid weak force on the solid equals the solid residual at the interface rows to $\le3\times10^{-10}$~N/m at every step of every run, the global solid momentum closure is $\le4.21\times10^{-10}$~N/m and the steady interface power $4.1\times10^{-7}$ at $\times1$. This is an algebraic identity of the weak form, not a check of the physics. The fluid-side integral and the weak force without the two corner dofs differ by $3.75$, $2.10$, $1.16$, $0.645\,\%$ in $F_x$ ($\times0.5$ to $\times4$), the corner-node share. The solids4foam interface balance of about $10^{-6}$ comes from the solids4foam authors' own runs and is \textbf{not reconstructed} here.
 
 The minimum of $J$ over the run lies in the fluid ALE mesh: solid $0.75$, $0.64$, $0.51$, $0.35$ and fluid $0.68$, $0.60$, $0.46$, $0.19$ ($\times0.5$ to $\times4$); the minimum scaled Jacobian (fluid cells) is $0.68$, $0.65$, $0.61$, $0.32$ (sampled every ten steps; \texttt{data/ale\_quality.csv}). At $\times4$ the fluid $J=0.19$ is below the $0.2$ warning level used for the solid and had settled by $t\approx4$; its location was not logged. All sampled values are positive (every element valid), which does not establish mesh-independent accuracy.
 
@@ -191,7 +190,7 @@ The campaign used $11.23$ CPU-hours in $81$ Slurm jobs (peak $36$ cores): \FE{} 
 
 \textbf{Claim.} A monolithic \FE{} implementation of the finite-strain neo-Hookean blobInTreacle reproduces the solids4foam steady displacement and force limits within their reported combined numerical uncertainty: the five limits differ by $0.05$--$0.19\,\%$ for the data-driven orders and by at most about $0.5\,\%$ for any fixed order from $1$ to $2$; matched-mesh differences are $2.3$--$2.9\,\%$ at $\times1$ and $\le0.4\,\%$ at $\times4$. \textbf{Classification: qualified pass} (qualified cross-code consistency of the steady observables; temporal second-order convergence is not verified).
 
-\textbf{Limitations.} Same group and AI lineage, internal review only; non-blind preregistration; the $u_x$ order $1.04$ and the time convergence below $\Delta t\approx0.016$ are unexplained; limits depend on the assumed order at the $0.1$--$0.5\,\%$ level; the $\times4$ ALE warning has an unknown location; $\Delta p$ is defined differently in the two codes; the solids4foam $10^{-6}$ statement is not reconstructed; point and integral observables of one benchmark; solver and raw output not public. A stronger statement needs external work.
+\textbf{Limitations.} Same group and AI lineage, internal review only; non-blind preregistration; the $u_x$ order $1.04$ and the time convergence below $\Delta t\approx0.016$ are unexplained; limits depend on the assumed order at the $0.1$--$0.5\,\%$ level; the $\times4$ ALE warning has an unknown location; point and integral observables of one benchmark; solver and raw output not public. A stronger statement needs external work.
 
 \section*{AI-use disclosure (placeholder for author review)}
 {\small\hl{TBD by the authors:} AI coding and writing assistants (Anthropic Claude) were used to implement and run the FEniCSx code, post-process and audit results internally and draft this text; the authors are to confirm, edit and take responsibility for the content and agree the wording with the journal's policy. No authorship is assigned to an AI system.}
