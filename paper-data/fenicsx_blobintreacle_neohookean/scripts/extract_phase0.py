@@ -37,7 +37,7 @@ rows = [("P: UFL-differentiated vs numpy (max rel., 20 F)", law["max_relative_er
 with open(os.path.join(out, "law_checks.csv"), "w", newline="") as fh:
     w = csv.writer(fh); w.writerow(["check", "value", "source"])
     for a, b, c in rows: w.writerow([a, "%.3e" % b, c])
-    # hand-transcribed from the internal audit text (an independent re-implementation, not regenerated here)
-    w.writerow(["internal audit, independent 3x3 re-implementation (F_zz=1): Cauchy stress vs module", "4e-16", "REPORTED in the internal audit report (evidence archive, NH_INDEPENDENT_AUDIT.md); not regenerated"])
-    w.writerow(["internal audit, independent re-implementation: tangent vs finite difference", "1.3e-09", "REPORTED in the internal audit report (evidence archive, NH_INDEPENDENT_AUDIT.md); not regenerated"])
+    # hand-transcribed from the internal audit text (an separate re-implementation, not regenerated here)
+    w.writerow(["internal audit, separate 3x3 re-implementation (F_zz=1): Cauchy stress vs module", "4e-16", "REPORTED in the internal audit report (evidence archive, NH_INDEPENDENT_AUDIT.md); not regenerated"])
+    w.writerow(["internal audit, separate re-implementation: tangent vs finite difference", "1.3e-09", "REPORTED in the internal audit report (evidence archive, NH_INDEPENDENT_AUDIT.md); not regenerated"])
 print("wrote", out)

@@ -13,5 +13,5 @@ objectivity (rotation) of sigma,1.059e-13,law_checks.json
 "s4f formulas vs module: sigma, exact (50, 533.33) constants",1.000e-07,s4f_transcript_comparison.json
 "s4f tutorial E,nu rounding: relative deviation of mu",3.094e-09,law_checks.json
 "s4f tutorial E,nu rounding: relative deviation of K",1.000e-07,law_checks.json
-"internal audit, independent 3x3 re-implementation (F_zz=1): Cauchy stress vs module",4e-16,"REPORTED in the internal audit report (evidence archive, NH_INDEPENDENT_AUDIT.md); not regenerated"
-"internal audit, independent re-implementation: tangent vs finite difference",1.3e-09,"REPORTED in the internal audit report (evidence archive, NH_INDEPENDENT_AUDIT.md); not regenerated"
+"internal audit, separate 3x3 re-implementation (F_zz=1): Cauchy stress vs module",4e-16,"REPORTED in the internal audit report (evidence archive, NH_INDEPENDENT_AUDIT.md); not regenerated"
+"internal audit, separate re-implementation: tangent vs finite difference",1.3e-09,"REPORTED in the internal audit report (evidence archive, NH_INDEPENDENT_AUDIT.md); not regenerated"
