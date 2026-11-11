@@ -7,10 +7,10 @@
 * Campaign repository (local, not public): branch `hessenthaler-phaseI`, last commit at the time of packaging in `prereg/` notes and `ledger/`; the FEniCSx code is copied to `fenicsx_source/`.
 
 ## Machine and cost
-Single node (192 cores, 755 GB), Slurm. CPU-hours reconciled with sacct in `ledger/HESSENTHALER_SACCT.csv` (campaign total in the file); the solids4foam reconstruction cost 14.5 CPU-h for 0-0.75 s on 16 cores (20.7 CPU-h per simulated second).
+Single node (192 cores, 755 GB), Slurm. CPU-hours reconciled with sacct in `ledger/HESSENTHALER_SACCT.csv` (campaign total in the file); the solids4foam reconstruction cost 14.5 CPU-h for 0-0.75 s on 16 cores (19.3 CPU-h per simulated second; an earlier 0-0.1 s pilot of 2.1 CPU-h is separate).
 
 ## Meshes (not included; hashes)
 FEniCSx: `data/checks/MESH_SHA256.txt`. solids4foam reconstruction: `s4f_case/fluid_polyMesh_SHA256.txt`, `solid_polyMesh_SHA256.txt`, `log.checkMesh.*`, `log.cartesianMesh` (cfMesh of OpenFOAM v2512 `cartesianMesh` after `surfaceFeatureEdges -angle 45`).
 
 ## Preregistration chronology
-`prereg/PREREG.sha256` lists the sha256 of the preregistration and each addendum. A6 and A6b (solids4foam reconstruction plan and case settings) were committed before the solids4foam build and run; A7 (temporal control) before its run.
+`prereg/PREREG.sha256` lists the sha256 of the preregistration and each addendum. A6 was committed at 20:09:40 and A6b at 20:10:47 (the build job had started at 20:10:04; no case had been run); both precede every solids4foam case run (first run 20:16:55). A7 (temporal control) was committed 1 s before its job and was written knowing the solids4foam Fy peak, so it is not blind; its criterion (i) covers 0.1 <= t <= 0.75 s (16.8 % at 0.1 s), the supplement headlines t >= 0.2 s (7.0 %) and states both.
